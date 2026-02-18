@@ -56,7 +56,7 @@ const navLinks: { title: string; href: string; description: string }[] = [
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-[#D9D9D9]">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         
         <div className="hidden md:flex items-center gap-10">
@@ -79,9 +79,9 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center space-x-4">
-          <div className="relative min-w-0">
+          <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input type="search" placeholder="Buscar producto..." className="pl-9 w-96" />
+            <Input type="search" placeholder="Buscar producto..." className="pl-9 w-full" />
           </div>
           <Popover>
             <PopoverTrigger asChild>
