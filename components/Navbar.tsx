@@ -20,6 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { LoginForm } from "./LoginForm";
 
 const navLinks: { title: string; href: string; description: string }[] = [
   {
@@ -55,8 +56,10 @@ const navLinks: { title: string; href: string; description: string }[] = [
 ];
 
 export default function Navbar() {
+  const [showLoginForm, setShowLoginForm] = React.useState(false);
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-[#D9D9D9]">
+    <header className="sticky top-0 z-50 w-full bg-[#ffff]">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         
         <div className="hidden md:flex items-center gap-10">
@@ -87,15 +90,19 @@ export default function Navbar() {
             <PopoverTrigger asChild>
               <User className="h-6 w-6 cursor-pointer" />
             </PopoverTrigger>
-            <PopoverContent className="w-60">
-              <div className="flex flex-col space-y-4 items-start">
-                <Button asChild variant="outline">
-                  <Link href="/mvz/registro">¿Eres veterinario? Regístrate...</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/mvz/login">Ya estoy registrado</Link>
-                </Button>
-              </div>
+            <PopoverContent className="w-60 p-4">
+              {showLoginForm ? (
+                <LoginForm onBack={() => setShowLoginForm(false)} />
+              ) : (
+                <div className="flex flex-col space-y-4">
+                  <Button asChild variant="outline" className="w-full">
+                    <Link href="/mvz/registro">¿Eres veterinario? Regístrate...</Link>
+                  </Button>
+                  <Button asChild className="w-full" onClick={() => setShowLoginForm(true)}>
+                    <Link href="#">Ya estoy registrado</Link>
+                  </Button>
+                </div>
+              )}
             </PopoverContent>
           </Popover>
           <ShoppingCart className="h-6 w-6 cursor-pointer" />
