@@ -2,8 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar } from "lucide-react";
+import { getProducts } from "@/lib/shopify";
+import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
 
-export default function Home() {
+export default async function Home() {
+  const { body } = await getProducts();
+  const products = body.data.products.edges.map((edge) => edge.node).slice(0, 3);
+
   return (
     <>
       {/* Landing Frame */}
@@ -53,9 +58,61 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 3D Dog Frame */}
-          <div className="flex flex-row w-[1080px] h-[700px] gap-[400px] bg-transparent">
-            {/* 3D Dog content */}
+          {/* 3D Model Frame */}
+          <div className="flex flex-row w-[1080px] h-[700px] gap-[16px] bg-transparent">
+            {/* 3D Image Frame */}
+            <div className="flex flex-col w-[588px] h-[710px] gap-[16px] bg-transparent">
+              {/* 3D Image Heading Text Frame */}
+              <div className="flex flex-row items-center justify-center w-[542px] h-[64px] gap-[10px] mx-auto">
+                <p className="text-[#F5F5F5] font-sans font-medium text-lg leading-[100%] text-center">
+                  Haz clic en cualquier zona del cuerpo del perro para ver productos ortopédicos específicos para esa área.
+                </p>
+              </div>
+
+              {/* 3D Image Mapper Frame */}
+              <div className="relative w-[588px] h-[611px] rounded-[32px] overflow-hidden">
+                <Image 
+                  src="/img/3dimgmapper.png" 
+                  alt="3D Dog Model Mapper" 
+                  fill 
+                  className="object-cover rounded-[32px]"
+                />
+              </div>
+            </div>
+
+            {/* 3D Products Frame */}
+            <div className="flex flex-col w-[476px] h-[700px] pt-[28px] gap-[16px] bg-transparent">
+              {/* 3D Products Subframe */}
+              <div className="flex flex-col w-[476px] h-auto min-h-[614px] gap-[16px]">
+                {/* Heading Text Frame */}
+                <div className="flex flex-col w-[374px] h-[44px] gap-[8px] mx-auto">
+                  <h2 className="text-[#F5F5F5] font-sans font-semibold text-[22px] leading-[100%] text-center uppercase">
+                    Productos Recomendados para Cuello y Espalda
+                  </h2>
+                </div>
+
+                {/* 3 Equal 3D Product Cards */}
+                <div className="flex flex-col gap-[16px]">
+                  {products.map((product) => (
+                    <ProductCardHorizontal key={product.id} product={product} />
+                  ))}
+                  {/* Fill with placeholders if fewer than 3 products */}
+                  {Array.from({ length: Math.max(0, 3 - products.length) }).map((_, i) => (
+                    <div key={`placeholder-${i}`} className="w-[476px] h-[148px] bg-white/10 rounded-[32px]"></div>
+                  ))}
+                </div>
+
+                {/* 3D Redirection Frame */}
+                <div className="flex flex-row items-center w-[278px] h-[63px] gap-[8px]">
+                  <Link href="/tienda" className="flex items-center gap-[8px] text-[#F5F5F5] hover:opacity-80 transition-opacity">
+                    <span className="font-sans font-medium text-lg leading-[100%] underline decoration-solid">
+                      Ver más productos recomendados
+                    </span>
+                    <ArrowRight className="w-[30px] h-[30px]" />
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

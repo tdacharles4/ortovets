@@ -70,11 +70,11 @@ export default function Navbar() {
             <NavigationMenuList>
               {navLinks.map((link) => (
                 <NavigationMenuItem key={link.title}>
-                  <Link href={link.href}>
-                    <NavigationMenuLink className={`${navigationMenuTriggerStyle()} text-base`}>
+                  <NavigationMenuLink asChild>
+                    <Link href={link.href} className={`${navigationMenuTriggerStyle()} text-base`}>
                       {link.title}
-                    </NavigationMenuLink>
-                  </Link>
+                    </Link>
+                  </NavigationMenuLink>
                 </NavigationMenuItem>
               ))}
             </NavigationMenuList>
@@ -96,7 +96,7 @@ export default function Navbar() {
               ) : (
                 <div className="flex flex-col space-y-4">
                   <Button asChild variant="outline" className="w-full">
-                    <Link href="/mvz/registro">¿Eres veterinario? Regístrate...</Link>
+                    <Link href="/acceso">¿Eres veterinario? Regístrate...</Link>
                   </Button>
                   <Button asChild className="w-full" onClick={() => setShowLoginForm(true)}>
                     <Link href="#">Ya estoy registrado</Link>
@@ -144,10 +144,10 @@ export default function Navbar() {
                 <div className="flex flex-col gap-y-4">
                   <div className="flex flex-col gap-y-2">
                     <Button asChild variant="outline">
-                      <Link href="/mvz/registro">¿Eres veterinario? Regístrate...</Link>
+                      <Link href="/acceso">¿Eres veterinario? Regístrate...</Link>
                     </Button>
                     <Button asChild>
-                      <Link href="/mvz/login">Ya estoy registrado</Link>
+                      <Link href="/acceso">Ya estoy registrado</Link>
                     </Button>
                   </div>
                   <Link href="/cart" className="flex items-center gap-2 text-lg font-semibold text-foreground/80 hover:text-foreground">

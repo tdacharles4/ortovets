@@ -18,14 +18,14 @@ import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: "Usuario incorrecto o inexistente.",
   }),
   password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
+    message: "Contraseña no coincide con el usuario ingresado.",
   }),
 });
 
-export function LoginForm({ onBack }: { onBack: () => void }) {
+export function LoginForm({ onBack }: { onBack?: () => void }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,10 +40,11 @@ export function LoginForm({ onBack }: { onBack: () => void }) {
 
   return (
     <div>
-      <Button variant="ghost" size="sm" onClick={onBack} className="mb-4">
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back
-      </Button>
+      {onBack && (
+        <Button variant="ghost" size="sm" onClick={onBack} className="mb-4">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+        </Button>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -51,9 +52,9 @@ export function LoginForm({ onBack }: { onBack: () => void }) {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Usuario</FormLabel>
                 <FormControl>
-                  <Input placeholder="username" {...field} />
+                  <Input placeholder="usuario" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -64,16 +65,16 @@ export function LoginForm({ onBack }: { onBack: () => void }) {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Contraseña</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="password" {...field} />
+                  <Input type="password" placeholder="contraseña" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <Button type="submit" className="w-full">
-            Login
+            Acceder
           </Button>
         </form>
       </Form>
