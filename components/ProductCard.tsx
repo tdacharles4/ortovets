@@ -14,6 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { FloatingProductCard } from "./FloatingProductCard";
+import Link from "next/link";
 
 export function ProductCard({ product }: { product: ShopifyProduct }) {
   const [isCartHovered, setIsCartHovered] = React.useState(false);
@@ -30,6 +31,8 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
   const priceDisplay = minPrice.amount === maxPrice.amount 
     ? formatPrice(minPrice) 
     : `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
+
+  const isOutOfStock = !product.availableForSale;
 
   return (
     <Dialog>
@@ -67,16 +70,19 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
         <CardFooter className="p-4 pt-0">
           <div className="flex w-full overflow-hidden rounded-md border border-input h-10 relative bg-[#1E1E1E]">
             {/* 1. Ver Detalles Button (Base Layer) */}
-            <button 
-              className="flex-grow h-full text-sm font-medium text-white transition-opacity duration-300 cursor-pointer"
-              onClick={() => console.log("Ver detalles: " + product.title)}
+            <Link 
+              href={`/tienda/${product.handle}`}
+              className="flex-grow h-full text-sm font-medium text-white transition-opacity duration-300 cursor-pointer flex items-center justify-center hover:bg-white/10"
             >
               Ver detalles
-            </button>
+            </Link>
 
             {/* 2. Añadir al Carrito Overlay - Expands to cover 'Ver detalles' */}
             <button 
-              className={`absolute top-0 bottom-0 right-0 z-20 flex items-center justify-center bg-[#8CC63F] transition-all duration-500 ease-in-out overflow-hidden cursor-pointer ${
+              disabled={isOutOfStock}
+              className={`absolute top-0 bottom-0 right-0 z-20 flex items-center justify-center transition-all duration-500 ease-in-out overflow-hidden cursor-pointer ${
+                isOutOfStock ? "bg-gray-500" : "bg-[#8CC63F]"
+              } ${
                 isCartHovered ? "left-0 w-full" : "w-0 opacity-0"
               }`}
               onMouseEnter={() => setIsCartHovered(true)}
@@ -84,15 +90,15 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
               onClick={() => console.log("Añadir al carrito: " + product.title)}
             >
               <span className="whitespace-nowrap text-sm font-medium text-white pr-10">
-                Añadir al carrito
+                {isOutOfStock ? "Agotado" : "Añadir al carrito"}
               </span>
             </button>
 
             {/* 3. Cart Icon Section (Fixed Right Corner) */}
             <div 
               className={`w-12 h-full flex items-center justify-center border-l border-white/20 cursor-pointer relative z-30 transition-colors duration-500 ${
-                isCartHovered ? "bg-[#8CC63F] border-transparent" : "bg-[#1E1E1E]"
-              }`}
+                isCartHovered ? (isOutOfStock ? "bg-gray-500" : "bg-[#8CC63F]") : "bg-[#1E1E1E]"
+              } ${isCartHovered ? "border-transparent" : "border-l border-white/20"}`}
               onMouseEnter={() => setIsCartHovered(true)}
               onMouseLeave={() => setIsCartHovered(false)}
             >

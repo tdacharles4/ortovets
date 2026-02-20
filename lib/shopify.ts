@@ -33,6 +33,7 @@ export type ShopifyProduct = {
   title: string;
   handle: string;
   description: string;
+  availableForSale: boolean;
   images: {
     edges: {
       node: {
@@ -56,6 +57,7 @@ export type ShopifyProduct = {
       node: {
         id: string;
         title: string;
+        availableForSale: boolean;
         price: {
           amount: string;
           currencyCode: string;
@@ -77,6 +79,7 @@ export async function getProduct(handle: string) {
         title
         handle
         description
+        availableForSale
         images(first: 10) {
           edges {
             node {
@@ -100,6 +103,7 @@ export async function getProduct(handle: string) {
             node {
               id
               title
+              availableForSale
               price {
                 amount
                 currencyCode
@@ -126,6 +130,7 @@ export async function getProducts() {
             title
             handle
             description
+            availableForSale
             images(first: 10) {
               edges {
                 node {
@@ -149,6 +154,7 @@ export async function getProducts() {
                 node {
                   id
                   title
+                  availableForSale
                   price {
                     amount
                     currencyCode
