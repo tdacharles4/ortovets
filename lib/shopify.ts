@@ -71,6 +71,46 @@ export type ShopifyProduct = {
   };
 };
 
+export function isMenudeoVariant(variant: any) {
+  if (!variant) return false;
+  const title = variant.title?.toLowerCase() || "";
+  const options = variant.selectedOptions?.map((opt: any) => opt.value.toLowerCase()).join(" ") || "";
+  
+  // Explicit check for menudeo
+  if (title.includes("menudeo") || options.includes("menudeo")) return true;
+  // If it mentions mayoreo, it's NOT menudeo
+  if (title.includes("mayoreo") || options.includes("mayoreo")) return false;
+  
+  // Default to true if neither is mentioned (standard products)
+  return true;
+}
+
+export function getMenudeoPriceRange(product: ShopifyProduct) {
+  const menudeoVariants = product.variants.edges
+    .map(edge => edge.node)
+    .filter(isMenudeoVariant);
+
+  if (menudeoVariants.length === 0) {
+    return product.priceRange;
+  }
+
+  const prices = menudeoVariants.map(v => parseFloat(v.price.amount));
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const currencyCode = menudeoVariants[0].price.currencyCode;
+
+  return {
+    minVariantPrice: {
+      amount: minPrice.toString(),
+      currencyCode,
+    },
+    maxVariantPrice: {
+      amount: maxPrice.toString(),
+      currencyCode,
+    },
+  };
+}
+
 export async function getProduct(handle: string) {
   return shopifyFetch<{ data: { product: ShopifyProduct } }>({
     query: `{

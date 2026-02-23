@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { ShopifyProduct } from "@/lib/shopify";
+import { ShopifyProduct, getMenudeoPriceRange } from "@/lib/shopify";
 import { Search } from "lucide-react";
 import {
   Dialog,
@@ -16,8 +16,10 @@ import { FloatingProductCard } from "./FloatingProductCard";
 
 export function ProductCardHorizontal({ product }: { product: ShopifyProduct }) {
   const image = product.images.edges[0]?.node;
-  const minPrice = product.priceRange.minVariantPrice;
-  const maxPrice = product.priceRange.maxVariantPrice;
+  
+  const menudeoPriceRange = getMenudeoPriceRange(product);
+  const minPrice = menudeoPriceRange.minVariantPrice;
+  const maxPrice = menudeoPriceRange.maxVariantPrice;
 
   const formatPrice = (price: { amount: string; currencyCode: string }) => 
     new Intl.NumberFormat("es-MX", {

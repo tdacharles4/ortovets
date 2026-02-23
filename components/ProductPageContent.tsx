@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { ShopifyProduct } from "@/lib/shopify";
+import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import {
   Select,
@@ -24,8 +24,11 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
   
+  // Extract unique sizes from Menudeo variants
   const sizes = Array.from(new Set(
     product.variants?.edges?.map(edge => {
+      if (!isMenudeoVariant(edge.node)) return null;
+
       const options = edge.node.selectedOptions;
       const sizeOpt = options.find(opt => 
         ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase())
@@ -39,15 +42,19 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
 
   const [selectedSize, setSelectedSize] = React.useState<string | undefined>(undefined);
 
+  // Find the selected Menudeo variant based on the selected size
   const selectedVariant = product.variants?.edges?.find(edge => 
-    edge.node.selectedOptions.some(opt => 
-      ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase()) && 
-      opt.value === selectedSize
-    ) || (edge.node.selectedOptions.length === 1 && edge.node.selectedOptions[0].value === selectedSize)
+    isMenudeoVariant(edge.node) && (
+      edge.node.selectedOptions.some(opt => 
+        ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase()) && 
+        opt.value === selectedSize
+      ) || (edge.node.selectedOptions.length === 1 && edge.node.selectedOptions[0].value === selectedSize)
+    )
   )?.node;
 
-  const minPrice = product.priceRange.minVariantPrice;
-  const maxPrice = product.priceRange.maxVariantPrice;
+  const menudeoPriceRange = getMenudeoPriceRange(product);
+  const minPrice = menudeoPriceRange.minVariantPrice;
+  const maxPrice = menudeoPriceRange.maxVariantPrice;
   
   const formatPrice = (price: { amount: string; currencyCode: string }) => 
     new Intl.NumberFormat("es-MX", {

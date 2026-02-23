@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShopifyProduct } from "@/lib/shopify";
+import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
 import { X, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import { DialogClose } from "@/components/ui/dialog";
 import {
@@ -26,15 +26,15 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
   
-  // Extract unique sizes from variants with more robust detection
+  // Extract unique sizes from Menudeo variants
   const sizes = Array.from(new Set(
     product.variants?.edges?.map(edge => {
+      if (!isMenudeoVariant(edge.node)) return null;
+      
       const options = edge.node.selectedOptions;
-      // Look for common size-related names
       const sizeOpt = options.find(opt => 
         ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase())
       );
-      // Fallback: if there's only one option and it's not "Title", use it
       if (!sizeOpt && options.length === 1 && options[0].name !== 'Title') {
         return options[0].value;
       }
@@ -44,16 +44,19 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
 
   const [selectedSize, setSelectedSize] = React.useState<string | undefined>(undefined);
 
-  // Find the selected variant based on the selected size
+  // Find the selected Menudeo variant based on the selected size
   const selectedVariant = product.variants?.edges?.find(edge => 
-    edge.node.selectedOptions.some(opt => 
-      ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase()) && 
-      opt.value === selectedSize
-    ) || (edge.node.selectedOptions.length === 1 && edge.node.selectedOptions[0].value === selectedSize)
+    isMenudeoVariant(edge.node) && (
+      edge.node.selectedOptions.some(opt => 
+        ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase()) && 
+        opt.value === selectedSize
+      ) || (edge.node.selectedOptions.length === 1 && edge.node.selectedOptions[0].value === selectedSize)
+    )
   )?.node;
 
-  const minPrice = product.priceRange.minVariantPrice;
-  const maxPrice = product.priceRange.maxVariantPrice;
+  const menudeoPriceRange = getMenudeoPriceRange(product);
+  const minPrice = menudeoPriceRange.minVariantPrice;
+  const maxPrice = menudeoPriceRange.maxVariantPrice;
   
   const formatPrice = (price: { amount: string; currencyCode: string }) => 
     new Intl.NumberFormat("es-MX", {

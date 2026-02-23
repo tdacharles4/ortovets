@@ -1,13 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar } from "lucide-react";
+import { ArrowRight, Calendar, Clock, Award, ShieldCheck, Heart } from "lucide-react";
 import { getProducts } from "@/lib/shopify";
 import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
 
 export default async function Home() {
   const { body } = await getProducts();
   const products = body.data.products.edges.map((edge) => edge.node).slice(0, 3);
+
+  const features = [
+    {
+      icon: Clock,
+      title: "Asesoría Especializada",
+    },
+    {
+      icon: Award,
+      title: "Calidad Garantizada",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Compras Protegidas",
+    },
+    {
+      icon: Heart,
+      title: "Marca 100% Mexicana",
+    },
+  ];
 
   return (
     <>
@@ -18,7 +37,7 @@ export default async function Home() {
           {/* Redirection Frame */}
           <div className="flex flex-col w-[569px] h-[638px] gap-[48px] bg-transparent">
             {/* Text Content Frame */}
-            <div className="flex flex-col w-full h-[310px] gap-[16px]">
+            <div className="flex flex-col w-full h-fit gap-[16px]">
               <div className="w-[409px] h-[64px]">
                 <h1 className="text-[#FFFFFF] font-sans font-extrabold text-[32px] leading-[100%] tracking-[0%] uppercase">
                   MEJORA LA MOVILIDAD DE TU MASCOTA
@@ -30,11 +49,15 @@ export default async function Home() {
                 </p>
               </div>
               {/* Stats/Features Container */}
-              <div className="flex flex-row w-[556px] h-[118px] gap-[16px]">
-                <div className="flex flex-col w-[122px] h-[118px] gap-[8px] bg-white/10 rounded-lg"></div>
-                <div className="flex flex-col w-[122px] h-[118px] gap-[8px] bg-white/10 rounded-lg"></div>
-                <div className="flex flex-col w-[122px] h-[118px] gap-[8px] bg-white/10 rounded-lg"></div>
-                <div className="flex flex-col w-[122px] h-[118px] gap-[8px] bg-white/10 rounded-lg"></div>
+              <div className="flex flex-row w-[556px] h-fit gap-[16px]">
+                {features.map((feature, index) => (
+                  <div key={index} className="flex flex-col w-[122px] h-[118px] p-4 justify-center items-center gap-[12px] bg-white/10 rounded-lg backdrop-blur-sm transition-all hover:bg-white/20">
+                    <feature.icon className="w-8 h-8 text-white shrink-0" />
+                    <h3 className="text-white font-sans font-bold text-[11px] leading-tight text-center">
+                      {feature.title}
+                    </h3>
+                  </div>
+                ))}
               </div>
             </div>
 
