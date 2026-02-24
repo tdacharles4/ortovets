@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,17 +17,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { routerServerGlobal } from "next/dist/server/lib/router-utils/router-server-context";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
+  username: z.string().min(8, {
     message: "Usuario incorrecto o inexistente.",
   }),
-  password: z.string().min(8, {
+  password: z.string().min(4, {
     message: "Contraseña no coincide con el usuario ingresado.",
   }),
 });
 
 export function LoginForm({ onBack }: { onBack?: () => void }) {
+
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,9 +40,26 @@ export function LoginForm({ onBack }: { onBack?: () => void }) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setError(null);
+
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({email: values.username, password: values.password}),
+    });
+
+    const data = await response.json();
+  
+    if (response.ok) {
+      alert('estas logeado')
+    } else {
+      setError(data.error || 'login fallido')
+    }
   }
+
 
   return (
     <div>

@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, Award, ShieldCheck, Heart } from "lucide-react";
 import { getProducts } from "@/lib/shopify";
 import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
+import { getCustomer } from "./lib/shopify";
 
 export default async function Home() {
   const { body } = await getProducts();
   const products = body.data.products.edges.map((edge) => edge.node).slice(0, 3);
+
+  const customer = await getCustomer();
 
   const features = [
     {
@@ -94,10 +97,10 @@ export default async function Home() {
 
               {/* 3D Image Mapper Frame */}
               <div className="relative w-[588px] h-[611px] rounded-[32px] overflow-hidden">
-                <Image 
-                  src="/img/3dimgmapper.png" 
-                  alt="3D Dog Model Mapper" 
-                  fill 
+                <Image
+                  src="/img/3dimgmapper.png"
+                  alt="3D Dog Model Mapper"
+                  fill
                   className="object-cover rounded-[32px]"
                 />
               </div>
@@ -186,14 +189,24 @@ export default async function Home() {
 
             {/* Rightmost Image: Proportional to 472px, 583px h */}
             <div className="w-full xl:flex-[472] h-[583px] relative rounded-[16px] overflow-hidden">
-              <Image 
-                src="/img/dummyproduct.png" 
-                alt="Dummy Product" 
-                fill 
+              <Image
+                src="/img/dummyproduct.png"
+                alt="Dummy Product"
+                fill
                 className="object-cover"
               />
             </div>
           </div>
+        </div>
+
+        <div>
+          {customer ? (
+            <p>Logged in as {customer.email}</p>
+          ) : (
+            <p>Not logged in</p>
+          )}
+
+          <a href="/account/login">Login</a>
         </div>
       </section>
     </>
