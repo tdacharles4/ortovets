@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const returnTo = encodeURIComponent(
-    process.env.NEXT_PUBLIC_SITE_URL!
+    process.env.SHOPIFY_STORE_DOMAIN!
   );
 
   return NextResponse.redirect(
