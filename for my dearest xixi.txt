@@ -1,0 +1,77 @@
+Sprint 1: Foundation & Shopify Integration (Week 1)
+TEODORO - Frontend Lead:
+•	Set up Next.js project with TypeScript and folder structure
+•	Configure Shopify Storefront API integration
+•	Build reusable component library (buttons, cards, navigation components)
+•	Implement basic routing structure matching the site map
+•	Create responsive header with navigation (Menu Principal, Zonas, Tienda, etc.)
+ULISES - Backend/Content Lead:
+•	Set up Shopify store backend (products, collections, basic settings)
+•	Configure Shopify admin and create documentation for client
+•	Set up authentication flow with Shopify Customer Accounts
+•	Prepare sample product data and categories
+•	Create initial deployment pipeline (Vercel/similar)
+Client Deliverable: Demo of navigation skeleton + Shopify admin walkthrough session
+________________________________________
+Sprint 2: Core E-commerce Features (Week 2)
+Person 1 - Frontend Lead:
+•	Build Landing Page with hero section and "Quizá te pueda interesar" recommendations
+•	Create Product Listing page with filtering/sorting
+•	Implement Product Detail page (images, videos, "add to cart", "buy now")
+•	Build Shopping Cart component and page
+•	Implement 3D dog visualization feature (research library like Three.js/React Three Fiber)
+Person 2 - Backend/Integration Lead:
+•	Integrate Shopify Cart API with frontend
+•	Set up Shopify Checkout redirect flow
+•	Configure shipping and payment settings in Shopify
+•	Implement product search functionality
+•	Create policies pages (returns, privacy, terms) in Shopify
+Client Deliverable: Functional product browsing and cart system
+________________________________________
+Sprint 3: User Features & Content (Week 3)
+Person 1 - Frontend Lead:
+•	Build User Profile page ("Perfil Usuario")
+•	Create MVZ (veterinarian) profile section
+•	Implement appointment booking form ("Agenda tu Consulta")
+•	Build "¿Quiénes somos?" and "Contáctanos" pages
+•	Create review submission component
+Person 2 - Content/Blog Lead:
+•	Set up Shopify Blog for news/announcements section
+•	Create blog listing and detail page templates
+•	Implement downloadable content section (graphics/resources)
+•	Configure contact form (email integration or Shopify form app)
+•	Set up order confirmation email templates in Shopify
+Client Deliverable: Complete user journey from browsing to checkout + content management demo
+________________________________________
+Sprint 4: Polish, Testing & Handoff (Week 4)
+Person 1 - Frontend Lead:
+•	Responsive design refinement (mobile, tablet, desktop)
+•	Performance optimization (image optimization, lazy loading, code splitting)
+•	Accessibility audit and fixes (WCAG compliance)
+•	Cross-browser testing and bug fixes
+•	SEO optimization (meta tags, structured data)
+Person 2 - QA/Documentation Lead:
+•	End-to-end testing of all user flows
+•	Create comprehensive Shopify admin documentation for client
+•	Record video tutorials for product management, blog posting, order processing
+•	Set up analytics (Google Analytics, Shopify Analytics)
+•	Final deployment and domain configuration
+•	Knowledge transfer sessions with client
+Client Deliverable: Production-ready site + complete admin documentation + training
+________________________________________
+Key Considerations:
+Why Next.js + Shopify works well:
+•	Next.js handles custom frontend experience (3D dog, custom layouts)
+•	Shopify manages products, checkout, inventory, customer accounts
+•	Clear separation of concerns
+Critical Path Items:
+•	Week 1: Get Shopify API keys and test integration early
+•	Week 2: Confirm 3D dog feature scope (could be complex)
+•	Week 3: Ensure appointment booking doesn't conflict with Shopify's customer data
+•	Week 4: Buffer for unexpected issues
+Recommendations:
+1.	Daily standups between Person 1 & 2 (15 min)
+2.	Friday client demos at end of each sprint
+3.	Shopify admin training should start Week 1, not Week 4
+4.	Consider a design system (Tailwind + shadcn/ui) for consistency
+5.	The 3D dog feature might need scoping - is it just a viewer or interactive configurator?
