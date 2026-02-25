@@ -1,8 +1,8 @@
 
 export async function getShopifyAdminToken() {
   const domain = process.env.SHOPIFY_STORE_DOMAIN;
-  const clientId = process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID;
-  const clientSecret = process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_SECRET;
+  const clientId = process.env.SHOPIFY_ADMIN_APP_CLIENT_ID;
+  const clientSecret = process.env.SHOPIFY_ADMIN_APP_CLIENT_SECRET;
 
   const response = await fetch(`https://${domain}/admin/oauth/access_token`, {
     method: 'POST',
