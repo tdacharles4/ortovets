@@ -1,0 +1,182 @@
+hopify Customer Account API + Popup Auth — Complete Implementation Guide
+Stack: Next.js (App Router) + Vercel + Shopify Storefront API + Headless channel Timeline: 1 week Client type: Confidential (you have a server, so use this — you get refresh token storage and a client secret, which is more secure than public PKCE-only clients)
+________________________________________
+PRE-WEEK: Before You Write a Single Line of Code
+1. Install the Shopify Headless Sales Channel
+Go to your Shopify admin → Apps → and install the Headless channel from the Shopify App Store (it's free). This is the only way to get access to Customer Account API credentials. If you already have it installed for your Storefront API access, you may already be set — just confirm.
+2. Enable New Customer Accounts
+Admin → Settings → Customer accounts → Edit → Select "Customer accounts" (the new one, not "Classic customer accounts") → Save.
+This is irreversible per-se in that if you switch your existing customers will be migrated. Existing email+password customers will be prompted to log in via OTP the first time. Know this before doing it in production.
+3. Configure the Customer Account API in the Headless Channel
+Admin → Sales channels → Headless → select your storefront → Customer Account API settings
+•	Client type: Set to Confidential
+•	Callback URLs: You need to register every URL that Shopify is allowed to redirect back to after login. Add: 
+o	https://yourdomain.com/api/auth/callback
+o	Your ngrok URL for dev: https://YOUR-NGROK-ID.ngrok-free.app/api/auth/callback
+•	JavaScript origins: https://yourdomain.com (and ngrok URL)
+•	Logout URL: https://yourdomain.com/api/auth/logout-callback (optional but recommended)
+•	Copy down your Client ID and Client Secret — you need both since you're confidential
+4. Set Up ngrok for Local Development
+Shopify refuses HTTP and localhost. No exceptions. Install ngrok, run:
+ngrok http 3000
+Use the HTTPS URL it gives you. Every time ngrok restarts the URL changes (unless you pay), so add it to the Shopify callback list each time or pay for a static domain. The ngrok-free.app URLs work fine.
+5. Environment Variables
+Add to .env.local and Vercel's environment variables:
+SHOPIFY_STORE_DOMAIN=yourstore.myshopify.com SHOPIFY_STOREFRONT_ACCESS_TOKEN=your_storefront_token SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID=your_client_id SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_SECRET=your_client_secret SHOPIFY_CUSTOMER_ACCOUNT_CALLBACK_URL=https://yourdomain.com/api/auth/callback SESSION_SECRET=a_long_random_string_at_least_32_chars NEXT_PUBLIC_APP_URL=https://yourdomain.com
+
+DAY 1 — PKCE Utilities & Session Layer
+Install Dependencies
+npm install iron-session jose
+•	•  iron-session — encrypted, signed, httpOnly cookie sessions. Dead simple and works perfectly in Next.js Route Handlers. 
+•	•  jose — for verifying the ID token JWT that Shopify sends back (always verify it).
+lib/session.ts
+import { getIronSession, SessionOptions } from 'iron-session'; import { cookies } from 'next/headers'; export interface SessionData { accessToken?: string; refreshToken?: string; idToken?: string; customerId?: string; expiresAt?: number; // unix timestamp // PKCE temps — stored here during the auth flow, cleared after codeVerifier?: string; state?: string; nonce?: string; } export const sessionOptions: SessionOptions = { password: process.env.SESSION_SECRET!, cookieName: 'shopify_auth_session', cookieOptions: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: 'lax', maxAge: 60 * 60 * 24 * 30, // 30 days }, }; export async function getSession() { const session = await getIronSession<SessionData>( await cookies(), sessionOptions ); return session; }
+lib/pkce.ts
+// PKCE (Proof Key for Code Exchange) utility functions // These run server-side only export function generateRandomString(length: number): string { const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'; const values = crypto.getRandomValues(new Uint8Array(length)); return Array.from(values) .map((x) => charset[x % charset.length]) .join(''); } export async function generateCodeChallenge(verifier: string): Promise<string> { const encoder = new TextEncoder(); const data = encoder.encode(verifier); const digest = await crypto.subtle.digest('SHA-256', data); return btoa(String.fromCharCode(...new Uint8Array(digest))) .replace(/\+/g, '-') .replace(/\//g, '_') .replace(/=+$/, ''); } export function generateState(): string { return generateRandomString(32); } export function generateNonce(): string { return generateRandomString(32); } export function generateCodeVerifier(): string { return generateRandomString(64); }
+
+lib/shopify-auth.ts
+This is the core module that talks to Shopify's discovery endpoint and token endpoint.
+const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN!; interface OpenIDConfig { authorization_endpoint: string; token_endpoint: string; end_session_endpoint: string; jwks_uri: string; issuer: string; } let cachedConfig: OpenIDConfig | null = null; export async function getOpenIDConfig(): Promise<OpenIDConfig> { if (cachedConfig) return cachedConfig; const res = await fetch( `https://${SHOP_DOMAIN}/.well-known/openid-configuration`, { next: { revalidate: 3600 } } // cache for 1 hour ); if (!res.ok) throw new Error('Failed to fetch OpenID configuration'); cachedConfig = await res.json(); return cachedConfig!; } export interface TokenResponse { access_token: string; refresh_token: string; id_token: string; expires_in: number; token_type: string; } export async function exchangeCodeForTokens( code: string, codeVerifier: string, redirectUri: string ): Promise<TokenResponse> { const config = await getOpenIDConfig(); const params = new URLSearchParams({ grant_type: 'authorization_code', client_id: process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID!, client_secret: process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_SECRET!, code, code_verifier: codeVerifier, redirect_uri: redirectUri, }); const res = await fetch(config.token_endpoint, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params.toString(), }); if (!res.ok) { const err = await res.text(); throw new Error(`Token exchange failed: ${err}`); } return res.json(); } export async function refreshAccessToken( refreshToken: string ): Promise<TokenResponse> { const config = await getOpenIDConfig(); const params = new URLSearchParams({ grant_type: 'refresh_token', client_id: process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID!, client_secret: process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_SECRET!, refresh_token: refreshToken, }); const res = await fetch(config.token_endpoint, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params.toString(), }); if (!res.ok) throw new Error('Token refresh failed'); return res.json(); } export async function revokeSession(idToken: string): Promise<void> { const config = await getOpenIDConfig(); await fetch(config.end_session_endpoint, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ id_token_hint: idToken, client_id: process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID!, }).toString(), }); }
+DAY 2 — Route Handlers (The Auth Backend)
+You need 3 Route Handlers. Think of them as your Express routes but in Next.js App Router style.
+app/api/auth/login/route.ts
+This route is called by your frontend when the user clicks "Login". It generates all the PKCE params, stores them in the session, and returns the Shopify authorization URL for the popup to open.
+import { NextResponse } from 'next/server'; import { getSession } from '@/lib/session'; import { getOpenIDConfig } from '@/lib/shopify-auth'; import { generateCodeVerifier, generateCodeChallenge, generateState, generateNonce, } from '@/lib/pkce'; export async function GET(request: Request) { try { const config = await getOpenIDConfig(); const session = await getSession(); const codeVerifier = generateCodeVerifier(); const codeChallenge = await generateCodeChallenge(codeVerifier); const state = generateState(); const nonce = generateNonce(); // Store in session — these are validated at callback time session.codeVerifier = codeVerifier; session.state = state; session.nonce = nonce; await session.save(); const callbackUrl = process.env.SHOPIFY_CUSTOMER_ACCOUNT_CALLBACK_URL!; const clientId = process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID!; const url = new URL(config.authorization_endpoint); url.searchParams.set('client_id', clientId); url.searchParams.set('response_type', 'code'); url.searchParams.set('redirect_uri', callbackUrl); url.searchParams.set('scope', 'openid email customer-account-api:full'); url.searchParams.set('state', state); url.searchParams.set('nonce', nonce); url.searchParams.set('code_challenge', codeChallenge); url.searchParams.set('code_challenge_method', 'S256'); return NextResponse.json({ authUrl: url.toString() }); } catch (error) { console.error('Login init error:', error); return NextResponse.json({ error: 'Failed to initialize login' }, { status: 500 }); } }
+
+app/api/auth/callback/route.ts
+This is where Shopify redirects after the user logs in inside the popup. It runs in the popup window context, exchanges the code for tokens, saves them to the session, then sends a message to the parent window and closes itself.
+import { NextResponse } from 'next/server'; import { getSession } from '@/lib/session'; import { exchangeCodeForTokens } from '@/lib/shopify-auth'; import { jwtDecode } from 'jose'; // we'll use jose to decode, not verify for the customer ID export async function GET(request: Request) { const { searchParams } = new URL(request.url); const code = searchParams.get('code'); const state = searchParams.get('state'); const error = searchParams.get('error'); // Return an HTML page that posts messages to the opener const sendMessage = (type: 'AUTH_SUCCESS' | 'AUTH_ERROR', payload?: object) => { const message = JSON.stringify({ type, ...payload }); return new NextResponse( `<!DOCTYPE html> <html> <head><title>Authenticating...</title></head> <body> <script> if (window.opener) { window.opener.postMessage(${message}, '${process.env.NEXT_PUBLIC_APP_URL}'); } window.close(); </script> <p>Authentication complete. You can close this window.</p> </body> </html>`, { headers: { 'Content-Type': 'text/html' } } ); }; if (error) { console.error('Shopify auth error:', error); return sendMessage('AUTH_ERROR', { error }); } if (!code || !state) { return sendMessage('AUTH_ERROR', { error: 'Missing code or state' }); } try { const session = await getSession(); // CSRF protection — state must match if (state !== session.state) { return sendMessage('AUTH_ERROR', { error: 'State mismatch — possible CSRF attack' }); } const codeVerifier = session.codeVerifier; if (!codeVerifier) { return sendMessage('AUTH_ERROR', { error: 'Missing code verifier' }); } const callbackUrl = process.env.SHOPIFY_CUSTOMER_ACCOUNT_CALLBACK_URL!; const tokens = await exchangeCodeForTokens(code, codeVerifier, callbackUrl); // Decode the ID token to extract the customer ID (sub claim) // We're not doing full JWT verification here — Shopify's server already verified the code // But you can add full JWKS verification if you want to be extra strict const idTokenParts = tokens.id_token.split('.'); const idTokenPayload = JSON.parse( Buffer.from(idTokenParts[1], 'base64url').toString() ); // Store tokens in session (server-side, httpOnly cookie — never exposed to browser) session.accessToken = tokens.access_token; session.refreshToken = tokens.refresh_token; session.idToken = tokens.id_token; session.customerId = idTokenPayload.sub; // "gid://shopify/Customer/123456" session.expiresAt = Date.now() + tokens.expires_in * 1000; // Clear PKCE temps session.codeVerifier = undefined; session.state = undefined; session.nonce = undefined; await session.save(); return sendMessage('AUTH_SUCCESS', { customerId: idTokenPayload.sub, }); } catch (error) { console.error('Token exchange error:', error); return sendMessage('AUTH_ERROR', { error: 'Token exchange failed' }); } }
+
+app/api/auth/logout/route.ts
+import { NextResponse } from 'next/server'; import { getSession } from '@/lib/session'; import { revokeSession } from '@/lib/shopify-auth'; import { getOpenIDConfig } from '@/lib/shopify-auth'; export async function POST() { try { const session = await getSession(); const idToken = session.idToken; // Destroy local session session.destroy(); // Revoke Shopify session if we have the ID token if (idToken) { try { await revokeSession(idToken); } catch (e) { // Don't block logout if Shopify revocation fails console.error('Shopify session revocation failed:', e); } } return NextResponse.json({ success: true }); } catch (error) { return NextResponse.json({ error: 'Logout failed' }, { status: 500 }); } }
+app/api/auth/me/route.ts
+This is what your frontend calls to check if the user is logged in and get their info. It also handles silent token refresh.
+import { NextResponse } from 'next/server'; import { getSession } from '@/lib/session'; import { refreshAccessToken } from '@/lib/shopify-auth'; export async function GET() { const session = await getSession(); if (!session.accessToken) { return NextResponse.json({ authenticated: false }); } // Check if token is expired (with 5 minute buffer) const isExpired = session.expiresAt ? Date.now() > session.expiresAt - 5 * 60 * 1000 : false; if (isExpired && session.refreshToken) { try { const newTokens = await refreshAccessToken(session.refreshToken); session.accessToken = newTokens.access_token; session.refreshToken = newTokens.refresh_token; session.expiresAt = Date.now() + newTokens.expires_in * 1000; await session.save(); } catch (error) { // Refresh failed — session is dead session.destroy(); return NextResponse.json({ authenticated: false }); } } return NextResponse.json({ authenticated: true, customerId: session.customerId, }); }
+DAY 3 — Customer Account API Proxy
+Never expose your access token to the browser. All Customer Account API calls go through a server-side proxy route.
+app/api/customer/route.ts
+import { NextRequest, NextResponse } from 'next/server'; import { getSession } from '@/lib/session'; import { refreshAccessToken } from '@/lib/shopify-auth'; const CUSTOMER_API_ENDPOINT = `https://${process.env.SHOPIFY_STORE_DOMAIN}/account/customer/api/2026-01/graphql`; export async function POST(request: NextRequest) { const session = await getSession(); if (!session.accessToken) { return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }); } // Refresh if needed const isExpired = session.expiresAt ? Date.now() > session.expiresAt - 5 * 60 * 1000 : false; if (isExpired && session.refreshToken) { try { const newTokens = await refreshAccessToken(session.refreshToken); session.accessToken = newTokens.access_token; session.refreshToken = newTokens.refresh_token; session.expiresAt = Date.now() + newTokens.expires_in * 1000; await session.save(); } catch { session.destroy(); return NextResponse.json({ error: 'Session expired' }, { status: 401 }); } } const body = await request.json(); const shopifyRes = await fetch(CUSTOMER_API_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: session.accessToken, }, body: JSON.stringify(body), }); const data = await shopifyRes.json(); return NextResponse.json(data); }
+Now from any component or hook, you call /api/customer with a GraphQL body instead of hitting Shopify directly. The token never touches the client.
+________________________________________
+DAY 4 — React Auth Context
+contexts/AuthContext.tsx
+'use client'; import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode, } from 'react'; interface AuthState { isAuthenticated: boolean; customerId: string | null; isLoading: boolean; } interface AuthContextType extends AuthState { login: () => void; logout: () => Promise<void>; refetch: () => Promise<void>; } const AuthContext = createContext<AuthContextType | null>(null); export function AuthProvider({ children }: { children: ReactNode }) { const [state, setState] = useState<AuthState>({ isAuthenticated: false, customerId: null, isLoading: true, }); const popupRef = useRef<Window | null>(null); const messageHandlerRef = useRef<((e: MessageEvent) => void) | null>(null); const fetchAuthState = useCallback(async () => { try { const res = await fetch('/api/auth/me'); const data = await res.json(); setState({ isAuthenticated: data.authenticated, customerId: data.customerId ?? null, isLoading: false, }); } catch { setState({ isAuthenticated: false, customerId: null, isLoading: false }); } }, []); useEffect(() => { fetchAuthState(); }, [fetchAuthState]); const login = useCallback(async () => { // Get the auth URL from our server const res = await fetch('/api/auth/login'); const { authUrl, error } = await res.json(); if (error || !authUrl) { console.error('Failed to get auth URL'); return; } // Open popup — size and position it in the center of the screen const width = 500; const height = 650; const left = window.screenX + (window.innerWidth - width) / 2; const top = window.screenY + (window.innerHeight - height) / 2; // Clean up any existing popup if (popupRef.current && !popupRef.current.closed) { popupRef.current.close(); } if (messageHandlerRef.current) { window.removeEventListener('message', messageHandlerRef.current); } const popup = window.open( authUrl, 'shopify-auth-popup', `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes` ); if (!popup) { // Popup was blocked — inform the user alert('Please allow popups for this site to log in.'); return; } popupRef.current = popup; // Listen for the message from our callback route const handleMessage = (event: MessageEvent) => { // Security: only accept messages from our own origin if (event.origin !== process.env.NEXT_PUBLIC_APP_URL) return; if (event.data.type === 'AUTH_SUCCESS') { setState({ isAuthenticated: true, customerId: event.data.customerId, isLoading: false, }); cleanup(); } else if (event.data.type === 'AUTH_ERROR') { console.error('Auth error:', event.data.error); setState((prev) => ({ ...prev, isLoading: false })); cleanup(); } }; const cleanup = () => { window.removeEventListener('message', handleMessage); messageHandlerRef.current = null; if (popupRef.current && !popupRef.current.closed) { popupRef.current.close(); } }; messageHandlerRef.current = handleMessage; window.addEventListener('message', handleMessage); // Poll in case popup is closed manually without completing auth const pollClosed = setInterval(() => { if (popup.closed) { clearInterval(pollClosed); cleanup(); // Refetch auth state — maybe they completed before closing fetchAuthState(); } }, 500); }, [fetchAuthState]); const logout = useCallback(async () => { await fetch('/api/auth/logout', { method: 'POST' }); setState({ isAuthenticated: false, customerId: null, isLoading: false }); }, []); return ( <AuthContext.Provider value={{ ...state, login, logout, refetch: fetchAuthState, }} > {children} </AuthContext.Provider> ); } export function useAuth() { const ctx = useContext(AuthContext); if (!ctx) throw new Error('useAuth must be used inside AuthProvider'); return ctx; }
+Wrap your app/layout.tsx with <AuthProvider>.
+________________________________________
+DAY 4 (continued) — Customer Data Hook
+hooks/useCustomer.ts
+'use client'; import { useState, useEffect } from 'react'; import { useAuth } from '@/contexts/AuthContext'; const CUSTOMER_QUERY = ` query GetCustomer { customer { id firstName lastName emailAddress { emailAddress } orders(first: 5) { nodes { id number processedAt totalPrice { amount currencyCode } } } } } `; export function useCustomer() { const { isAuthenticated } = useAuth(); const [customer, setCustomer] = useState<any>(null); const [loading, setLoading] = useState(false); const [error, setError] = useState<string | null>(null); useEffect(() => { if (!isAuthenticated) { setCustomer(null); return; } const fetchCustomer = async () => { setLoading(true); try { const res = await fetch('/api/customer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: CUSTOMER_QUERY }), }); const data = await res.json(); setCustomer(data?.data?.customer ?? null); } catch (e) { setError('Failed to load customer data'); } finally { setLoading(false); } }; fetchCustomer(); }, [isAuthenticated]); return { customer, loading, error }; }
+DAY 5 — Login/Logout UI Components
+components/AuthButton.tsx
+'use client';
+
+import { useAuth } from '@/contexts/AuthContext';
+
+export function AuthButton() {
+  const { isAuthenticated, isLoading, login, logout } = useAuth();
+
+  if (isLoading) return <button disabled>Loading...</button>;
+
+  if (isAuthenticated) {
+    return (
+      <button onClick={logout} className="btn-logout">
+        Log out
+      </button>
+    );
+  }
+
+  return (
+    <button onClick={login} className="btn-login">
+      Log in / Register
+    </button>
+  );
+}
+Both login and register flow through the same popup — Shopify's hosted page has a "Create account" link, or you can deep-link to registration by appending ?prompt=create_account to the authorizationRequestUrl if Shopify supports it for your account setup (it's not officially documented but works). More reliably, just let Shopify's UI handle the "Create account" toggle — it's on the login page by default.
+components/AccountPanel.tsx
+'use client';
+
+import { useAuth } from '@/contexts/AuthContext';
+import { useCustomer } from '@/hooks/useCustomer';
+
+export function AccountPanel() {
+  const { isAuthenticated } = useAuth();
+  const { customer, loading } = useCustomer();
+
+  if (!isAuthenticated) return null;
+  if (loading) return <p>Loading your account...</p>;
+  if (!customer) return <p>Could not load account data.</p>;
+
+  return (
+    <div>
+      <h2>Hello, {customer.firstName}!</h2>
+      <p>{customer.emailAddress?.emailAddress}</p>
+      <h3>Recent Orders</h3>
+      <ul>
+        {customer.orders.nodes.map((order: any) => (
+          <li key={order.id}>
+            Order #{order.number} — {order.totalPrice.amount} {order.totalPrice.currencyCode}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+________________________________________
+DAY 6 — Checkout Integration & Edge Cases
+Authenticated Checkout
+When the customer proceeds to checkout, you must append ?logged_in=true to the checkout URL and use a /checkouts/ URL (not /cart/). Using the Storefront API to create a checkout, then append it:
+const checkoutUrl = `https://${process.env.SHOPIFY_STORE_DOMAIN}/checkouts/${checkoutId}?logged_in=true`;
+Without ?logged_in=true, the customer will be logged in on your headless site but Shopify won't know who they are in checkout, breaking order history, shipping address prefill, etc.
+Silent Auth Check (SSO Sync with Checkout)
+If a customer logs in during Shopify checkout and then comes back to your site, they won't be logged in on your side. Handle this with a silent auth check on load. In your AuthProvider, after the initial fetchAuthState() comes back unauthenticated, fire a silent check:
+const silentCheck = useCallback(async () => { const config = await fetch('/api/auth/openid-config').then(r => r.json()); // same flow as login but add: url.searchParams.set('prompt', 'none') // use a hidden iframe instead of popup for this // if the iframe gets AUTH_SUCCESS, call fetchAuthState() // if it gets login_required, do nothing }, []);
+This is a nice-to-have for week 1 — skip if timeline is tight. It handles the edge case where a customer is already logged in through Shopify checkout but not your site.
+Token Refresh Middleware (Optional but Recommended)
+You can add a middleware.ts that silently refreshes tokens on each page load for SSR-rendered pages
+// middleware.ts import { NextResponse } from 'next/server'; import type { NextRequest } from 'next/server'; // For protected routes — redirect to home if not authenticated export function middleware(request: NextRequest) { // Check session cookie exists (iron-session is encrypted so you can't decode it in middleware) // Better to check via /api/auth/me in client components return NextResponse.next(); }
+For now, rely on client-side auth state checks. SSR-based auth guard via middleware is a week 2 concern.
+________________________________________
+DAY 7 — Testing, Cleanup, and Vercel Deploy
+Testing Checklist
+Auth Flow:
+•	Clicking "Login" opens popup to Shopify's hosted login page
+•	Completing email OTP flow in popup → popup closes → user is logged in on main page
+•	useCustomer hook returns correct data for logged-in user
+•	Manually closing popup without completing auth → main page stays unauthenticated, no errors
+•	Popup blocker triggers the alert gracefully
+•	Logging out clears session, isAuthenticated goes to false
+•	Refreshing the page while logged in → session persists (iron-session cookie)
+Security:
+•	Access token is never visible in browser DevTools (Network tab, Application cookies)
+•	state mismatch is rejected (test by manually passing a wrong state)
+•	origin check in postMessage handler prevents cross-origin attacks
+Edge Cases:
+•	Token expiration → /api/auth/me transparently refreshes and returns authenticated: true
+•	Expired refresh token → returns authenticated: false, destroys session
+•	Checkout URL includes ?logged_in=true
+Vercel Deploy
+1.	Add all env vars in Vercel dashboard under your project Settings → Environment Variables
+2.	Make sure SHOPIFY_CUSTOMER_ACCOUNT_CALLBACK_URL points to your production domain, not ngrok
+3.	Add the production callback URL to Shopify's Headless channel settings
+4.	Deploy — that's it, no special Vercel config needed for Route Handlers
+________________________________________
+Common Gotchas and FAQ
+"The popup opens but just shows an error / blank page" Your callback URL isn't registered in Shopify. Double-check it exactly matches, including no trailing slash.
+"state mismatch on every callback" iron-session cookies may not be set between the GET /api/auth/login and the callback if your dev environment is HTTP. Use ngrok and HTTPS.
+"The popup doesn't close" The window.close() in the callback HTML only works if the popup was opened by your JS (window.open()), which it is. Make sure you're not accidentally navigating the popup to a URL that doesn't have the close script.
+"Customer ID from idTokenPayload.sub looks like gid://shopify/Customer/123456789" Correct, that's the Shopify global ID. Use it as-is when making Customer Account API calls. When you need just the numeric ID, parse it: sub.split('/').pop().
+"I want Google login" You get it for free. Shopify's hosted login page has a "Continue with Google" button built in. No extra work on your side. Users who sign up via Google will have a Shopify customer account created and linked automatically.
+"Registration vs Login" Both go through the same popup. Shopify's login page has a "Create account" link. You can build a separate "Register" button in your UI that opens the same popup — users who don't have an account will just create one through Shopify's UI. There's no way to send users directly to a registration form without a redirect on Shopify's current system.
+________________________________________
+Week Summary
+Day	Deliverable
+Pre-week	Shopify admin setup, ngrok, env vars
+Day 1	lib/session.ts, lib/pkce.ts, lib/shopify-auth.ts
+Day 2	Route Handlers: /api/auth/login, /callback, /logout, /me
+Day 3	/api/customer proxy route
+Day 4	AuthContext, useCustomer hook
+Day 5	UI components: AuthButton, AccountPanel
+Day 6	Checkout integration, edge cases, silent check
+Day 7	Full test pass, production deploy
+This is a complete, production-grade system. There's no magic — it's just standard OAuth2 + PKCE through a popup, with iron-session keeping the tokens server-side. The popup pattern mirrors exactly how "Sign in with Google" works, so it's familiar to users and there's no UX friction.
+

@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LoginForm } from "@/components/LoginForm";
+import { AuthButton } from "@/components/AuthButton"; // Import AuthButton
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -45,6 +46,10 @@ const signupSchema = z.object({
 });
 
 function SignupForm() {
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [success, setSuccess] = useState(false);
+
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -58,13 +63,48 @@ function SignupForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof signupSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof signupSchema>) {
+    setLoading(true);
+    setMessage("");
+    setSuccess(false);
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSuccess(true);
+        setMessage(data.message);
+        form.reset();
+      } else {
+        setMessage(data.message || "Ocurrió un error.");
+      }
+    } catch (error) {
+      setMessage("No se pudo conectar al servidor.");
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  if (success) {
+    return (
+      <div className="text-center p-4 border rounded-md bg-green-50 border-green-200">
+        <p className="text-green-800">{message}</p>
+      </div>
+    );
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {message && <p className={`text-sm ${success ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -73,7 +113,7 @@ function SignupForm() {
               <FormItem>
                 <FormLabel>Nombre(s)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Juan" {...field} />
+                  <Input placeholder="Juan" {...field} disabled={loading} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -86,7 +126,7 @@ function SignupForm() {
               <FormItem>
                 <FormLabel>Apellido(s)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Pérez" {...field} />
+                  <Input placeholder="Pérez" {...field} disabled={loading} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,7 +140,7 @@ function SignupForm() {
             <FormItem>
               <FormLabel>Correo Electrónico</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="juan@ejemplo.com" {...field} />
+                <Input type="email" placeholder="juan@ejemplo.com" {...field} disabled={loading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -113,7 +153,7 @@ function SignupForm() {
             <FormItem>
               <FormLabel>Contraseña</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="********" {...field} />
+                <Input type="password" placeholder="********" {...field} disabled={loading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -126,7 +166,7 @@ function SignupForm() {
             <FormItem>
               <FormLabel>Confirmar Contraseña</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="********" {...field} />
+                <Input type="password" placeholder="********" {...field} disabled={loading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -140,7 +180,7 @@ function SignupForm() {
             <FormItem>
               <FormLabel>Cédula Profesional</FormLabel>
               <FormControl>
-                <Input placeholder="12345678" {...field} />
+                <Input placeholder="12345678" {...field} disabled={loading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -157,6 +197,7 @@ function SignupForm() {
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    disabled={loading}
                   />
                 </FormControl>
                 <div className="grid gap-1.5 leading-none">
@@ -173,8 +214,8 @@ function SignupForm() {
           />
         </div>
 
-        <Button type="submit" className="w-full">
-          Registrarse
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? 'Registrando...' : 'Registrarse'}
         </Button>
       </form>
     </Form>
@@ -198,7 +239,12 @@ export default function AccesoPage() {
               <TabsTrigger value="signup">Registrarse</TabsTrigger>
             </TabsList>
             <TabsContent value="login">
-              <LoginForm />
+              <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                  <p className="text-sm text-gray-600">
+                    Haz clic en el botón para iniciar sesión de forma segura a través de Shopify.
+                  </p>
+                  <AuthButton />
+              </div>
             </TabsContent>
             <TabsContent value="signup">
               <SignupForm />

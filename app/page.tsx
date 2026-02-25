@@ -4,13 +4,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, Award, ShieldCheck, Heart } from "lucide-react";
 import { getProducts } from "@/lib/shopify";
 import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
-import { getCustomer } from "./lib/shopify";
+import { AuthButton } from "@/components/AuthButton";
+import { AccountPanel } from "@/components/AccountPanel";
 
 export default async function Home() {
   const { body } = await getProducts();
   const products = body.data.products.edges.map((edge) => edge.node).slice(0, 3);
-
-  const customer = await getCustomer();
 
   const features = [
     {
@@ -200,15 +199,8 @@ export default async function Home() {
         </div>
 
         <div>
-          {customer ? (
-            <p>Logged in as {customer.email}</p>
-          ) : (
-            <p>Not logged in</p>
-          )}
-
-          <a href="https://shopify.com/97515667777/account/login?locale=es&region_country=MX" className="underline btn">
-            Login
-          </a>
+          <AuthButton />
+          <AccountPanel />
         </div>
       </section>
     </>
