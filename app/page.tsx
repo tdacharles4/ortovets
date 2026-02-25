@@ -206,7 +206,7 @@ export default async function Home() {
             <p>Not logged in</p>
           )}
 
-          <a href="/account/login">Login</a>
+          <a href={`https://shopify.com/authentication/${process.env.SHOPIFY_STORE_ID}/login`}>Login</a>
         </div>
       </section>
     </>
