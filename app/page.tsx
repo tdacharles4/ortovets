@@ -206,7 +206,9 @@ export default async function Home() {
             <p>Not logged in</p>
           )}
 
-          <a href="https://shopify.com/97515667777/account/orders?locale=es&region_country=MX" className="underline btn">Login</a>
+          <a href="https://shopify.com/97515667777/account/login?return_to=https://davidpaz.org" className="underline btn">
+            Login
+          </a>
         </div>
       </section>
     </>
