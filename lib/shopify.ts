@@ -17,7 +17,7 @@ export async function shopifyFetch<T>({ query, variables }: { query: string; var
 
     return {
       status: result.status,
-      body: await result.json(),
+      body: await result.json()
     };
   } catch (error) {
     console.error('Error reaching Shopify Storefront API:', error);
