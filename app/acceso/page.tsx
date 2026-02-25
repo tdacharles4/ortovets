@@ -5,9 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
+import { AlertCircle } from "lucide-react";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AuthButton } from "@/components/AuthButton"; // Import AuthButton
+import { AuthButton } from "@/components/AuthButton";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,6 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const signupSchema = z.object({
   firstName: z.string().min(2, {
@@ -84,9 +87,16 @@ function SignupForm() {
         setMessage(data.message);
         form.reset();
       } else {
-        setMessage(data.message || "Ocurrió un error.");
+        // This is the new logic to handle the specific error
+        setSuccess(false);
+        if (data.message === 'Email has already been taken') {
+            setMessage("El correo ya esta registrado en esta tienda.");
+        } else {
+            setMessage(data.message || "Ocurrió un error.");
+        }
       }
     } catch (error) {
+      setSuccess(false);
       setMessage("No se pudo conectar al servidor.");
     } finally {
       setLoading(false);
@@ -104,7 +114,15 @@ function SignupForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {message && <p className={`text-sm ${success ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
+        {message && (
+            <Alert variant={success ? "default" : "destructive"}>
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>{success ? 'Éxito' : 'Error de Registro'}</AlertTitle>
+                <AlertDescription>
+                    {message}
+                </AlertDescription>
+            </Alert>
+        )}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
