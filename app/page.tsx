@@ -106,7 +106,7 @@ export default async function Home() {
               </div> */}
               
               <DogMap />
-              
+
             </div>
 
             {/* 3D Products Frame */}
@@ -115,7 +115,7 @@ export default async function Home() {
               <div className="flex flex-col w-[476px] h-auto min-h-[614px] gap-[16px]">
                 {/* Heading Text Frame */}
                 <div className="flex flex-col w-[374px] h-[44px] gap-[8px] mx-auto">
-                  <h2 className="text-[#F5F5F5] font-sans font-semibold text-[22px] leading-[100%] text-center uppercase">
+                  <h2 className="text-[#F5F5F5] font-sans font-semibold text-[22px] leading-[100%] text-center uppercase"> 
                     Productos Recomendados para Cuello y Espalda
                   </h2>
                 </div>

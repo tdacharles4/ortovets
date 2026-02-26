@@ -11,7 +11,6 @@ const bodyParts = [
   { id: 'rodilla_back', src: '/img/perro3d/rodilla_back.png', label: 'Rodilla trasera' },
 ]
 
-// Aspect ratio de tus imágenes: 990x1080
 const IMG_W = 990
 const IMG_H = 1080
 
@@ -23,6 +22,9 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
   const [activePart, setActivePart] = useState<string | null>(null)
   const canvasRefs = useRef<Record<string, HTMLCanvasElement | null>>({})
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // tracking del mouse
+  const [mousePos, setMousePos] = useState({x:0, y:0})
 
   // Carga cada parte en su canvas oculto para hit-detection
   useEffect(() => {
@@ -48,7 +50,6 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
 
     const rect = container.getBoundingClientRect()
 
-    // Mapear coordenadas del mouse al tamaño real de la imagen
     const x = ((e.clientX - rect.left) / rect.width) * IMG_W
     const y = ((e.clientY - rect.top) / rect.height) * IMG_H
 
@@ -56,11 +57,11 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
     if (!ctx) return 0
 
     const pixel = ctx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data
-    return pixel[3] // alpha channel
+    return pixel[3]
   }
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Recorre en orden inverso para que las capas de arriba tengan prioridad
+    setMousePos({ x: e.clientX, y: e.clientY })
     for (let i = bodyParts.length - 1; i >= 0; i--) {
       const part = bodyParts[i]
       const alpha = getAlphaAtEvent(part.id, e)
@@ -129,7 +130,12 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
 
       {/* Tooltip opcional */}
       {activePart && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white text-sm px-3 py-1 rounded-full pointer-events-none">
+        <div className="fixed bg-black/70 text-white text-sm px-3 py-1 rounded-full pointer-events-none"
+        style={{
+            left: mousePos.x + 12,
+            top: mousePos.y - 32,
+        }}
+        >
           {bodyParts.find(p => p.id === activePart)?.label}
         </div>
       )}
