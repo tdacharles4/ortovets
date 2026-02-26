@@ -1,3 +1,5 @@
+import { Heart, Zap, PawPrint, Star } from "lucide-react";
+
 export default function Nosotros() {
   return (
     <div className="flex flex-col w-full items-center">
@@ -36,8 +38,64 @@ export default function Nosotros() {
       </section>
 
       {/* Frame 3 */}
-      <section className="w-full max-w-[1920px] h-[547px] bg-gradient-to-b from-[#132D59] to-[#317BE5] flex flex-col items-center justify-center gap-8">
+      <section className="w-full max-w-[1920px] h-[547px] bg-gradient-to-b from-[#132D59] to-[#317BE5] flex flex-col items-center justify-center gap-12">
+        <h2 className="text-[#FFFFFF] font-sans font-extrabold text-[48px] leading-tight text-center">
+          Nuestros Valores
+        </h2>
+        
+        <div className="flex flex-row justify-center gap-6">
+          {/* Bienestar Primero */}
+          <div className="w-[321px] h-[257px] flex flex-col items-center text-center px-4 gap-4">
+            <Heart className="w-20 h-20 text-white fill-white" />
+            <div className="flex flex-col gap-2">
+              <h3 className="text-white font-normal text-[25px] leading-[36px] tracking-normal">
+                Bienestar Primero
+              </h3>
+              <p className="text-white font-sans font-normal text-[16px] leading-relaxed">
+                Cada decisión que tomamos está orientada a mejorar la calidad de vida de las mascotas, priorizando su comodidad, movilidad y salud integral.
+              </p>
+            </div>
+          </div>
 
+          {/* Innovación Con Propósito */}
+          <div className="w-[321px] h-[257px] flex flex-col items-center text-center px-4 gap-4">
+            <Zap className="w-20 h-20 text-white fill-white" />
+            <div className="flex flex-col gap-2">
+              <h3 className="text-white font-normal text-[25px] leading-[36px] tracking-normal">
+                Innovación Con Propósito
+              </h3>
+              <p className="text-white font-sans font-normal text-[16px] leading-relaxed">
+                Desarrollamos soluciones ortopédicas basadas en investigación, tecnología y mejora continua para ofrecer productos realmente funcionales y efectivos.
+              </p>
+            </div>
+          </div>
+
+          {/* Atención Personalizada */}
+          <div className="w-[321px] h-[257px] flex flex-col items-center text-center px-4 gap-4">
+            <PawPrint className="w-20 h-20 text-white fill-white" />
+            <div className="flex flex-col gap-2">
+              <h3 className="text-white font-normal text-[25px] leading-[36px] tracking-normal">
+                Atención Personalizada
+              </h3>
+              <p className="text-white font-sans font-normal text-[16px] leading-relaxed">
+                Reconocemos que cada mascota es única. Escuchamos, entendemos y diseñamos soluciones adaptadas a necesidades específicas.
+              </p>
+            </div>
+          </div>
+
+          {/* Calidad y Confianza */}
+          <div className="w-[321px] h-[257px] flex flex-col items-center text-center px-4 gap-4">
+            <Star className="w-20 h-20 text-white fill-white" />
+            <div className="flex flex-col gap-2">
+              <h3 className="text-white font-normal text-[25px] leading-[36px] tracking-normal">
+                Calidad y Confianza
+              </h3>
+              <p className="text-white font-sans font-normal text-[16px] leading-relaxed">
+                Trabajamos bajo altos estándares de fabricación, utilizando materiales seguros y duraderos que garantizan respaldo, seguridad y tranquilidad para sus familias.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

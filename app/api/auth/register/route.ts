@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: '¡Registro exitoso! Su cuenta está pendiente de aprobación por un administrador.',
+        message: 'Solicitud de registro completada. Nuestro equipo continuará con el proceso de validación. Recibirás una notificación una vez que tu registro haya sido aprobado.',
       });
     } else {
       return NextResponse.json(

@@ -21,7 +21,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
-import { AuthButton } from "./AuthButton";
+import { useCustomer } from "@/hooks/useCustomer";
 
 const navLinks: { title: string; href: string; description: string }[] = [
   {
@@ -56,16 +56,42 @@ const navLinks: { title: string; href: string; description: string }[] = [
   },
 ];
 
-// This new component handles the auth logic for the navbar
+// This component handles both logged-in and logged-out auth states for the navbar
 function AuthNav() {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login, logout } = useAuth();
+  const { customer, loading } = useCustomer();
 
-  // If the user is logged in, show the simple AuthButton which contains the logout logic
   if (isAuthenticated) {
-    return <AuthButton />;
+    // LOGGED-IN STATE: Show a popover with user name and actions
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <User className="h-6 w-6" />
+            <span className="sr-only">Open user menu</span>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80 mr-4">
+          <div className="grid gap-4">
+            <div className="space-y-2">
+              <h4 className="font-medium leading-none">
+                {loading ? "Cargando..." : `Hola, ${customer?.firstName || 'Usuario'}`}
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                Administra tu cuenta y tus órdenes.
+              </p>
+            </div>
+            <div className="grid gap-2">
+              <Button variant="secondary" disabled>Perfil</Button>
+              <Button onClick={logout}>Cerrar Sesión</Button>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
   }
 
-  // If the user is logged out, show the Popover with Login and Register options
+  // LOGGED-OUT STATE: Show a popover with Login and Register options
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -76,14 +102,11 @@ function AuthNav() {
       </PopoverTrigger>
       <PopoverContent className="w-80 mr-4">
         <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">Acceso de Clientes</h4>
-            <p className="text-sm text-muted-foreground">
-              Inicia sesión o crea una cuenta de veterinario.
-            </p>
+          <div className="space-y-2 text-center">
+            <h4 className="font-medium leading-none">Acceso</h4>
           </div>
           <div className="grid gap-2">
-            <Button onClick={() => login()}>Ya tengo cuenta (Login)</Button>
+            <Button onClick={() => login()}>Iniciar Sesión</Button>
             <Link href="/acceso" passHref>
               <Button variant="secondary" className="w-full">
                 ¿Eres veterinario? Regístrate
@@ -131,7 +154,7 @@ export default function Navbar() {
               className="pl-9 w-full"
             />
           </div>
-          <AuthNav /> {/* Correctly placed AuthNav component */}
+          <AuthNav />
           <ShoppingCart className="h-6 w-6 cursor-pointer" />
         </div>
 
@@ -167,7 +190,7 @@ export default function Navbar() {
                 <div className="border-b"></div>
                 <div className="flex flex-col gap-y-4">
                   <div className="flex flex-col gap-y-2">
-                    <AuthNav /> {/* Correctly placed AuthNav component */}
+                    <AuthNav />
                   </div>
                   <Link
                     href="/cart"

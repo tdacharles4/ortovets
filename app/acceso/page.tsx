@@ -9,7 +9,6 @@ import { AlertCircle } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AuthButton } from "@/components/AuthButton";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
 
 const signupSchema = z.object({
   firstName: z.string().min(2, {
@@ -33,19 +33,19 @@ const signupSchema = z.object({
   email: z.string().email({
     message: "Introduce un correo electrónico válido.",
   }),
-  password: z.string().min(8, {
-    message: "La contraseña debe tener al menos 8 caracteres.",
-  }),
-  confirmPassword: z.string(),
-  cedula: z.string().min(5, {
-    message: "La cédula profesional debe tener al menos 5 caracteres.",
-  }),
+  isVet: z.boolean().default(false),
+  cedula: z.string().optional(),
   acceptTerms: z.boolean().refine((val) => val === true, {
     message: "Debes aceptar los términos y condiciones.",
   }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Las contraseñas no coinciden.",
-  path: ["confirmPassword"],
+}).refine((data) => {
+  if (data.isVet && (!data.cedula || data.cedula.length < 5)) {
+    return false;
+  }
+  return true;
+}, {
+  message: "La cédula profesional es obligatoria para médicos veterinarios y debe tener al menos 5 caracteres.",
+  path: ["cedula"],
 });
 
 function SignupForm() {
@@ -59,12 +59,13 @@ function SignupForm() {
       firstName: "",
       lastName: "",
       email: "",
-      password: "",
-      confirmPassword: "",
+      isVet: false,
       cedula: "",
       acceptTerms: false,
     },
   });
+
+  const isVet = form.watch("isVet");
 
   async function onSubmit(values: z.infer<typeof signupSchema>) {
     setLoading(true);
@@ -87,7 +88,6 @@ function SignupForm() {
         setMessage(data.message);
         form.reset();
       } else {
-        // This is the new logic to handle the specific error
         setSuccess(false);
         if (data.message === 'Email has already been taken') {
             setMessage("El correo ya esta registrado en esta tienda.");
@@ -164,29 +164,29 @@ function SignupForm() {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="password"
+          name="isVet"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Contraseña</FormLabel>
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
               <FormControl>
-                <Input type="password" placeholder="********" {...field} disabled={loading} />
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={(checked) => {
+                    field.onChange(checked);
+                    if (!checked) {
+                      form.setValue("cedula", "");
+                    }
+                  }}
+                  disabled={loading}
+                />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirmar Contraseña</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="********" {...field} disabled={loading} />
-              </FormControl>
-              <FormMessage />
+              <div className="space-y-1 leading-none">
+                <FormLabel>
+                  Soy Médico Veterinario Zootecnista
+                </FormLabel>
+              </div>
             </FormItem>
           )}
         />
@@ -198,7 +198,11 @@ function SignupForm() {
             <FormItem>
               <FormLabel>Cédula Profesional</FormLabel>
               <FormControl>
-                <Input placeholder="12345678" {...field} disabled={loading} />
+                <Input 
+                  placeholder="12345678" 
+                  {...field} 
+                  disabled={loading || !isVet} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -240,12 +244,25 @@ function SignupForm() {
   );
 }
 
+// New component for the login tab content
+function LoginTabContent() {
+    const { login } = useAuth();
+    return (
+        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <p className="text-sm text-gray-600">
+                Si ya tienes una cuenta, inicia sesión de forma segura a través de Shopify.
+            </p>
+            <Button onClick={() => login()}>Ya tengo cuenta (Login)</Button>
+        </div>
+    );
+}
+
 export default function AccesoPage() {
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-64px)] py-12 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Registro Médico Veterinario Zootecnista</CardTitle>
+          <CardTitle className="text-2xl font-bold">Acceso de Clientes</CardTitle>
           <CardDescription>
             Inicia sesión o regístrate para acceder a tu cuenta.
           </CardDescription>
@@ -257,12 +274,7 @@ export default function AccesoPage() {
               <TabsTrigger value="signup">Registrarse</TabsTrigger>
             </TabsList>
             <TabsContent value="login">
-              <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                  <p className="text-sm text-gray-600">
-                    Haz clic en el botón para iniciar sesión de forma segura a través de Shopify.
-                  </p>
-                  <AuthButton />
-              </div>
+              <LoginTabContent />
             </TabsContent>
             <TabsContent value="signup">
               <SignupForm />
