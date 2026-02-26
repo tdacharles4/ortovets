@@ -33,7 +33,7 @@ const signupSchema = z.object({
   email: z.string().email({
     message: "Introduce un correo electrónico válido.",
   }),
-  isVet: z.boolean().default(false),
+  isVet: z.boolean(),
   cedula: z.string().optional(),
   acceptTerms: z.boolean().refine((val) => val === true, {
     message: "Debes aceptar los términos y condiciones.",
