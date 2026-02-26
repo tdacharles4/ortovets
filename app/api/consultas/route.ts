@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       to: storeOwnerEmail,
       subject: subject,
       html: emailBody,
-      reply_to: email,
+      replyTo: email,
     });
 
     if (error) {

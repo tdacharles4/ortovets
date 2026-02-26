@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       to: storeOwnerEmail,
       subject: subject,
       html: emailBody,
-      reply_to: email, // Set the reply-to header to the user's email
+      replyTo: email, // Set the reply-to header to the user's email
     });
 
     if (error) {
