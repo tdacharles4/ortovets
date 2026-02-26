@@ -6,6 +6,7 @@ import { getProducts } from "@/lib/shopify";
 import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
 import { AuthButton } from "@/components/AuthButton";
 import { AccountPanel } from "@/components/AccountPanel";
+import DogMap from "@/components/Perro3D";
 
 export default async function Home() {
   const { body } = await getProducts();
@@ -95,14 +96,17 @@ export default async function Home() {
               </div>
 
               {/* 3D Image Mapper Frame */}
-              <div className="relative w-[588px] h-[611px] rounded-[32px] overflow-hidden">
+              {/* <div className="relative w-[588px] h-[611px] rounded-[32px] overflow-hidden">
                 <Image
                   src="/img/3dimgmapper.png"
                   alt="3D Dog Model Mapper"
                   fill
                   className="object-cover rounded-[32px]"
                 />
-              </div>
+              </div> */}
+              
+              <DogMap />
+              
             </div>
 
             {/* 3D Products Frame */}
