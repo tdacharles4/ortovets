@@ -12,7 +12,7 @@ export async function shopifyFetch<T>({ query, variables }: { query: string; var
         'X-Shopify-Storefront-Access-Token': accessToken!,
       },
       body: JSON.stringify({ query, variables }),
-      next: { revalidate: 0 } // Disable cache for immediate updates
+      next: { revalidate: 3600 } // Revalidate cache every hour
     });
 
     return {
