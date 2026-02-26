@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 import { exchangeCodeForTokens } from '@/lib/shopify-auth';
-import { jwtDecode } from 'jose'; // we'll use jose to decode, not verify for the customer ID
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
