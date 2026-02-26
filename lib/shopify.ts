@@ -12,7 +12,7 @@ export async function shopifyFetch<T>({ query, variables }: { query: string; var
         'X-Shopify-Storefront-Access-Token': accessToken!,
       },
       body: JSON.stringify({ query, variables }),
-      next: { revalidate: 3600 } // Cache for 1 hour
+      next: { revalidate: 3600 } // Revalidate cache every hour
     });
 
     return {
@@ -58,6 +58,7 @@ export type ShopifyProduct = {
         id: string;
         title: string;
         availableForSale: boolean;
+        quantityAvailable: number;
         price: {
           amount: string;
           currencyCode: string;
@@ -144,6 +145,7 @@ export async function getProduct(handle: string) {
               id
               title
               availableForSale
+              quantityAvailable
               price {
                 amount
                 currencyCode
@@ -195,6 +197,7 @@ export async function getProducts() {
                   id
                   title
                   availableForSale
+                  quantityAvailable
                   price {
                     amount
                     currencyCode

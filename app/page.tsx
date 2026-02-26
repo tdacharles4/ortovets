@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, Award, ShieldCheck, Heart } from "lucide-react";
 import { getProducts } from "@/lib/shopify";
 import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
-
+import { AuthButton } from "@/components/AuthButton";
+import { AccountPanel } from "@/components/AccountPanel";
 import DogMap from "@/components/Perro3D";
 
 export default async function Home() {
