@@ -1,25 +1,33 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
+// This query is now written for the Storefront API and requires the customerAccessToken variable.
 const CUSTOMER_QUERY = `
-  query GetCustomer {
-    customer {
+  query GetCustomer($customerAccessToken: String!) {
+    customer(customerAccessToken: $customerAccessToken) {
       id
       firstName
       lastName
-      emailAddress {
-        emailAddress
-      }
+      email
+      phone
       orders(first: 5) {
         nodes {
           id
-          number
+          orderNumber
           processedAt
+          financialStatus
+          fulfillmentStatus
           totalPrice {
             amount
             currencyCode
+          }
+          lineItems(first: 5) {
+            nodes {
+              title
+              quantity
+            }
           }
         }
       }
@@ -33,33 +41,39 @@ export function useCustomer() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchCustomer = useCallback(async () => {
     if (!isAuthenticated) {
       setCustomer(null);
       return;
     }
-
-    const fetchCustomer = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/customer', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query: CUSTOMER_QUERY }),
-        });
-        const data = await res.json();
-        setCustomer(data?.data?.customer ?? null);
-      } catch (e) {
-        setError('Failed to load customer data');
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/customer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: CUSTOMER_QUERY }),
+      });
+      const data = await res.json();
+      
+      if (data.errors) {
+          console.error("GraphQL errors from useCustomer:", data.errors);
+          throw new Error("GraphQL error");
       }
-    };
 
-    fetchCustomer();
+      setCustomer(data?.data?.customer ?? null);
+    } catch (e) {
+      setError('Failed to load customer data');
+    } finally {
+      setLoading(false);
+    }
   }, [isAuthenticated]);
 
-  return { customer, loading, error };
+  useEffect(() => {
+    fetchCustomer();
+  }, [fetchCustomer]);
+
+  return { customer, loading, error, refetchCustomer: fetchCustomer };
 }

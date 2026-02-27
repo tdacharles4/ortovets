@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
-import { X, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus } from "lucide-react";
 import { DialogClose } from "@/components/ui/dialog";
 import {
   Select,
@@ -25,6 +25,7 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   const allImages = product.images?.edges?.map(edge => edge.node) || [];
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
+  const [quantity, setQuantity] = React.useState(0);
   
   // Extract unique sizes from Menudeo variants
   const sizes = Array.from(new Set(
@@ -99,10 +100,31 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
     }
   }
 
-  // Stock status: if size selected, check that variant. If no size selected, check product level.
+  // Inventory logic: Use quantityAvailable if present, else fall back to availableForSale boolean
+  const currentAvailability = selectedSize 
+    ? (selectedVariant ? selectedVariant.quantityAvailable : 0)
+    : (product.variants.edges[0]?.node?.quantityAvailable || 0);
+
   const isOutOfStock = selectedSize 
-    ? (selectedVariant ? !selectedVariant.availableForSale : true)
-    : !product.availableForSale;
+    ? (selectedVariant ? !selectedVariant.availableForSale || selectedVariant.quantityAvailable <= 0 : true)
+    : !product.availableForSale || product.variants.edges.every(edge => edge.node.quantityAvailable <= 0);
+
+  const incrementQuantity = () => {
+    if (quantity < currentAvailability) {
+      setQuantity(prev => prev + 1);
+    }
+  };
+
+  const decrementQuantity = () => {
+    if (quantity > 0) {
+      setQuantity(prev => prev - 1);
+    }
+  };
+
+  // Reset quantity when size changes
+  React.useEffect(() => {
+    setQuantity(0);
+  }, [selectedSize]);
 
   return (
     <div className="relative flex flex-row w-fit h-fit bg-[#FFFFFF] rounded-[32px] overflow-hidden items-center p-[64px] gap-[24px] group/fpc shadow-2xl">
@@ -196,41 +218,92 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
 
           {/* Text Frame - [productdescription] Body Base Regular Medium 140% #757575 */}
           <div className="w-full">
-            <p className="text-[#757575] font-sans font-normal text-base leading-[1.4] line-clamp-[6]">
+            <p className="text-[#757575] font-sans font-normal text-base leading-[1.4] line-clamp-[4]">
               {product.description}
             </p>
           </div>
 
-          {/* Talla Select Frame */}
-          {sizes.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="size-select" className="text-[#1E1E1E] font-sans font-medium text-sm">Talla</Label>
-              <Select value={selectedSize} onValueChange={setSelectedSize}>
-                <SelectTrigger id="size-select" className="w-full h-12 rounded-[8px] border-input">
-                  <SelectValue placeholder="Selecciona una talla" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sizes.map((size) => (
-                    <SelectItem key={size} value={size!}>
-                      {size}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          {/* Interaction Section */}
+          <div className="flex flex-col gap-4 w-full">
+            <div className="grid grid-cols-4 gap-4 items-end w-full">
+              {/* Talla Select (3/4) */}
+              {sizes.length > 0 && (
+                <div className="col-span-3 flex flex-col gap-2">
+                  <Label htmlFor="size-select-fpc" className="text-[#1E1E1E] font-sans font-medium text-sm h-5 flex items-center">Talla</Label>
+                  <Select value={selectedSize} onValueChange={setSelectedSize}>
+                    <SelectTrigger id="size-select-fpc" className="w-full !h-12 rounded-[8px] border border-input text-base flex items-center bg-white px-3">
+                      <SelectValue placeholder="Selecciona una talla" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sizes.map((size) => (
+                        <SelectItem key={size} value={size!}>
+                          {size}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-          {/* Agregar al carrito Button */}
-          <button 
-            disabled={isOutOfStock}
-            className={`flex items-center justify-center gap-[8px] w-full text-white p-[12px] rounded-[8px] font-bold text-lg transition-colors mt-2 cursor-pointer ${
-              isOutOfStock ? "bg-gray-500 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab236] shadow-lg shadow-[#8CC63F]/20"
-            }`}
-            onClick={() => console.log("Añadir al carrito: " + product.title + " Variant: " + selectedVariant?.id)}
-          >
-            <ShoppingCart className="w-5 h-5" />
-            {isOutOfStock ? "Agotado" : "Agregar al carrito"}
-          </button>
+              {/* Cantidad Select (1/4) */}
+              <div className={`${sizes.length > 0 ? 'col-span-1' : 'col-span-4'} flex flex-col gap-2`}>
+                <Label className="text-[#1E1E1E] font-sans font-medium text-sm h-5 flex items-center">Cantidad</Label>
+                <div className="flex items-center justify-between w-full h-12 px-3 rounded-[8px] border border-input bg-white">
+                  <button 
+                    onClick={decrementQuantity}
+                    disabled={quantity <= 0}
+                    className="p-1 hover:text-[#8CC63F] disabled:text-gray-300 transition-colors"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="text-base font-medium">{quantity}</span>
+                  <button 
+                    onClick={incrementQuantity}
+                    disabled={quantity >= currentAvailability || (sizes.length > 0 && !selectedSize)}
+                    className="p-1 hover:text-[#8CC63F] disabled:text-gray-300 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-3 w-full">
+              {isOutOfStock ? (
+                <button 
+                  disabled
+                  className="flex items-center justify-center w-full text-white h-12 rounded-[8px] font-bold text-lg bg-gray-500 cursor-not-allowed"
+                >
+                  Agotado
+                </button>
+              ) : (
+                <div className="flex flex-row gap-3 w-full">
+                  {/* Add to Cart Button */}
+                  <button 
+                    disabled={quantity === 0 || (sizes.length > 0 && !selectedSize)}
+                    className={`flex items-center justify-center gap-2 flex-1 text-white h-12 rounded-[8px] font-bold text-lg transition-all ${
+                      (quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#FF9230] hover:bg-[#e6832b] shadow-lg shadow-[#FF9230]/20"
+                    }`}
+                    onClick={() => console.log("Añadir al carrito: " + product.title + " Variant: " + selectedVariant?.id + " Cantidad: " + quantity)}
+                  >
+                    <ShoppingCart className="w-5 h-5" />
+                    Agregar al carrito
+                  </button>
+                  {/* Comprar ahora Button */}
+                  <button 
+                    disabled={quantity === 0 || (sizes.length > 0 && !selectedSize)}
+                    className={`flex items-center justify-center flex-1 text-white h-12 rounded-[8px] font-bold text-lg transition-all ${
+                      (quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab236] shadow-lg shadow-[#8CC63F]/20"
+                    }`}
+                    onClick={() => console.log("Comprar ahora: " + product.title + " Variant: " + selectedVariant?.id + " Cantidad: " + quantity)}
+                  >
+                    Comprar ahora
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Accordion */}
           <Accordion type="single" collapsible className="w-full">
