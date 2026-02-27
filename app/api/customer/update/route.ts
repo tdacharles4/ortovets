@@ -1,9 +1,28 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 import { refreshAccessToken } from '@/lib/shopify-auth';
+import { shopify } from '@/lib/shopify'; // Assuming you have a shopify client instance
 
-// This is the correct, standard Storefront API endpoint
 const STOREFRONT_API_ENDPOINT = `https://${process.env.SHOPIFY_STORE_DOMAIN}/api/2024-04/graphql.json`;
+
+const customerUpdateMutation = `
+  mutation customerUpdate($customerAccessToken: String!, $customer: CustomerUpdateInput!) {
+    customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
+      customer {
+        id
+        firstName
+        lastName
+        phone
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
@@ -30,14 +49,14 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const body = await request.json(); // This contains the { query } from the frontend
+  const { firstName, lastName, phone } = await request.json();
 
-  // **THE FIX IS HERE:** We create a variables object and add the access token to it,
-  // as required by the 'customer' query in the Storefront API.
-  const shopifyRequestBody = {
-    query: body.query,
-    variables: {
-      customerAccessToken: session.accessToken,
+  const variables = {
+    customerAccessToken: session.accessToken,
+    customer: {
+      firstName,
+      lastName,
+      phone,
     },
   };
 
@@ -48,20 +67,23 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
         'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!,
       },
-      body: JSON.stringify(shopifyRequestBody), // Send the modified body with the token variable
+      body: JSON.stringify({
+        query: customerUpdateMutation,
+        variables,
+      }),
     });
 
     const data = await shopifyRes.json();
-    
-    if (data.errors || !shopifyRes.ok) {
-        console.error('Shopify GraphQL Error:', data.errors);
-        return NextResponse.json({ error: 'Error from Shopify API', details: data.errors }, { status: 500 });
+
+    if (data.errors || data.data?.customerUpdate?.customerUserErrors.length > 0) {
+      console.error('Shopify GraphQL Error:', data.errors || data.data.customerUpdate.customerUserErrors);
+      return NextResponse.json({ error: 'Error from Shopify API', details: data.errors || data.data.customerUpdate.customerUserErrors }, { status: 500 });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json({ success: true, customer: data.data.customerUpdate.customer });
 
   } catch (err: any) {
-    console.error('Fetch error in /api/customer:', err);
+    console.error('Fetch error in /api/customer/update:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
