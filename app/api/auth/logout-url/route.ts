@@ -17,12 +17,6 @@ export async function GET() {
     if (session.idToken) {
       params.set('id_token_hint', session.idToken);
     }
-    
-    // Tell Shopify where to redirect the user (in the popup) after logout is complete.
-    params.set(
-      'post_logout_redirect_uri',
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/logout-callback`
-    );
 
     return NextResponse.json({ logoutUrl: logoutUrl.toString() });
   } catch (error) {
