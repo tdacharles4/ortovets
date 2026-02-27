@@ -44,7 +44,10 @@ export async function GET(request: Request) {
 
   if (error) {
     console.error('Shopify auth error:', error);
-    return sendMessage('AUTH_ERROR', { error });
+    return new NextResponse(
+      `<!DOCTYPE html><html><body><h1>Auth Error</h1><p>${error}</p></body></html>`,
+      { headers: { 'Content-Type': 'text/html' } }
+    );
   }
 
   if (!code || !state) {
