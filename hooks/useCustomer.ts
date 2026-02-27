@@ -12,6 +12,7 @@ const CUSTOMER_QUERY = `
       lastName
       email
       phone
+      tags
       orders(first: 5) {
         nodes {
           id

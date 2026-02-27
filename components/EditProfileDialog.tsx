@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -88,7 +87,7 @@ export function EditProfileDialog({ customer, refetchCustomer, isOpen, setIsOpen
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
+          <DialogTitle>Editar Datos de Usuario</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -97,9 +96,9 @@ export function EditProfileDialog({ customer, refetchCustomer, isOpen, setIsOpen
               name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>Nombre(s)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your first name" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -110,9 +109,9 @@ export function EditProfileDialog({ customer, refetchCustomer, isOpen, setIsOpen
               name="lastName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>Apellido(s)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your last name" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -123,9 +122,9 @@ export function EditProfileDialog({ customer, refetchCustomer, isOpen, setIsOpen
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>Teléfono</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your phone number" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,10 +133,10 @@ export function EditProfileDialog({ customer, refetchCustomer, isOpen, setIsOpen
             <DialogFooter>
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
-                  Cancel
+                  Cancelar
                 </Button>
               </DialogClose>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit">Guardar cambios</Button>
             </DialogFooter>
           </form>
         </Form>
