@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
 import { X, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import { DialogClose } from "@/components/ui/dialog";
+import { useCart } from "@/app/context/cartContext";
 import {
   Select,
   SelectContent,
@@ -20,19 +21,68 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   const allImages = product.images?.edges?.map(edge => edge.node) || [];
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
-  
+
+  // cart
+  const { addToCart } = useCart();
+
+  const [quantity, setQuantity] = React.useState(1);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+
+    const hasVariants = sizes.length > 1;
+
+    if (!selectedSize && hasVariants) {
+      toast("Debes seleccionar una talla");
+      return;
+    }
+
+    const variant = selectedVariant || product.variants?.edges?.[0]?.node;
+    if (!variant) {
+      toast("No se encontraron variantes de este producto");
+      return;
+    }
+
+    if (!variant.availableForSale) {
+      toast("Este producto está agotado.");
+      return;
+    }
+
+    const availableQty = variant.quantityAvailable ?? 0;
+    if (availableQty === 0) {
+      toast("Este producto no está disponible.");
+      return;
+    }
+
+    const finalQty = Math.min(quantity, availableQty);
+    if (quantity > availableQty) {
+      toast(`Solo hay ${availableQty} disponibles — se agregó la cantidad máxima.`);
+    }
+
+    addToCart({
+      id: variant.id,
+      title: product.title,
+      variantTitle: variant.title,
+      price: parseFloat(variant.price.amount), // ← use selected variant price, not priceRange
+      quantity: finalQty,
+      image: product.images.edges[0]?.node.url,
+      available: availableQty,
+    });
+  };
+
   // Extract unique sizes from Menudeo variants
   const sizes = Array.from(new Set(
     product.variants?.edges?.map(edge => {
       if (!isMenudeoVariant(edge.node)) return null;
-      
+
       const options = edge.node.selectedOptions;
-      const sizeOpt = options.find(opt => 
+      const sizeOpt = options.find(opt =>
         ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase())
       );
       if (!sizeOpt && options.length === 1 && options[0].name !== 'Title') {
@@ -45,10 +95,10 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   const [selectedSize, setSelectedSize] = React.useState<string | undefined>(undefined);
 
   // Find the selected Menudeo variant based on the selected size
-  const selectedVariant = product.variants?.edges?.find(edge => 
+  const selectedVariant = product.variants?.edges?.find(edge =>
     isMenudeoVariant(edge.node) && (
-      edge.node.selectedOptions.some(opt => 
-        ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase()) && 
+      edge.node.selectedOptions.some(opt =>
+        ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase()) &&
         opt.value === selectedSize
       ) || (edge.node.selectedOptions.length === 1 && edge.node.selectedOptions[0].value === selectedSize)
     )
@@ -57,8 +107,8 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   const menudeoPriceRange = getMenudeoPriceRange(product);
   const minPrice = menudeoPriceRange.minVariantPrice;
   const maxPrice = menudeoPriceRange.maxVariantPrice;
-  
-  const formatPrice = (price: { amount: string; currencyCode: string }) => 
+
+  const formatPrice = (price: { amount: string; currencyCode: string }) =>
     new Intl.NumberFormat("es-MX", {
       style: "currency",
       currency: price.currencyCode,
@@ -100,7 +150,7 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   }
 
   // Stock status: if size selected, check that variant. If no size selected, check product level.
-  const isOutOfStock = selectedSize 
+  const isOutOfStock = selectedSize
     ? (selectedVariant ? !selectedVariant.availableForSale : true)
     : !product.availableForSale;
 
@@ -132,21 +182,20 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
 
         {/* Extra Images Carousel Frame - 352w 84h horizontal gap-2 */}
         <div className="flex items-center w-[352px] gap-2">
-          <button 
+          <button
             onClick={handlePrev}
             className="p-1 hover:bg-muted rounded-full transition-colors shrink-0"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
-          
+
           <div className="flex flex-row w-[272px] h-[84px] gap-[10px] overflow-hidden">
             {visibleImages.map((item, idx) => (
-              <div 
+              <div
                 key={`${item.img.url}-${idx}`}
                 onClick={() => setSelectedImageIndex(item.actualIndex)}
-                className={`relative w-[84px] h-[84px] shrink-0 rounded-[12px] overflow-hidden cursor-pointer border-2 transition-colors ${
-                  selectedImageIndex === item.actualIndex ? "border-[#8CC63F]" : "border-transparent hover:border-muted"
-                }`}
+                className={`relative w-[84px] h-[84px] shrink-0 rounded-[12px] overflow-hidden cursor-pointer border-2 transition-colors ${selectedImageIndex === item.actualIndex ? "border-[#8CC63F]" : "border-transparent hover:border-muted"
+                  }`}
               >
                 <Image
                   src={item.img.url}
@@ -158,7 +207,7 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
             ))}
           </div>
 
-          <button 
+          <button
             onClick={handleNext}
             className="p-1 hover:bg-muted rounded-full transition-colors shrink-0"
           >
@@ -169,7 +218,7 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
         {/* Hyperlink text - Body Link Medium Regular 140% underlined #0091FF - Centered */}
         <div className="flex justify-center w-full">
           <DialogClose asChild>
-            <Link 
+            <Link
               href={`/tienda/${product.handle || ""}`}
               className="text-[#0091FF] font-sans font-normal text-base leading-[1.4] underline decoration-solid w-fit"
             >
@@ -221,12 +270,11 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
           )}
 
           {/* Agregar al carrito Button */}
-          <button 
+          <button
             disabled={isOutOfStock}
-            className={`flex items-center justify-center gap-[8px] w-full text-white p-[12px] rounded-[8px] font-bold text-lg transition-colors mt-2 cursor-pointer ${
-              isOutOfStock ? "bg-gray-500 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab236] shadow-lg shadow-[#8CC63F]/20"
-            }`}
-            onClick={() => console.log("Añadir al carrito: " + product.title + " Variant: " + selectedVariant?.id)}
+            className={`flex items-center justify-center gap-[8px] w-full text-white p-[12px] rounded-[8px] font-bold text-lg transition-colors mt-2 cursor-pointer ${isOutOfStock ? "bg-gray-500 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab236] shadow-lg shadow-[#8CC63F]/20"
+              }`}
+            onClick={handleAddToCart}
           >
             <ShoppingCart className="w-5 h-5" />
             {isOutOfStock ? "Agotado" : "Agregar al carrito"}
