@@ -30,10 +30,21 @@ const formSchema = z.object({
   phone: z.string().optional(),
 });
 
-export function EditProfileDialog({ customer, refetchCustomer, isOpen, setIsOpen }) {
+interface EditProfileDialogProps {
+  customer: {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+  };
+  refetchCustomer: () => void;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
+
+export function EditProfileDialog({ customer, refetchCustomer, isOpen, setIsOpen }: EditProfileDialogProps) {
   const { toast } = useToast();
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: customer.firstName || "",
@@ -42,7 +53,7 @@ export function EditProfileDialog({ customer, refetchCustomer, isOpen, setIsOpen
     },
   });
 
-  async function onSubmit(values) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const response = await fetch('/api/customer/update', {
         method: 'POST',
@@ -67,7 +78,7 @@ export function EditProfileDialog({ customer, refetchCustomer, isOpen, setIsOpen
     } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An unknown error occurred",
         variant: "destructive",
       });
     }

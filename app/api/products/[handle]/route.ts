@@ -3,10 +3,10 @@ import { getProduct } from '@/lib/shopify';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { handle: string } }
+  { params }: { params: Promise<{ handle: string }> }
 ) {
   try {
-    const handle = (await params).handle;
+    const { handle } = await params;
     const { body } = await getProduct(handle);
 
     if (!body.data.product) {

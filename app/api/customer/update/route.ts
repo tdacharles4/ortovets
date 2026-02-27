@@ -2,7 +2,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 import { refreshAccessToken } from '@/lib/shopify-auth';
-import { shopify } from '@/lib/shopify'; // Assuming you have a shopify client instance
 
 const STOREFRONT_API_ENDPOINT = `https://${process.env.SHOPIFY_STORE_DOMAIN}/api/2024-04/graphql.json`;
 
