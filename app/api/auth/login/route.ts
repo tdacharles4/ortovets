@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     url.searchParams.set('client_id', clientId);
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('redirect_uri', callbackUrl);
-    url.searchParams.set('scope', 'openid email customer_read_customers customer_write_customers');
+    url.searchParams.set('scope', 'openid email customer-account-api:full');
     url.searchParams.set('state', state);
     url.searchParams.set('nonce', nonce);
     url.searchParams.set('code_challenge', codeChallenge);
