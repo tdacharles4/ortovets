@@ -257,7 +257,9 @@ export async function getAllPolicies() {
   });
 
   // Return an array of policies that actually exist and have content
-  return Object.values(res.body.data.shop).filter(policy => policy && policy.body.trim() !== '');
+  return Object.values(res.body.data.shop).filter((policy): policy is { title: string; body: string } => 
+    policy !== null && policy.body.trim() !== ''
+  );
 }
 
 export async function getCustomer() {
