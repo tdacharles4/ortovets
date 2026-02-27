@@ -36,19 +36,42 @@ const CUSTOMER_QUERY = `
   }
 `;
 
+// Shared state to keep all components in sync
+let globalCustomer: any = null;
+let globalLoading = false;
+let globalError: string | null = null;
+const listeners = new Set<(data: { customer: any; loading: boolean; error: string | null }) => void>();
+
+function notifyListeners() {
+  listeners.forEach((listener) => 
+    listener({ customer: globalCustomer, loading: globalLoading, error: globalError })
+  );
+}
+
 export function useCustomer() {
   const { isAuthenticated } = useAuth();
-  const [customer, setCustomer] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState({
+    customer: globalCustomer,
+    loading: globalLoading,
+    error: globalError,
+  });
 
-  const fetchCustomer = useCallback(async () => {
+  const fetchCustomer = useCallback(async (force = false) => {
     if (!isAuthenticated) {
-      setCustomer(null);
+      globalCustomer = null;
+      globalLoading = false;
+      globalError = null;
+      notifyListeners();
       return;
     }
-    setLoading(true);
-    setError(null);
+
+    // Avoid redundant fetches unless forced
+    if (globalCustomer && !force) return;
+
+    globalLoading = true;
+    globalError = null;
+    notifyListeners();
+
     try {
       const res = await fetch('/api/customer', {
         method: 'POST',
@@ -64,17 +87,35 @@ export function useCustomer() {
           throw new Error("GraphQL error");
       }
 
-      setCustomer(data?.data?.customer ?? null);
+      globalCustomer = data?.data?.customer ?? null;
     } catch (e) {
-      setError('Failed to load customer data');
+      globalError = 'Failed to load customer data';
     } finally {
-      setLoading(false);
+      globalLoading = false;
+      notifyListeners();
     }
   }, [isAuthenticated]);
 
   useEffect(() => {
-    fetchCustomer();
-  }, [fetchCustomer]);
+    const listener = (newState: any) => setState(newState);
+    listeners.add(listener);
 
-  return { customer, loading, error, refetchCustomer: fetchCustomer };
+    // Initial fetch if authenticated and no data
+    if (isAuthenticated && !globalCustomer && !globalLoading) {
+      fetchCustomer();
+    }
+
+    return () => {
+      listeners.delete(listener);
+    };
+  }, [isAuthenticated, fetchCustomer]);
+
+  const refetchCustomer = useCallback(() => fetchCustomer(true), [fetchCustomer]);
+
+  return { 
+    customer: state.customer, 
+    loading: state.loading, 
+    error: state.error, 
+    refetchCustomer 
+  };
 }
