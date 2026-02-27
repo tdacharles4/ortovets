@@ -63,8 +63,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!popup) return alert('Please allow popups for this site.');
 
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== process.env.NEXT_PUBLIC_APP_URL) return;
+      // Use the environment variable or fallback to current origin for resilience
+      const expectedOrigin = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      
+      if (event.origin !== expectedOrigin) {
+        return;
+      }
+
       if (event.data.type === 'AUTH_SUCCESS') {
+        console.log('Auth success received from popup');
         fetchAuthState(); // Refetch user state
         cleanup();
       } else if (event.data.type === 'AUTH_ERROR') {
@@ -75,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const cleanup = () => {
       window.removeEventListener('message', handleMessage);
-      clearInterval(pollClosed);
+      if (typeof pollClosed !== 'undefined') clearInterval(pollClosed);
       if (popup && !popup.closed) {
         popup.close();
       }
@@ -90,22 +97,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, 500);
   }, [fetchAuthState]);
   
-  const logout = useCallback(() => {
-    // 1. Instantly update the UI to show the user as logged out.
-    setState({ isAuthenticated: false, customerId: null, isLoading: false });
+  const logout = useCallback(async () => {
+    try {
+      // 1. Instantly update the UI to show the user as logged out.
+      setState({ isAuthenticated: false, customerId: null, isLoading: false });
 
-    // 2. In the background, tell our server to destroy its session.
-    fetch('/api/auth/logout', { method: 'POST' });
+      // 2. Tell our server to destroy its session and wait for it.
+      await fetch('/api/auth/logout', { method: 'POST' });
 
-    // 3. Also in the background, get the Shopify logout URL and open it in a new tab.
-    // This is "fire and forget" - the user can ignore or close the new tab.
-    fetch('/api/auth/logout-url')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.logoutUrl) {
-          window.open(data.logoutUrl, '_blank');
-        }
-      });
+      // 3. Get the Shopify logout URL.
+      const res = await fetch('/api/auth/logout-url');
+      const data = await res.json();
+      
+      if (data.logoutUrl) {
+        // 4. Redirect the main page to Shopify for logout.
+        window.location.href = data.logoutUrl;
+      } else {
+        // Fallback: just refresh if we can't get the URL
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      window.location.reload();
+    }
   }, []);
 
   return (

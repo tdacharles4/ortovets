@@ -225,7 +225,7 @@ function SignupForm() {
                 <div className="grid gap-1.5 leading-none">
                   <FormLabel>
                     He leído y acepto los{" "}
-                    <Link href="#" className="text-blue-600 hover:underline">
+                    <Link href="/terminos" className="text-blue-600 hover:underline">
                       Términos y Condiciones
                     </Link>
                   </FormLabel>

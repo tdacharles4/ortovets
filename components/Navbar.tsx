@@ -32,6 +32,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCustomer } from "@/hooks/useCustomer";
 import { getProduct, ShopifyProduct } from "@/lib/shopify";
 import { FloatingProductCard } from "./FloatingProductCard";
+import { Badge } from "@/components/ui/badge";
 
 type SearchResult = {
   handle: string;
@@ -61,8 +62,13 @@ function AuthNav() {
         <PopoverContent className="w-80 mr-4">
           <div className="grid gap-4">
             <div className="space-y-2">
-              <h4 className="font-medium leading-none">
+              <h4 className="font-medium leading-none flex items-center gap-2">
                 {loading ? "Cargando..." : `Hola, ${customer?.firstName || 'Usuario'}`}
+                {!loading && customer?.tags?.includes('MVZ') && (
+                  <Badge variant="secondary" className="px-2 py-0 text-[10px]">
+                    MVZ
+                  </Badge>
+                )}
               </h4>
               <p className="text-sm text-muted-foreground">Administra tu cuenta y tus órdenes.</p>
             </div>

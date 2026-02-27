@@ -55,7 +55,7 @@ export function AccountPanel() {
                     Usuario MVZ Verificado
                   </Badge>
                 )}
-                <Button variant="outline" onClick={() => setIsEditDialogOpen(true)}>Edit Profile</Button>
+                <Button variant="outline" onClick={() => setIsEditDialogOpen(true)}>Editar Datos de Usuario</Button>
               </div>
             </div>
           </CardHeader>
