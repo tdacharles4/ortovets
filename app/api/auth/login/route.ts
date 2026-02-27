@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     url.searchParams.set('client_id', clientId);
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('redirect_uri', callbackUrl);
-    url.searchParams.set('scope', 'openid email https://api.customers.com/auth/customer.graphql');
+    url.searchParams.set('scope', 'openid email https://api.shopify.com/auth/customer.graphql');
     url.searchParams.set('state', state);
     url.searchParams.set('nonce', nonce);
     url.searchParams.set('code_challenge', codeChallenge);
