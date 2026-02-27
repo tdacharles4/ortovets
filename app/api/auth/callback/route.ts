@@ -12,20 +12,15 @@ export async function GET(request: Request) {
   const sendMessage = (type: 'AUTH_SUCCESS' | 'AUTH_ERROR', payload?: object) => {
     const message = JSON.stringify({ type, ...payload });
     
-    // Ensure the target origin is exactly what we expect, no trailing slash.
-    // We use a script to determine the correct origin if the env var is missing or includes a slash.
+    // Ensure the target origin is exactly what we expect.
+    // We prioritize the current origin to ensure the message actually reaches the opener.
     const script = `
       <script>
         (function() {
           const message = ${message};
-          let targetOrigin = '${process.env.NEXT_PUBLIC_APP_URL || ''}';
-          if (!targetOrigin || targetOrigin === 'undefined') {
-            targetOrigin = window.location.origin;
-          } else {
-            // Remove trailing slash if present
-            targetOrigin = targetOrigin.replace(/\\/$/, "");
-          }
-
+          // Try to use the opener's origin if possible, or fallback to a safe default
+          let targetOrigin = window.location.origin;
+          
           if (window.opener) {
             window.opener.postMessage(message, targetOrigin);
           }
