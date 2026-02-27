@@ -97,15 +97,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   const logout = useCallback(async () => {
     try {
-      // 1. Instantly update the UI to show the user as logged out.
-      setState({ isAuthenticated: false, customerId: null, isLoading: false });
-
-      // 2. Tell our server to destroy its session and wait for it.
-      await fetch('/api/auth/logout', { method: 'POST' });
-
-      // 3. Get the Shopify logout URL.
+      // 1. Get the Shopify logout URL while the session still exists.
       const res = await fetch('/api/auth/logout-url');
       const data = await res.json();
+
+      // 2. Instantly update the UI to show the user as logged out.
+      setState({ isAuthenticated: false, customerId: null, isLoading: false });
+
+      // 3. Tell our server to destroy its session.
+      // We don't strictly need to await this if we're about to redirect,
+      // but it's cleaner to ensure the local session is gone.
+      await fetch('/api/auth/logout', { method: 'POST' });
       
       if (data.logoutUrl) {
         // 4. Redirect the main page to Shopify for logout.

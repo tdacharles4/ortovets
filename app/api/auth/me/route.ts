@@ -19,6 +19,7 @@ export async function GET() {
       const newTokens = await refreshAccessToken(session.refreshToken);
       session.accessToken = newTokens.access_token;
       session.refreshToken = newTokens.refresh_token;
+      session.idToken = newTokens.id_token;
       session.expiresAt = Date.now() + newTokens.expires_in * 1000;
       await session.save();
     } catch (error) {
