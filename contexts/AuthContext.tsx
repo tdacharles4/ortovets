@@ -63,10 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!popup) return alert('Please allow popups for this site.');
 
     const handleMessage = (event: MessageEvent) => {
-      // Use the environment variable or fallback to current origin for resilience
-      const expectedOrigin = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
-      
-      if (event.origin !== expectedOrigin) {
+      // Allow messages from our own origin to handle cases where NEXT_PUBLIC_APP_URL is mismatched
+      if (event.origin !== window.location.origin) {
         return;
       }
 
