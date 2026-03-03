@@ -284,7 +284,7 @@ export async function getCustomer() {
 
 // Logica Blog
 
-export async function getArticle(blogHandle: string, articleHandle: string){
+export async function getArticle(blogHandle: string, articleHandle: string, cache: RequestCache = 'force-cache'){
   const query = `
     query GetArticle($blogHandle: String!, $articleHandle: String!) {
       blog(handle: $blogHandle) {
@@ -315,7 +315,8 @@ export async function getArticle(blogHandle: string, articleHandle: string){
     }
   }>({
     query,
-    variables
+    variables,
+    cache
   });
   return rest.body.data?.blog?.articleByHandle ?? null;
 }

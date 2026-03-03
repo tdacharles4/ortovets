@@ -9,6 +9,8 @@ import { AccountPanel } from "@/components/AccountPanel";
 import DogMap from "@/components/Perro3D";
 import { NoticieroCarousel } from "@/components/ui/NoticieroCarousel";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const { body } = await getProducts();
   const products = body.data.products.edges.map((edge) => edge.node).slice(0, 3);
