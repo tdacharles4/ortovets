@@ -89,8 +89,8 @@ function AppointmentForm({ setOpen }: { setOpen: (open: boolean) => void }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="firstName"
@@ -119,7 +119,7 @@ function AppointmentForm({ setOpen }: { setOpen: (open: boolean) => void }) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="phone"
@@ -148,7 +148,7 @@ function AppointmentForm({ setOpen }: { setOpen: (open: boolean) => void }) {
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="petName"
@@ -207,12 +207,12 @@ function AppointmentForm({ setOpen }: { setOpen: (open: boolean) => void }) {
           )}
         />
 
-        <DialogFooter className="flex flex-row justify-end gap-2 pt-4">
+        <DialogFooter className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4">
           <Button 
             type="button" 
             variant="outline" 
             onClick={() => setOpen(false)}
-            className="border-[#4C83DC] text-[#4C83DC] hover:bg-[#4C83DC]/10"
+            className="w-full sm:w-auto border-[#4C83DC] text-[#4C83DC] hover:bg-[#4C83DC]/10"
             disabled={loading}
           >
             Cancelar
@@ -220,7 +220,7 @@ function AppointmentForm({ setOpen }: { setOpen: (open: boolean) => void }) {
           <Button 
             type="submit" 
             disabled={loading}
-            className="bg-[#4C83DC] hover:bg-[#3b6bb8] text-white"
+            className="w-full sm:w-auto bg-[#4C83DC] hover:bg-[#3b6bb8] text-white"
           >
             {loading ? "Enviando..." : "Enviar Solicitud"}
           </Button>
@@ -235,48 +235,48 @@ export default function ConsultasPage() {
 
   return (
     <div className="flex flex-col w-full items-center bg-[#F5F1E6]">
-      <section className="relative w-full max-w-[1920px] h-[540px] bg-[url('/img/consultas-icon.png')] bg-no-repeat bg-right-bottom bg-contain flex items-center">
+      <section className="relative w-full max-w-[1920px] min-h-[600px] md:h-[540px] bg-[url('/img/consultas-icon.png')] bg-no-repeat bg-right-bottom bg-contain flex flex-col md:flex-row items-center">
         
-        {/* Content Frame - 1114w fixed vertical flow */}
-        <div className="w-[1114px] h-full flex flex-col justify-center py-[48px] pl-[100px] gap-[48px]">
+        {/* Content Frame */}
+        <div className="w-full max-w-[1114px] flex flex-col justify-center py-12 md:py-[48px] px-6 md:pl-[100px] gap-8 md:gap-[48px]">
           
           {/* Title and Subtitle Container */}
-          <div className="flex flex-col gap-4 max-w-[800px]">
-            <h1 className="text-[#1E2939] font-sans font-extrabold text-[48px] leading-tight">
+          <div className="flex flex-col gap-4 max-w-[800px] text-center md:text-left">
+            <h1 className="text-[#1E2939] font-sans font-extrabold text-3xl md:text-[48px] leading-tight">
               Agenda Tu Consulta Virtual
             </h1>
-            <p className="text-[#757575] font-sans font-medium text-[24px] leading-[1.2]">
+            <p className="text-[#757575] font-sans font-medium text-lg md:text-[24px] leading-snug md:leading-[1.2]">
               Tu mascota merece atención profesional sin salir de casa. Completa el formulario y nos pondremos en contacto contigo para coordinar tu consulta virtual.
             </p>
           </div>
 
           {/* Steps Container */}
-          <div className="flex flex-col gap-2">
-            <p className="text-[#757575] font-sans font-bold text-[24px] leading-relaxed">
+          <div className="flex flex-col gap-3 md:gap-2 text-center md:text-left">
+            <p className="text-[#757575] font-sans font-bold text-lg md:text-[24px] leading-relaxed">
               Paso 1 — Completa la información de tu mascota
             </p>
-            <p className="text-[#757575] font-sans font-bold text-[24px] leading-relaxed">
+            <p className="text-[#757575] font-sans font-bold text-lg md:text-[24px] leading-relaxed">
               Paso 2 — Envía tu solicitud
             </p>
-            <p className="text-[#757575] font-sans font-bold text-[24px] leading-relaxed">
+            <p className="text-[#757575] font-sans font-bold text-lg md:text-[24px] leading-relaxed">
               Paso 3 — Te contactamos por WhatsApp para confirmar horario
             </p>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col items-center md:items-start gap-4">
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <div className="flex">
-                  <button className="flex items-center justify-center gap-2 bg-[#8CC63F] text-[#F5F5F5] font-sans font-semibold text-[24px] px-8 py-3 rounded-full hover:bg-[#7ab236] transition-all shadow-lg shadow-[#8CC63F]/20 border-none cursor-pointer">
-                    <FileText className="w-6 h-6" />
+                  <button className="flex items-center justify-center gap-2 bg-[#8CC63F] text-[#F5F5F5] font-sans font-semibold text-lg md:text-[24px] px-8 py-3 rounded-full hover:bg-[#7ab236] transition-all shadow-lg shadow-[#8CC63F]/20 border-none cursor-pointer">
+                    <FileText className="w-5 h-5 md:w-6 md:h-6" />
                     Llenar Formulario
                   </button>
                 </div>
               </DialogTrigger>
-              <DialogContent className="max-w-[600px] bg-white rounded-[20px]">
+              <DialogContent className="max-w-[95vw] sm:max-w-[600px] bg-white rounded-[20px] p-4 sm:p-6">
                 <DialogHeader>
-                  <DialogTitle className="text-[24px] font-bold text-[#1E2939]">Formulario - Cita Virtual</DialogTitle>
+                  <DialogTitle className="text-xl sm:text-[24px] font-bold text-[#1E2939]">Formulario - Cita Virtual</DialogTitle>
                   <DialogDescription>
                     Ingresa los datos para coordinar la consulta virtual de tu mascota.
                   </DialogDescription>
@@ -297,16 +297,16 @@ export default function ConsultasPage() {
           </div>
         </div>
 
-        {/* Dra. Info Frame - 560w103h fixed */}
-        <div className="absolute right-[64px] bottom-[48px] w-[560px] h-[103px] bg-[#FFFFFF99] px-[16px] py-[12px] flex flex-col gap-[10px] rounded-md shadow-sm">
-          <h2 className="text-[#1E2939] font-sans font-extrabold text-[24px] leading-none">
+        {/* Dra. Info Frame */}
+        <div className="relative md:absolute md:right-[64px] md:bottom-[48px] w-full md:w-[560px] h-auto bg-[#FFFFFF99] px-[16px] py-[12px] flex flex-col gap-[10px] md:rounded-md shadow-sm backdrop-blur-sm mt-8 md:mt-0">
+          <h2 className="text-[#1E2939] font-sans font-extrabold text-xl md:text-[24px] leading-none text-center md:text-left">
             Dra. Gabriela Mateos Trigos
           </h2>
-          <div className="flex flex-col gap-1">
-            <p className="text-[#1E2939] font-sans font-medium text-[16px] leading-tight">
+          <div className="flex flex-col gap-1 text-center md:text-left">
+            <p className="text-[#1E2939] font-sans font-medium text-sm md:text-[16px] leading-tight">
               LICENCIATURA EN MEDICINA VETERINARIA Y ZOOTECNIA: 1458193
             </p>
-            <p className="text-[#1E2939] font-sans font-medium text-[16px] leading-tight">
+            <p className="text-[#1E2939] font-sans font-medium text-sm md:text-[16px] leading-tight">
               MAESTRÍA EN CIENCIAS FISIOLÓGICA: 2056201
             </p>
           </div>

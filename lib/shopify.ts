@@ -281,3 +281,41 @@ export async function getCustomer() {
 
   return body?.data?.customer ?? null;
 }
+
+// Logica Blog
+
+export async function getArticle(blogHandle: string, articleHandle: string){
+  const query = `
+    query GetArticle($blogHandle: String!, $articleHandle: String!) {
+      blog(handle: $blogHandle) {
+        articleByHandle(handle: $articleHandle) {
+          title
+          contentHtml
+          publishedAt
+          authorV2{
+            name
+          }
+          image {
+            url
+            altText
+          }
+        }
+      }
+    }
+  `
+  const variables = {
+    blogHandle,
+    articleHandle
+  }
+  const rest = await shopifyFetch<{
+    data: {
+      blog: {
+        articleByHandle: any
+      } | null
+    }
+  }>({
+    query,
+    variables
+  });
+  return rest.body.data?.blog?.articleByHandle ?? null;
+}
