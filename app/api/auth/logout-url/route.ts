@@ -10,15 +10,18 @@ export async function GET(request: Request) {
       getSession(),
     ]);
 
+    // --- Xixi's Debug Start ---
+    console.log("VERCEL_LOGOUT_DEBUG: Session object:", JSON.stringify(session, null, 2));
+    // --- Xixi's Debug End ---
+
     const logoutUrl = new URL(config.end_session_endpoint);
 
     // The id_token_hint is required by Shopify to identify which user session to log out.
     if (session.idToken) {
       logoutUrl.searchParams.set('id_token_hint', session.idToken);
     }
-
-    // Adding client_id and post_logout_redirect_uri is often required or recommended
-    // to avoid "Invalid id_token" or redirect issues.
+    
+    // The user's other client has added these parameters. We will keep them.
     logoutUrl.searchParams.set('client_id', process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID!);
     
     const logoutCallbackUrl = `${origin}/api/auth/logout-callback`;
