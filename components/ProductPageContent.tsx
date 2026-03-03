@@ -121,11 +121,11 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   }, [selectedSize]);
 
   return (
-    <section className="w-full max-w-[1792px] h-fit min-h-[736px] flex flex-row gap-[64px] mx-auto">
+    <section className="w-full flex flex-col lg:flex-row gap-8 lg:gap-[64px]">
       {/* Images Frame*/}
-      <div className="flex flex-col w-[816px] gap-[24px] shrink-0">
+      <div className="flex flex-col w-full lg:w-[600px] xl:w-[816px] gap-[16px] lg:gap-[24px] shrink-0">
         {/* Main Image Container */}
-        <div className="relative w-[816px] h-[500px] bg-muted overflow-hidden">
+        <div className="relative w-full aspect-square md:aspect-video lg:aspect-square lg:h-[500px] bg-muted overflow-hidden rounded-2xl">
           {mainImage ? (
             <Image
               src={mainImage.url}
@@ -141,23 +141,22 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
         </div>
 
         {/* Carousel Container */}
-        <div className="flex items-center w-full gap-2">
+        <div className="flex items-center w-full gap-2 justify-center">
           <button 
             onClick={handlePrev}
             className="p-1 hover:bg-muted rounded-full transition-colors shrink-0"
           >
-            <ChevronLeft className="w-8 h-8" />
+            <ChevronLeft className="w-6 h-6 lg:w-8 lg:h-8" />
           </button>
           
-          <div className="flex flex-row gap-[16px] flex-grow overflow-hidden">
+          <div className="flex flex-row gap-2 lg:gap-[16px] overflow-hidden">
             {visibleImages.map((item, idx) => (
               <div 
                 key={`${item.img.url}-${idx}`}
                 onClick={() => setSelectedImageIndex(item.actualIndex)}
-                className={`relative aspect-square flex-grow shrink-0 bg-muted cursor-pointer border-2 transition-colors ${
+                className={`relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-[120px] xl:h-[120px] shrink-0 bg-muted rounded-lg lg:rounded-xl cursor-pointer border-2 transition-colors ${
                   selectedImageIndex === item.actualIndex ? "border-[#8CC63F]" : "border-transparent hover:border-muted"
                 }`}
-                style={{ width: 'calc((100% - 48px) / 4)' }}
               >
                 <Image
                   src={item.img.url}
@@ -173,44 +172,44 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
             onClick={handleNext}
             className="p-1 hover:bg-muted rounded-full transition-colors shrink-0"
           >
-            <ChevronRight className="w-8 h-8" />
+            <ChevronRight className="w-6 h-6 lg:w-8 lg:h-8" />
           </button>
         </div>
       </div>
 
       {/* Product Info Frame */}
-      <div className="flex flex-col flex-grow gap-8 pt-4">
+      <div className="flex flex-col flex-grow gap-6 lg:gap-8 pt-2 lg:pt-4">
         {/* Title and Price Section */}
-        <div className="flex flex-col gap-4 w-full">
-          <h1 className="text-[#1E1E1E] font-sans font-semibold text-4xl leading-[1.2]">
+        <div className="flex flex-col gap-3 md:gap-4 w-full text-center lg:text-left">
+          <h1 className="text-[#1E1E1E] font-sans font-semibold text-2xl md:text-3xl xl:text-4xl leading-[1.2]">
             {product.title}
           </h1>
-          <p className="text-[#1E1E1E] font-sans font-bold text-2xl">
+          <p className="text-[#1E1E1E] font-sans font-bold text-xl md:text-2xl">
             {priceDisplay}
           </p>
         </div>
 
         {/* Description */}
-        <div className="w-full">
-          <p className="text-[#757575] font-sans font-normal text-lg leading-[1.6]">
+        <div className="w-full text-center lg:text-left">
+          <p className="text-[#757575] font-sans font-normal text-base md:text-lg leading-[1.6]">
             {product.description}
           </p>
         </div>
 
         {/* Interaction Section */}
         <div className="flex flex-col gap-6 w-full">
-          <div className="grid grid-cols-4 gap-4 items-end w-full">
-            {/* Talla Select (3/4) */}
+          <div className="flex flex-col sm:flex-row gap-4 items-end w-full">
+            {/* Talla Select */}
             {sizes.length > 0 && (
-              <div className="col-span-3 flex flex-col gap-3">
-                <Label htmlFor="size-select-page" className="text-[#1E1E1E] font-sans font-medium text-lg h-7 flex items-center">Talla</Label>
+              <div className="flex flex-col gap-3 w-full sm:flex-[3]">
+                <Label htmlFor="size-select-page" className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg h-7 flex items-center">Talla</Label>
                 <Select value={selectedSize} onValueChange={setSelectedSize}>
-                  <SelectTrigger id="size-select-page" className="w-full !h-14 rounded-[12px] border border-input text-lg flex items-center bg-white px-4">
+                  <SelectTrigger id="size-select-page" className="w-full !h-14 rounded-[12px] border border-input text-base md:text-lg flex items-center bg-white px-4">
                     <SelectValue placeholder="Selecciona una talla" />
                   </SelectTrigger>
                   <SelectContent>
                     {sizes.map((size) => (
-                      <SelectItem key={size} value={size!} className="text-lg">
+                      <SelectItem key={size} value={size!} className="text-base md:text-lg">
                         {size}
                       </SelectItem>
                     ))}
@@ -219,9 +218,9 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
               </div>
             )}
 
-            {/* Cantidad Select (1/4) */}
-            <div className={`${sizes.length > 0 ? 'col-span-1' : 'col-span-4'} flex flex-col gap-3`}>
-              <Label className="text-[#1E1E1E] font-sans font-medium text-lg h-7 flex items-center">Cantidad</Label>
+            {/* Cantidad Select */}
+            <div className={`flex flex-col gap-3 w-full ${sizes.length > 0 ? 'sm:flex-[1]' : ''}`}>
+              <Label className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg h-7 flex items-center">Cantidad</Label>
               <div className="flex items-center justify-between w-full h-14 px-4 rounded-[12px] border border-input bg-white">
                 <button 
                   onClick={decrementQuantity}
@@ -230,7 +229,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
                 >
                   <Minus className="w-5 h-5" />
                 </button>
-                <span className="text-lg font-medium">{quantity}</span>
+                <span className="text-base md:text-lg font-medium">{quantity}</span>
                 <button 
                   onClick={incrementQuantity}
                   disabled={quantity >= currentAvailability || (sizes.length > 0 && !selectedSize)}
@@ -247,49 +246,49 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
             {isOutOfStock ? (
               <button 
                 disabled
-                className="flex items-center justify-center w-full text-white h-16 rounded-[12px] font-bold text-xl bg-gray-500 cursor-not-allowed"
+                className="flex items-center justify-center w-full text-white h-14 md:h-16 rounded-[12px] font-bold text-lg md:text-xl bg-gray-500 cursor-not-allowed"
               >
                 Agotado
               </button>
             ) : (
-              <div className="flex flex-row gap-4 w-full">
+              <div className="flex flex-col sm:flex-row gap-4 w-full">
                 {/* Add to Cart Button */}
                 <button 
                   disabled={quantity === 0 || (sizes.length > 0 && !selectedSize)}
-                  className={`flex items-center justify-center gap-3 flex-1 text-white h-16 rounded-[12px] font-bold text-xl transition-all ${
+                  className={`flex items-center justify-center gap-3 flex-1 text-white h-14 md:h-16 rounded-[12px] font-bold text-lg md:text-xl transition-all ${
                     (quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#FF9230] hover:bg-[#e6832b] shadow-xl shadow-[#FF9230]/20"
                   }`}
                   onClick={() => console.log("Añadir al carrito: " + product.title + " Variant: " + selectedVariant?.id + " Cantidad: " + quantity)}
                 >
-                  <ShoppingCart className="w-6 h-6" />
-                  Agregar al carrito
+                  <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
+                  <span className="whitespace-nowrap">Agregar al carrito</span>
                 </button>
                 {/* Comprar ahora Button */}
                 <button 
                   disabled={quantity === 0 || (sizes.length > 0 && !selectedSize)}
-                  className={`flex items-center justify-center flex-1 text-white h-16 rounded-[12px] font-bold text-xl transition-all ${
-                    (quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab236] shadow-xl shadow-[#8CC63F]/20"
+                  className={`flex items-center justify-center flex-1 text-white h-14 md:h-16 rounded-[12px] font-bold text-lg md:text-xl transition-all ${
+                    (quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab336] shadow-xl shadow-[#8CC63F]/20"
                   }`}
                   onClick={() => console.log("Comprar ahora: " + product.title + " Variant: " + selectedVariant?.id + " Cantidad: " + quantity)}
                 >
-                  Comprar ahora
+                  <span className="whitespace-nowrap">Comprar ahora</span>
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* FAQs / Accordion Section - Full width */}
-        <div className="flex flex-col gap-4 mt-8 w-full">
-          <h3 className="text-[#1E1E1E] font-sans font-normal text-xl leading-[1.2]">
+        {/* FAQs / Accordion Section */}
+        <div className="flex flex-col gap-4 mt-4 lg:mt-8 w-full">
+          <h3 className="text-[#1E1E1E] font-sans font-normal text-lg md:text-xl leading-[1.2] text-center lg:text-left">
             Preguntas Frecuentes
           </h3>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="sizing" className="border-none">
-              <AccordionTrigger className="text-[#1E1E1E] font-sans font-medium text-lg hover:no-underline py-4 px-6 bg-[#F5F5F5] rounded-t-[12px]">
+              <AccordionTrigger className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg hover:no-underline py-3 md:py-4 px-4 md:px-6 bg-[#F5F5F5] rounded-t-[12px]">
                 ¿Cómo se que talla comprar?
               </AccordionTrigger>
-              <AccordionContent className="text-[#757575] font-sans font-normal text-base leading-[1.6] px-6 pb-6 bg-[#F5F5F5] rounded-b-[12px]">
+              <AccordionContent className="text-[#757575] font-sans font-normal text-sm md:text-base leading-[1.6] px-4 md:px-6 pb-4 md:pb-6 bg-[#F5F5F5] rounded-b-[12px]">
                 La talla depende del tamaño de tu perro y de las medidas indicadas en nuestra tabla de medidas, por eso te recomendamos acceder al video para aprender cómo medirlo correctamente y elegir la talla ideal. 🐾📏
               </AccordionContent>
             </AccordionItem>

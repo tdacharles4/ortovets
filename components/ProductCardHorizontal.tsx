@@ -33,10 +33,10 @@ export function ProductCardHorizontal({ product }: { product: ShopifyProduct }) 
 
   return (
     <Dialog>
-      <div className="flex flex-row w-[476px] h-[148px] bg-[#FFFFFF] rounded-[32px] overflow-hidden items-center p-[9px] gap-[16px] hover:shadow-lg transition-shadow group/hcard">
+      <div className="flex flex-row w-full max-w-[476px] min-h-[148px] bg-[#FFFFFF] rounded-[32px] overflow-hidden items-center p-2 sm:p-[9px] gap-4 sm:gap-[16px] hover:shadow-lg transition-shadow group/hcard mx-auto">
         {/* Image Frame - 130x130px */}
         <DialogTrigger asChild>
-          <div className="relative w-[130px] h-[130px] shrink-0 rounded-[24px] overflow-hidden bg-muted cursor-zoom-in">
+          <div className="relative w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] shrink-0 rounded-[24px] overflow-hidden bg-muted cursor-zoom-in">
             {image ? (
               <Image
                 src={image.url}

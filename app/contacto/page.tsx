@@ -82,20 +82,20 @@ function ContactForm() {
   }
 
   return (
-    <div className="w-[632px] h-[736px] min-w-[320px] bg-[#FFFFFFCC] rounded-[20px] border border-[#E5E5E5] px-[32px] py-[40px] flex flex-col justify-between shadow-sm shrink-0">
+    <div className="w-full lg:w-[632px] h-fit lg:h-[736px] bg-[#FFFFFFCC] rounded-[20px] border border-[#E5E5E5] px-6 md:px-[32px] py-8 md:py-[40px] flex flex-col justify-between shadow-sm shrink-0 backdrop-blur-sm">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <h2 className="text-[#1E1E1E] font-sans font-bold text-[32px] leading-tight">
+          <h2 className="text-[#1E1E1E] font-sans font-bold text-2xl md:text-[32px] leading-tight text-center lg:text-left">
             Cuéntanos qué necesitas
           </h2>
-          <p className="text-[#757575] font-sans font-normal text-lg">
+          <p className="text-[#757575] font-sans font-normal text-base md:text-lg text-center lg:text-left">
             Estamos aquí para ayudarte a cuidar a quien más quieres.
           </p>
         </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="firstName"
@@ -157,7 +157,7 @@ function ContactForm() {
                   <FormLabel className="text-[#1E1E1E] font-sans font-medium text-base">Cuéntanos más detalles</FormLabel>
                   <FormControl>
                     <Textarea 
-                      className="min-h-[140px] resize-none bg-white/50" 
+                      className="min-h-[120px] lg:min-h-[140px] resize-none bg-white/50" 
                       {...field} 
                       disabled={loading} 
                     />
@@ -184,36 +184,36 @@ function ContactForm() {
 
 export default function ContactoPage() {
   return (
-    <div className="relative w-full min-h-[calc(100vh-64px)] flex items-center justify-center bg-[url('/img/contacto-bg.png')] bg-cover bg-center overflow-hidden">
+    <div className="relative w-full min-h-[calc(100vh-64px)] flex items-center justify-center bg-[url('/img/contacto-bg.png')] bg-cover bg-center overflow-hidden py-12 px-4 md:px-8">
       <div className="absolute inset-0 bg-black/5" />
       
       {/* Container for siblings */}
-      <div className="relative z-10 flex flex-row items-center justify-center gap-[64px] max-w-[1810px] w-full px-4">
-        {/* Content Frame - 1114w 674h fixed vertical flow */}
-        <div className="w-[1114px] h-[674px] flex flex-col items-start justify-between">
-          <div className="flex flex-col gap-4">
-            <h1 className="text-[#1E2939] font-sans font-extrabold text-[48px] leading-tight">
+      <div className="relative z-10 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-[64px] max-w-[1810px] w-full">
+        {/* Content Frame */}
+        <div className="w-full lg:w-fit flex flex-col items-center lg:items-start justify-between gap-12 lg:h-[674px]">
+          <div className="flex flex-col gap-4 text-center lg:text-left">
+            <h1 className="text-[#1E2939] font-sans font-extrabold text-3xl md:text-5xl lg:text-[48px] leading-tight">
               Tu Tienes Preguntas,<br />Nosotros Respuestas
             </h1>
-            <p className="text-[#757575] font-sans font-medium text-[20px] leading-[1.2] max-w-[500px]">
+            <p className="text-[#757575] font-sans font-medium text-lg md:text-[20px] leading-snug max-w-[500px] mx-auto lg:mx-0">
               Si tienes dudas, necesitas orientación o deseas información sobre nuestros productos o servicios. Puedes comunicarte con nosotros a través de los siguientes medios.
             </p>
           </div>
 
-          {/* Info Frame - 1114w fill 133h fixed 40px gap */}
-          <div className="w-[1114px] h-[133px] flex flex-row items-center gap-[40px]">
+          {/* Info Frame */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-[40px] w-full max-w-[600px] lg:max-w-none lg:flex lg:flex-row lg:items-center">
             {/* Frame 1: Ubicación */}
-            <div className="w-[265px] h-[86px] flex flex-col justify-start gap-1">
+            <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
               <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">
                 Ubicación
               </h3>
-              <p className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2]">
+              <p className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2] max-w-[200px] mx-auto lg:mx-0">
                 Tlapacoyan 14, Inmecafe, 91190 Xalapa-Enríquez, Ver.
               </p>
             </div>
 
             {/* Frame 2: Email */}
-            <div className="w-[265px] h-[86px] flex flex-col justify-start gap-1">
+            <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
               <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">
                 Email
               </h3>
@@ -223,7 +223,7 @@ export default function ContactoPage() {
             </div>
 
             {/* Frame 3: Contacto */}
-            <div className="w-[265px] h-[86px] flex flex-col justify-start gap-1">
+            <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
               <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">
                 Contacto
               </h3>
@@ -233,7 +233,7 @@ export default function ContactoPage() {
             </div>
 
             {/* Frame 4: Redes Sociales */}
-            <div className="w-[265px] h-[86px] flex flex-col justify-start gap-1">
+            <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
               <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">
                 Redes Sociales
               </h3>
@@ -247,7 +247,7 @@ export default function ContactoPage() {
           </div>
         </div>
 
-        {/* Contact Form Frame - 632w hug 736h fixed */}
+        {/* Contact Form Frame */}
         <ContactForm />
       </div>
     </div>

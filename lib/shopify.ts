@@ -10,10 +10,9 @@ export async function shopifyFetch<T>({
   variables?: Record<string, unknown>;
   cache?: RequestCache;
 }): Promise<{ status: number; body: T }> {
-  const endpoint = `https://${domain}/api/2024-04/graphql.json`;
+  const endpoint = `https://${domain}/api/2024-01/graphql.json`;
 
   try {
-
     const result = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -24,12 +23,10 @@ export async function shopifyFetch<T>({
       cache,
       next: cache === 'force-cache' ? { revalidate: 3600 } : undefined
     });
-    
-    const body = await result.json();
 
     return {
       status: result.status,
-      body: body
+      body: await result.json()
     };
   } catch (error) {
     console.error('Error reaching Shopify Storefront API:', error);

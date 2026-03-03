@@ -41,16 +41,25 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
     })
   }, [])
 
-  const getAlphaAtEvent = (partId: string, e: React.MouseEvent<HTMLDivElement>) => {
+  const getAlphaAtEvent = (partId: string, e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     const canvas = canvasRefs.current[partId]
     const container = containerRef.current
     if (!canvas || !container) return 0
 
     const rect = container.getBoundingClientRect()
 
-    // Mapear coordenadas del mouse al tamaño real de la imagen
-    const x = ((e.clientX - rect.left) / rect.width) * IMG_W
-    const y = ((e.clientY - rect.top) / rect.height) * IMG_H
+    let clientX, clientY;
+    if ('touches' in e) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    // Mapear coordenadas al tamaño real de la imagen
+    const x = ((clientX - rect.left) / rect.width) * IMG_W
+    const y = ((clientY - rect.top) / rect.height) * IMG_H
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return 0
@@ -87,7 +96,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
     <div
       ref={containerRef}
       // Usamos aspect-ratio para que el contenedor siempre respete 990:1080
-      className="relative w-[588px] rounded-[32px] overflow-hidden cursor-pointer"
+      className="relative w-full max-w-[588px] rounded-[32px] overflow-hidden cursor-pointer mx-auto touch-none"
       style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setActivePart(null)}
@@ -107,7 +116,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
         src="/img/perro3d/bg.png"
         alt="Perro base"
         fill
-        className="object-fill pointer-events-none"
+        className="object-contain pointer-events-none"
       />
 
       {/* Capas de body parts */}
@@ -118,7 +127,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
           alt={part.label}
           fill
           className={`
-            object-fill pointer-events-none transition-all duration-150
+            object-contain pointer-events-none transition-all duration-150
             ${activePart === part.id
               ? 'opacity-80 brightness-125 saturate-150'
               : 'opacity-50'
@@ -129,7 +138,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
 
       {/* Tooltip opcional */}
       {activePart && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white text-sm px-3 py-1 rounded-full pointer-events-none">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white text-xs sm:text-sm px-3 py-1 rounded-full pointer-events-none whitespace-nowrap z-10">
           {bodyParts.find(p => p.id === activePart)?.label}
         </div>
       )}
