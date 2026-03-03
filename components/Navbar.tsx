@@ -33,6 +33,8 @@ import { useCustomer } from "@/hooks/useCustomer";
 import { getProduct, ShopifyProduct } from "@/lib/shopify";
 import { FloatingProductCard } from "./FloatingProductCard";
 import { Badge } from "@/components/ui/badge";
+        
+import { useCart } from "@/app/context/cartContext";
 
 type SearchResult = {
   handle: string;
@@ -231,6 +233,9 @@ function SearchBar() {
 
 
 export default function Navbar() {
+  const { items } = useCart()
+  const count = items.reduce((sum, i) => sum + i.quantity, 0);
+
   return (
     <header className="sticky top-0 z-50 w-full bg-[#ffff]">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -254,7 +259,14 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-4">
           <SearchBar />
           <AuthNav />
-          <ShoppingCart className="h-6 w-6 cursor-pointer" />
+          <Link href="/cart" className="relative">
+            <ShoppingCart className="h-6 w-6 cursor-pointer" />
+            {count > 0 && (
+              <span className="absolute -top-2 -right-4 bg-red-600 text-white text-xs rounded-full px-2">
+                {count}
+              </span>
+            )}
+          </Link>
         </div>
 
         {/* Mobile View */}
@@ -276,9 +288,23 @@ export default function Navbar() {
                 </nav>
                 <div className="border-b"></div>
                 <div className="flex flex-col gap-y-4">
-                  <div className="flex flex-col gap-y-2"><AuthNav /></div>
-                  <Link href="/cart" className="flex items-center gap-2 text-lg font-semibold text-foreground/80 hover:text-foreground">
-                    <ShoppingCart className="h-5 w-5" /><span>Carrito</span>
+                  <div className="flex flex-col gap-y-2">
+                    <AuthNav />
+                  </div>
+
+                  <Link
+                    href="/cart"
+                    className="flex items-center gap-2 text-lg font-semibold text-foreground/80 hover:text-foreground"
+                  >
+                    <div className="relative">
+                      <ShoppingCart className="h-5 w-5" />
+                      {count > 0 && (
+                        <span className="absolute -top-2 -right-4 bg-red-600 text-white text-xs rounded-full px-2">
+                          {count}
+                        </span>
+                      )}
+                    </div>
+                    <span className="pl-2">Carrito</span>
                   </Link>
                 </div>
               </div>
