@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Facebook, Instagram, Youtube, Link as LinkIcon } from "lucide-react";
 
 export default function Footer() {
@@ -47,6 +48,7 @@ export default function Footer() {
         </div>
         <div className="mt-12 pt-8 border-t border-gray-700 text-center text-sm text-gray-400">
           <p>© {new Date().getFullYear()} Ortovets. All rights reserved.</p>
+          <Link href="/terminos" className="mt-2 inline-block hover:underline">Consulta nuestros Terminos y Condiciones</Link>
         </div>
       </div>
     </footer>

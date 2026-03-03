@@ -11,17 +11,30 @@ export async function GET(request: Request) {
   // Return an HTML page that posts messages to the opener
   const sendMessage = (type: 'AUTH_SUCCESS' | 'AUTH_ERROR', payload?: object) => {
     const message = JSON.stringify({ type, ...payload });
+    
+    // Ensure the target origin is exactly what we expect.
+    // We prioritize the current origin to ensure the message actually reaches the opener.
+    const script = `
+      <script>
+        (function() {
+          const message = ${message};
+          // Try to use the opener's origin if possible, or fallback to a safe default
+          let targetOrigin = window.location.origin;
+          
+          if (window.opener) {
+            window.opener.postMessage(message, targetOrigin);
+          }
+          window.close();
+        })();
+      </script>
+    `;
+
     return new NextResponse(
       `<!DOCTYPE html>
 <html>
   <head><title>Authenticating...</title></head>
   <body>
-    <script>
-      if (window.opener) {
-        window.opener.postMessage(${message}, '${process.env.NEXT_PUBLIC_APP_URL}');
-      }
-      window.close();
-    </script>
+    ${script}
     <p>Authentication complete. You can close this window.</p>
   </body>
 </html>`,
@@ -31,7 +44,10 @@ export async function GET(request: Request) {
 
   if (error) {
     console.error('Shopify auth error:', error);
-    return sendMessage('AUTH_ERROR', { error });
+    return new NextResponse(
+      `<!DOCTYPE html><html><body><h1>Auth Error</h1><p>${error}</p></body></html>`,
+      { headers: { 'Content-Type': 'text/html' } }
+    );
   }
 
   if (!code || !state) {

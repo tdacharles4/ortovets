@@ -1,7 +1,15 @@
 const domain = process.env.SHOPIFY_STORE_DOMAIN;
 const accessToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 
-export async function shopifyFetch<T>({ query, variables }: { query: string; variables?: Record<string, unknown> }): Promise<{ status: number; body: T }> {
+export async function shopifyFetch<T>({ 
+  query, 
+  variables,
+  cache = 'force-cache'
+}: { 
+  query: string; 
+  variables?: Record<string, unknown>;
+  cache?: RequestCache;
+}): Promise<{ status: number; body: T }> {
   const endpoint = `https://${domain}/api/2024-01/graphql.json`;
 
   try {
@@ -12,7 +20,8 @@ export async function shopifyFetch<T>({ query, variables }: { query: string; var
         'X-Shopify-Storefront-Access-Token': accessToken!,
       },
       body: JSON.stringify({ query, variables }),
-      next: { revalidate: 3600 } // Revalidate cache every hour
+      cache,
+      next: cache === 'force-cache' ? { revalidate: 3600 } : undefined
     });
 
     return {
@@ -214,4 +223,61 @@ export async function getProducts() {
       }
     }`
   });
+}
+
+export async function getAllPolicies() {
+  const res = await shopifyFetch<{ data: { shop: {
+    privacyPolicy: { title: string; body: string } | null;
+    refundPolicy: { title: string; body: string } | null;
+    termsOfService: { title: string; body: string } | null;
+    shippingPolicy: { title: string; body: string } | null;
+  } } }>({
+    query: `
+      query getAllPolicies {
+        shop {
+          privacyPolicy {
+            title
+            body
+          }
+          refundPolicy {
+            title
+            body
+          }
+          termsOfService {
+            title
+            body
+          }
+          shippingPolicy {
+            title
+            body
+          }
+        }
+      }
+    `,
+  });
+
+  // Return an array of policies that actually exist and have content
+  return Object.values(res.body.data.shop).filter((policy): policy is { title: string; body: string } => 
+    policy !== null && policy.body.trim() !== ''
+  );
+}
+
+export async function getCustomer() {
+  const query = `
+    query {
+      customer {
+        id
+        email
+        firstName
+        lastName
+      }
+    }
+  `;
+
+  const { body } = await shopifyFetch<any>({ 
+    query,
+    cache: 'no-store'
+  });
+
+  return body?.data?.customer ?? null;
 }

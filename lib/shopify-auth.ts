@@ -26,6 +26,14 @@ export async function getOpenIDConfig(): Promise<OpenIDConfig> {
   return cachedConfig!;
 }
 
+export async function getShopId(): Promise<string> {
+  const config = await getOpenIDConfig();
+  // issuer is usually https://shopify.com/<shop_id>/auth
+  const parts = config.issuer.split('/');
+  // parts: ["https:", "", "shopify.com", "<shop_id>", "auth"]
+  return parts[3];
+}
+
 export interface TokenResponse {
   access_token: string;
   refresh_token: string;
