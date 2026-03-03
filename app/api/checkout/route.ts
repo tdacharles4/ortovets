@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
   try {
     const response = await fetch(
-      `https://${process.env.SHOPIFY_STORE_DOMAIN}/api/2025-07/graphql.json`,
+      `https://${process.env.SHOPIFY_STORE_DOMAIN}/api/2024-04/graphql.json`,
       {
         method: "POST",
         headers: {
