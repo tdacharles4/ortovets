@@ -10,9 +10,10 @@ export async function shopifyFetch<T>({
   variables?: Record<string, unknown>;
   cache?: RequestCache;
 }): Promise<{ status: number; body: T }> {
-  const endpoint = `https://${domain}/api/2024-01/graphql.json`;
+  const endpoint = `https://${domain}/api/2024-04/graphql.json`;
 
   try {
+
     const result = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -23,10 +24,12 @@ export async function shopifyFetch<T>({
       cache,
       next: cache === 'force-cache' ? { revalidate: 3600 } : undefined
     });
+    
+    const body = await result.json();
 
     return {
       status: result.status,
-      body: await result.json()
+      body: body
     };
   } catch (error) {
     console.error('Error reaching Shopify Storefront API:', error);
@@ -280,4 +283,42 @@ export async function getCustomer() {
   });
 
   return body?.data?.customer ?? null;
+}
+
+// Logica Blog
+
+export async function getArticle(blogHandle: string, articleHandle: string){
+  const query = `
+    query GetArticle($blogHandle: String!, $articleHandle: String!) {
+      blog(handle: $blogHandle) {
+        articleByHandle(handle: $articleHandle) {
+          title
+          contentHtml
+          publishedAt
+          authorV2{
+            name
+          }
+          image {
+            url
+            altText
+          }
+        }
+      }
+    }
+  `
+  const variables = {
+    blogHandle,
+    articleHandle
+  }
+  const rest = await shopifyFetch<{
+    data: {
+      blog: {
+        articleByHandle: any
+      } | null
+    }
+  }>({
+    query,
+    variables
+  });
+  return rest.body.data?.blog?.articleByHandle ?? null;
 }

@@ -2,15 +2,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, Award, ShieldCheck, Heart } from "lucide-react";
-import { getProducts } from "@/lib/shopify";
+import { getProducts, getArticle } from "@/lib/shopify";
 import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
 import { AuthButton } from "@/components/AuthButton";
 import { AccountPanel } from "@/components/AccountPanel";
 import DogMap from "@/components/Perro3D";
+import { NoticieroCarousel } from "@/components/ui/NoticieroCarousel";
 
 export default async function Home() {
   const { body } = await getProducts();
   const products = body.data.products.edges.map((edge) => edge.node).slice(0, 3);
+  const landingArticle1 = await getArticle("noticias", "test-de-blog-desde-shopify");
+  const carouselArticleHandles = [
+    "carrusel-noticiero-1",
+    "carrusel-noticiero-2",
+    "carrusel-noticiero-3"
+  ];
+  const articlePromises = carouselArticleHandles.map(
+    handle => getArticle("carrusel-noticiero",handle)
+  );
+  const carouselArticles = (await Promise.all(articlePromises)).filter(Boolean);
 
   const features = [
     {
@@ -157,9 +168,31 @@ export default async function Home() {
           <div className="flex flex-col xl:flex-row gap-6">
             {/* Leftmost Frame: 690px w (xl), 583px fixed h */}
             <div className="flex flex-col gap-6 w-full xl:flex-[690] h-[583px]">
-              {/* Frame 1: Topmost */}
-              <div className="flex flex-row gap-[34px] w-full xl:w-[688px] h-[247px] rounded-[16px] bg-white/20 pr-[36px] overflow-hidden">
-                {/* Content for frame 1 */}
+              {/* Topmost Frame: Landing Article 1 */}
+              <div className="w-full xl:w-[688px] h-[247px] rounded-[16px] bg-white/20 overflow-hidden">
+                {/* Conditional Render del Articulo 1 */}
+                {landingArticle1 && (
+                  <div className="flex flex-row w-full h-full">
+                    {/* Imagen */}
+                    {landingArticle1.image && (
+                      <div className="w-[220px] h-full flex-shrink-0 relative">
+                        <Image
+                          src={landingArticle1.image.url}
+                          alt={landingArticle1.image.altText || landingArticle1.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="flex flex-col flex-grow p-6 overflow-hidden">
+                      <h3 className="text-xl font-bold mb-2 line-clamp-2 uppercase">{landingArticle1.title}</h3>
+                      <div 
+                        className="prose prose-invert prose-sm overflow-y-auto flex-grow pr-2"
+                        dangerouslySetInnerHTML={{ __html: landingArticle1.contentHtml }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Frame 2: Middle */}
@@ -191,13 +224,10 @@ export default async function Home() {
             </div>
 
             {/* Rightmost Image: Proportional to 472px, 583px h */}
-            <div className="w-full xl:flex-[472] h-[583px] relative rounded-[16px] overflow-hidden">
-              <Image
-                src="/img/dummyproduct.png"
-                alt="Dummy Product"
-                fill
-                className="object-cover"
-              />
+            <div className="w-full xl:flex-[472] h-[583px]">
+              {carouselArticles && carouselArticles.length>0 && (
+                <NoticieroCarousel articles={carouselArticles}/>
+              )}
             </div>
           </div>
         </div>
