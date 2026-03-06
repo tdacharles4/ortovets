@@ -1,12 +1,12 @@
 const domain = process.env.SHOPIFY_STORE_DOMAIN;
 const accessToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 
-export async function shopifyFetch<T>({ 
-  query, 
+export async function shopifyFetch<T>({
+  query,
   variables,
   cache = 'force-cache'
-}: { 
-  query: string; 
+}: {
+  query: string;
   variables?: Record<string, unknown>;
   cache?: RequestCache;
 }): Promise<{ status: number; body: T }> {
@@ -85,12 +85,12 @@ export function isMenudeoVariant(variant: any) {
   if (!variant) return false;
   const title = variant.title?.toLowerCase() || "";
   const options = variant.selectedOptions?.map((opt: any) => opt.value.toLowerCase()).join(" ") || "";
-  
+
   // Explicit check for menudeo
   if (title.includes("menudeo") || options.includes("menudeo")) return true;
   // If it mentions mayoreo, it's NOT menudeo
   if (title.includes("mayoreo") || options.includes("mayoreo")) return false;
-  
+
   // Default to true if neither is mentioned (standard products)
   return true;
 }
@@ -225,13 +225,72 @@ export async function getProducts() {
   });
 }
 
+export async function getProductsByTag(tag: string) {
+  return shopifyFetch<{ data: { products: { edges: { node: ShopifyProduct }[] } } }>({
+    query: `{
+      products(first: 10, query: "tag:${tag}") {
+        edges {
+          node {
+            id
+            title
+            handle
+            description
+            availableForSale
+            images(first: 10) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+              maxVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            variants(first: 20) {
+              edges {
+                node {
+                  id
+                  title
+                  availableForSale
+                  quantityAvailable
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  selectedOptions {
+                    name
+                    value
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`,
+    cache: 'no-store'
+  });
+}
+
 export async function getAllPolicies() {
-  const res = await shopifyFetch<{ data: { shop: {
-    privacyPolicy: { title: string; body: string } | null;
-    refundPolicy: { title: string; body: string } | null;
-    termsOfService: { title: string; body: string } | null;
-    shippingPolicy: { title: string; body: string } | null;
-  } } }>({
+  const res = await shopifyFetch<{
+    data: {
+      shop: {
+        privacyPolicy: { title: string; body: string } | null;
+        refundPolicy: { title: string; body: string } | null;
+        termsOfService: { title: string; body: string } | null;
+        shippingPolicy: { title: string; body: string } | null;
+      }
+    }
+  }>({
     query: `
       query getAllPolicies {
         shop {
@@ -257,7 +316,7 @@ export async function getAllPolicies() {
   });
 
   // Return an array of policies that actually exist and have content
-  return Object.values(res.body.data.shop).filter((policy): policy is { title: string; body: string } => 
+  return Object.values(res.body.data.shop).filter((policy): policy is { title: string; body: string } =>
     policy !== null && policy.body.trim() !== ''
   );
 }
@@ -274,7 +333,7 @@ export async function getCustomer() {
     }
   `;
 
-  const { body } = await shopifyFetch<any>({ 
+  const { body } = await shopifyFetch<any>({
     query,
     cache: 'no-store'
   });
@@ -284,7 +343,7 @@ export async function getCustomer() {
 
 // Logica Blog
 
-export async function getArticle(blogHandle: string, articleHandle: string, cache: RequestCache = 'force-cache'){
+export async function getArticle(blogHandle: string, articleHandle: string, cache: RequestCache = 'force-cache') {
   const query = `
     query GetArticle($blogHandle: String!, $articleHandle: String!) {
       blog(handle: $blogHandle) {
