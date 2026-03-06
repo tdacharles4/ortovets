@@ -5,10 +5,14 @@ import Image from "next/image"
 
 const bodyParts = [
   { id: 'cuello',       src: '/img/perro3d/cuello.png',       label: 'Cuello' },
+  { id: 'espalda',      src: '/img/perro3d/espalda.png',      label: 'Espalda' },
+  { id: 'cadera',       src: '/img/perro3d/cadera.png',       label: 'Cadera' },
   { id: 'hombro',       src: '/img/perro3d/hombro.png',       label: 'Hombro' },
-  { id: 'nalgas',       src: '/img/perro3d/nalgas.png',       label: 'Nalgas' },
+  { id: 'codo',         src: '/img/perro3d/codo.png',         label: 'Codo' },
+  { id: 'rodilla',      src: '/img/perro3d/rodilla.png',      label: 'Rodilla' },
   { id: 'pata_front',   src: '/img/perro3d/pata_front.png',   label: 'Pata frontal' },
-  { id: 'rodilla_back', src: '/img/perro3d/rodilla_back.png', label: 'Rodilla trasera' },
+  { id: 'pata_back',    src: '/img/perro3d/pata_back.png',    label: 'Pata trasera' },
+  
 ]
 
 const IMG_W = 990
