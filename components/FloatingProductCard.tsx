@@ -358,11 +358,18 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
           {/* Accordion */}
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="sizing" className="border-none">
-              <AccordionTrigger className="text-[#1E1E1E] font-sans font-medium text-base hover:no-underline py-2">
+              <AccordionTrigger className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg hover:no-underline py-3 md:py-4 px-4 md:px-6 bg-[#F5F5F5] rounded-t-[12px] flex items-center justify-between leading-none">
                 ¿Cómo se que talla comprar?
               </AccordionTrigger>
-              <AccordionContent className="text-[#757575] font-sans font-normal text-sm leading-[1.4]">
-                La talla depende del tamaño de tu perro y de las medidas indicadas en nuestra tabla de medidas, por eso te recomendamos acceder al video para aprender cómo medirlo correctamente y elegir la talla ideal. 🐾📏
+              <AccordionContent className="text-[#757575] font-sans font-normal text-sm md:text-base leading-[1.6] px-4 md:px-6 pb-4 md:pb-6 bg-[#F5F5F5] rounded-b-[12px]">
+                La talla depende del tamaño de tu perro y de las medidas indicadas en nuestra tabla de medidas, por eso te recomendamos{" "} 
+                <a 
+                  href={`/tienda/${product.handle}#video-section`} 
+                  className="text-[#1E1E1E] underline underline-offset-4 font-medium hover:text-black transition-colors cursor-pointer"
+                >
+                  acceder al video
+                </a> 
+                {" "}para aprender cómo medirlo correctamente y elegir la talla ideal. 🐾📏
               </AccordionContent>
             </AccordionItem>
           </Accordion>
