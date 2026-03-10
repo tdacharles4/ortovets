@@ -102,7 +102,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
             </div>
 
             {/* Redirection link */}
-            <div className="flex flex-row items-center justify-center lg:justify-start w-full gap-2 mt-4 lg:mt-0">
+            <div className="flex flex-row items-center justify-center lg:justify-end w-full gap-2 mt-4 lg:mt-0">
               <a
                 href={selectedPart ? `/tienda?tag=${selectedPart}` : '/tienda'}
                 className="flex items-center gap-2 text-[#F5F5F5] hover:opacity-80 transition-opacity"
