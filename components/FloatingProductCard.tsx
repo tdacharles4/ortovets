@@ -340,7 +340,7 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
                     <ShoppingCart className="w-5 h-5" />
                     <span className="whitespace-nowrap">Agregar al carrito</span>
                   </button>
-                  {/* Comprar ahora Button */}
+                  {/* Comprar ahora Button CHECKOUT*/}
                   <button 
                     disabled={quantity === 0 || (sizes.length > 0 && !selectedSize)}
                     className={`flex items-center justify-center flex-1 text-white h-12 rounded-[8px] font-bold text-base lg:text-lg transition-all ${

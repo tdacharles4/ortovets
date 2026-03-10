@@ -38,10 +38,9 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
 
   return (
     <Dialog>
-      <Card className=" flex flex-col h-full group/card">
-        <CardHeader className="p-0">
+      <Card className="flex flex-col h-full group/card overflow-hidden border-none shadow-lg rounded-2xl bg-card p-0 gap-0">
           <DialogTrigger asChild>
-            <div className="relative aspect-square w-full bg-muted cursor-zoom-in overflow-hidden">
+            <div className="relative aspect-square w-full cursor-zoom-in overflow-hidden">
               {image ? (
                 <Image
                   src={image.url}
@@ -59,7 +58,6 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
               </div>
             </div>
           </DialogTrigger>
-        </CardHeader>
         <CardContent className="flex-grow p-4">
           <CardTitle className="line-clamp-1 text-lg">{product.title}</CardTitle>
           <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
@@ -71,41 +69,12 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
         </CardContent>
         <CardFooter className="p-4 pt-0">
           <div className="flex w-full overflow-hidden rounded-md border border-input h-10 relative bg-[#1E1E1E]">
-            {/* 1. Ver Detalles Button (Base Layer) */}
             <Link 
               href={`/tienda/${product.handle}`}
               className="flex-grow h-full text-sm font-medium text-white transition-opacity duration-300 cursor-pointer flex items-center justify-center hover:bg-white/10"
             >
               Ver detalles
             </Link>
-
-            {/* 2. Añadir al Carrito Overlay - Expands to cover 'Ver detalles' */}
-            <button 
-              disabled={isOutOfStock}
-              className={`absolute top-0 bottom-0 right-0 z-20 flex items-center justify-center transition-all duration-500 ease-in-out overflow-hidden cursor-pointer ${
-                isOutOfStock ? "bg-gray-500" : "bg-[#8CC63F]"
-              } ${
-                isCartHovered ? "left-0 w-full" : "w-0 opacity-0"
-              }`}
-              onMouseEnter={() => setIsCartHovered(true)}
-              onMouseLeave={() => setIsCartHovered(false)}
-              onClick={() => console.log("Añadir al carrito: " + product.title)}
-            >
-              <span className="whitespace-nowrap text-sm font-medium text-white pr-10">
-                {isOutOfStock ? "Agotado" : "Añadir al carrito"}
-              </span>
-            </button>
-
-            {/* 3. Cart Icon Section (Fixed Right Corner) */}
-            <div 
-              className={`w-12 h-full flex items-center justify-center border-l border-white/20 cursor-pointer relative z-30 transition-colors duration-500 ${
-                isCartHovered ? (isOutOfStock ? "bg-gray-500" : "bg-[#8CC63F]") : "bg-[#1E1E1E]"
-              } ${isCartHovered ? "border-transparent" : "border-l border-white/20"}`}
-              onMouseEnter={() => setIsCartHovered(true)}
-              onMouseLeave={() => setIsCartHovered(false)}
-            >
-              <ShoppingCart className="h-4 w-4 text-white" />
-            </div>
           </div>
         </CardFooter>
       </Card>

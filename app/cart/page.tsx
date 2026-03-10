@@ -26,6 +26,8 @@ export default function CartPage() {
 
             const { webUrl } = await res.json();
 
+            console.log("Received Checkout URL from API:", webUrl);
+
             if (webUrl) {
                 clearCart();
                 window.location.href = webUrl;
