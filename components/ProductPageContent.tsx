@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import Link from 'next/link';
 import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
 import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus } from "lucide-react";
 import {
@@ -289,7 +290,14 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
                 ¿Cómo se que talla comprar?
               </AccordionTrigger>
               <AccordionContent className="text-[#757575] font-sans font-normal text-sm md:text-base leading-[1.6] px-4 md:px-6 pb-4 md:pb-6 bg-[#F5F5F5] rounded-b-[12px]">
-                La talla depende del tamaño de tu perro y de las medidas indicadas en nuestra tabla de medidas, por eso te recomendamos acceder al video para aprender cómo medirlo correctamente y elegir la talla ideal. 🐾📏
+                La talla depende del tamaño de tu perro y de las medidas indicadas en nuestra tabla de medidas, por eso te recomendamos{" "} 
+                <a 
+                  href={`/tienda/${product.handle}#video-section`} 
+                  className="text-[#1E1E1E] underline underline-offset-4 font-medium hover:text-black transition-colors cursor-pointer"
+                >
+                  acceder al video
+                </a> 
+                {" "}para aprender cómo medirlo correctamente y elegir la talla ideal. 🐾📏
               </AccordionContent>
             </AccordionItem>
           </Accordion>

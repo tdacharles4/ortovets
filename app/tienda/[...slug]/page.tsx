@@ -43,29 +43,8 @@ export default async function ProductPage({ params }: PageProps) {
           <ProductPageContent product={product} />
         </div>
 
-        {/* Reviews Grid Frame */}
-        <section className="w-full h-auto py-8 md:py-12 px-4 md:px-8 lg:px-16 flex flex-col gap-6 bg-white mt-8 md:mt-12">
-          {/* Text Heading: Reseñas más recientes */}
-          <h2 className="text-[#1E1E1E] font-sans font-semibold text-2xl leading-[1.2]">
-            Reseñas más recientes
-          </h2>
-          
-          {/* Reviews Frame - Horizontal scroll on mobile, grid on desktop if needed, for now keeping horizontal list with better spacing */}
-          <div className="flex flex-row gap-6 md:gap-8 w-full mt-4 overflow-x-auto pb-4 scrollbar-hide">
-            <div className="min-w-[280px] sm:min-w-[320px] lg:flex-1">
-              <ReviewCard />
-            </div>
-            <div className="min-w-[280px] sm:min-w-[320px] lg:flex-1">
-              <ReviewCard />
-            </div>
-            <div className="min-w-[280px] sm:min-w-[320px] lg:flex-1">
-              <ReviewCard />
-            </div>
-          </div>
-        </section>
-
         {/* Videos Recomendados Frame */}
-        <section className="w-full h-auto py-8 md:py-12 px-4 md:px-8 lg:px-16 flex flex-col gap-8 bg-white opacity-90 mt-8 md:mt-12 mb-12 md:mb-20">
+        <section className="w-full h-auto py-8 md:py-12 px-4 md:px-8 lg:px-16 flex flex-col gap-8 bg-white opacity-90 mt-8 md:mt-12 mb-12 md:mb-20 scroll-mt-20" id="video-section">
           {/* Text Heading: Videos Recomendados */}
           <h2 className="text-[#1E1E1E] font-sans font-semibold text-2xl leading-[1.2]">
             Videos Recomendados
@@ -93,6 +72,27 @@ export default async function ProductPage({ params }: PageProps) {
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors" />
                 <PlayCircle className="w-12 h-12 lg:w-16 lg:h-16 text-white/80 group-hover:scale-110 transition-transform z-10" />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Reviews Grid Frame */}
+        <section className="w-full h-auto py-8 md:py-12 px-4 md:px-8 lg:px-16 flex flex-col gap-6 bg-white mt-8 md:mt-12">
+          {/* Text Heading: Reseñas más recientes */}
+          <h2 className="text-[#1E1E1E] font-sans font-semibold text-2xl leading-[1.2]">
+            Reseñas más recientes
+          </h2>
+          
+          {/* Reviews Frame - Horizontal scroll on mobile, grid on desktop if needed, for now keeping horizontal list with better spacing */}
+          <div className="flex flex-row gap-6 md:gap-8 w-full mt-4 overflow-x-auto pb-4 scrollbar-hide">
+            <div className="min-w-[280px] sm:min-w-[320px] lg:flex-1">
+              <ReviewCard />
+            </div>
+            <div className="min-w-[280px] sm:min-w-[320px] lg:flex-1">
+              <ReviewCard />
+            </div>
+            <div className="min-w-[280px] sm:min-w-[320px] lg:flex-1">
+              <ReviewCard />
             </div>
           </div>
         </section>
