@@ -104,7 +104,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
     <div
       ref={containerRef}
       // Usamos aspect-ratio para que el contenedor siempre respete 990:1080
-      className="relative w-full max-w-[588px] rounded-[32px] overflow-hidden cursor-pointer mx-auto touch-none"
+      className="relative w-full max-w-[588px] rounded-[32px] overflow-hidden cursor-pointer mx-auto"
       style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setActivePart(null)}
@@ -145,7 +145,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
       ))}
 
       {/* Tooltip opcional */}
-      {activePart && (
+      {/* {activePart && (
         <div className="fixed bg-black/70 text-white text-sm px-3 py-1 rounded-full pointer-events-none z-50"
         style={{
             left: mousePos.x + 12,
@@ -154,7 +154,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
         >
           {bodyParts.find(p => p.id === activePart)?.label}
         </div>
-      )}
+      )} */}
     </div>
   )
 }
