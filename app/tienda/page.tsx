@@ -1,6 +1,8 @@
 import { getProducts } from "@/lib/shopify";
 import { ProductGrid } from "@/components/ProductGrid";
 
+export const dynamic = 'force-dynamic'
+
 export default async function Tienda() {
   const { body } = await getProducts();
   const edges = body.data.products.edges;
