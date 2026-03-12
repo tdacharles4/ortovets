@@ -24,7 +24,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   const allImages = product.images?.edges?.map(edge => edge.node) || [];
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
-  const [quantity, setQuantity] = React.useState(0);
+  const [quantity, setQuantity] = React.useState(1);
   
   // Extract unique sizes from Menudeo variants
   const sizes = Array.from(new Set(
@@ -118,7 +118,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
 
   // Reset quantity when size changes
   React.useEffect(() => {
-    setQuantity(0);
+    setQuantity(1);
   }, [selectedSize]);
 
   return (
