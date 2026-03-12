@@ -102,12 +102,12 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
             </div>
 
             {/* Redirection link */}
-            <div className="flex flex-row items-center justify-center lg:justify-end w-full gap-2 mt-4 lg:mt-0">
+            <div className="flex flex-row items-center justify-center w-full gap-2 mt-4 lg:mt-0">
               <a
                 href={selectedPart ? `/tienda?tag=${selectedPart}` : '/tienda'}
                 className="flex items-center gap-2 text-[#F5F5F5] hover:opacity-80 transition-opacity"
               >
-                <span className="font-sans font-medium text-lg leading-[100%] underline decoration-solid text-center lg:text-left">
+                <span className="font-sans font-medium text-lg leading-[100%] underline decoration-solid text-center lg:text-center">
                   Ver más productos recomendados
                 </span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
