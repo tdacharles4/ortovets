@@ -19,13 +19,18 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
+import { ProductImageGallery } from "./ProductImageGallery";
 
 export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   const allImages = product.images?.edges?.map(edge => edge.node) || [];
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
   const [quantity, setQuantity] = React.useState(1);
-  
+
+  const [isGalleryOpen, setIsGalleryOpen] = React.useState(false);
+  const [galleryInitialIndex, setGalleryInitialIndex] = React.useState(0);
+  const [galleryApi, setGalleryApi] = React.useState<any>();
+
   // Extract unique sizes from Menudeo variants
   const sizes = Array.from(new Set(
     product.variants?.edges?.map(edge => {
@@ -121,6 +126,15 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
     setQuantity(1);
   }, [selectedSize]);
 
+  // Abrir x imagen al abrir la galeria expansible
+  React.useEffect(()=>{
+    if(galleryApi&&isGalleryOpen){
+      setTimeout(()=>{
+        galleryApi.scrollTo(galleryInitialIndex, true);
+      },10);
+    }
+  },[galleryApi,isGalleryOpen,galleryInitialIndex]);
+
   return (
     <section className="w-full flex flex-col lg:flex-row gap-8 lg:gap-[64px]">
       {/* Images Frame*/}
@@ -128,12 +142,21 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
         {/* Main Image Container */}
         <div className="relative w-full aspect-square md:aspect-video lg:aspect-square lg:h-[500px] bg-muted overflow-hidden rounded-2xl">
           {mainImage ? (
+            <button
+              type="button"
+              className="w-full h-full"
+              onClick={() => {
+                setGalleryInitialIndex(selectedImageIndex);
+                setIsGalleryOpen(true);
+              }}
+            >
             <Image
               src={mainImage.url}
               alt={mainImage.altText || product.title}
               fill
               className="object-cover"
             />
+            </button>
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground bg-muted text-xl">
               Sin imagen
@@ -303,6 +326,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
           </Accordion>
         </div>
       </div>
+      <ProductImageGallery images={allImages} isOpen={isGalleryOpen} onOpenChange={setIsGalleryOpen} initialIndex={galleryInitialIndex}/>
     </section>
   );
 }
