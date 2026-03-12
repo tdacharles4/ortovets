@@ -58,10 +58,11 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
   }
 
   async function handleTagChange(tag: string) {
-    setActiveTag(tag);
+    const isAll = tag === "all";
+    setActiveTag(isAll ? null : tag);
     setLoading(true);
 
-    if (!tag) {
+    if (isAll) {
       setProducts(initialProducts);
       setCursor(initialCursor);
       setHasNextPage(initialHasNextPage);
@@ -83,12 +84,15 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
         <div className="flex justify-end mb-8 w-full">
           <div className="flex flex-col items-end gap-1">
             <span className="text-lg font-medium">Filtrar</span>
-            <Select value={activeTag ?? ""} onValueChange={(value) => handleTagChange(value)}>
+            <Select value={activeTag ?? "all"} onValueChange={handleTagChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Todos los productos" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
+                  <SelectItem value="all">
+                    Todos los productos
+                  </SelectItem>
                   {TAGS.map((tag) => (
                     <SelectItem key={tag.id} value={tag.id}>
                       {tag.label}
