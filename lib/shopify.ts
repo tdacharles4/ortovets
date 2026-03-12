@@ -171,11 +171,24 @@ export async function getProduct(handle: string) {
   });
 }
 
-export async function getProducts() {
-  return shopifyFetch<{ data: { products: { edges: { node: ShopifyProduct }[] } } }>({
+export async function getProducts(cursor?: string) {
+  const afterClause = cursor ? `, after: "${cursor}"` : "";
+
+  return shopifyFetch<{
+    data: {
+      products: {
+        pageInfo: { hasNextPage: boolean };
+        edges: { cursor: string; node: ShopifyProduct }[];
+      };
+    };
+  }>({
     query: `{
-      products(first: 10) {
+      products(first: 12${afterClause}) {
+        pageInfo {
+          hasNextPage
+        }
         edges {
+          cursor
           node {
             id
             title
@@ -184,44 +197,27 @@ export async function getProducts() {
             availableForSale
             images(first: 10) {
               edges {
-                node {
-                  url
-                  altText
-                }
+                node { url altText }
               }
             }
             priceRange {
-              minVariantPrice {
-                amount
-                currencyCode
-              }
-              maxVariantPrice {
-                amount
-                currencyCode
-              }
+              minVariantPrice { amount currencyCode }
+              maxVariantPrice { amount currencyCode }
             }
             variants(first: 20) {
               edges {
                 node {
-                  id
-                  title
-                  availableForSale
-                  quantityAvailable
-                  price {
-                    amount
-                    currencyCode
-                  }
-                  selectedOptions {
-                    name
-                    value
-                  }
+                  id title availableForSale quantityAvailable
+                  price { amount currencyCode }
+                  selectedOptions { name value }
                 }
               }
             }
           }
         }
       }
-    }`
+    }`,
+    cache: "no-store"
   });
 }
 
