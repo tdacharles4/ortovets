@@ -3,9 +3,11 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import InnerImageZoom from "react-inner-image-zoom";
+import 'react-inner-image-zoom/lib/styles.min.css';
 import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
 import { X, ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus } from "lucide-react";
-import { DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog"
 import { useCart } from "@/app/context/cartContext";
 import {
   Select,
@@ -22,11 +24,17 @@ import {
 } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { ProductImageGallery } from "./ProductImageGallery";
+
 
 export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   const allImages = product.images?.edges?.map(edge => edge.node) || [];
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
+
+  const [isGalleryOpen, setIsGalleryOpen] = React.useState(false);
+  const [galleryInitialIndex, setGalleryInitialIndex] = React.useState(0);
+  const [galleryApi, setGalleryApi] = React.useState<any>();
 
   // cart
   const { addToCart } = useCart();
@@ -176,6 +184,15 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
     setQuantity(1);
   }, [selectedSize]);
 
+  // Abrir x imagen al abrir la galeria expansible
+  React.useEffect(()=>{
+    if(galleryApi&&isGalleryOpen){
+      setTimeout(()=>{
+        galleryApi.scrollTo(galleryInitialIndex, true);
+      },10);
+    }
+  },[galleryApi,isGalleryOpen,galleryInitialIndex]);
+
   return (
     <div className="relative flex flex-col lg:flex-row w-full max-w-[95vw] lg:w-fit h-fit max-h-[90vh] lg:max-h-none overflow-y-auto lg:overflow-visible bg-[#FFFFFF] rounded-[24px] lg:rounded-[32px] items-center lg:items-start p-6 md:p-10 lg:p-[64px] gap-8 lg:gap-[24px] group/fpc shadow-2xl mx-auto">
       {/* Close Button Inside the card */}
@@ -189,12 +206,21 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
         {/* Main Image */}
         <div className="relative w-full aspect-square lg:h-[345px] shrink-0 rounded-[20px] lg:rounded-[24px] overflow-hidden bg-muted">
           {mainImage ? (
+            <button
+              type="button"
+              className="w-full h-full"
+              onClick={() => {
+                setGalleryInitialIndex(selectedImageIndex);
+                setIsGalleryOpen(true);
+              }}
+            >
             <Image
               src={mainImage.url}
               alt={mainImage.altText || product.title}
               fill
               className="object-cover transition-transform duration-500 lg:group-hover/fpc:scale-110"
             />
+            </button>
           ) : (
             <div className="flex h-full items-center justify-center text-xs text-muted-foreground bg-muted">
               Sin imagen
@@ -375,6 +401,9 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
           </Accordion>
         </div>
       </div>
+
+      {/* 2.2. Componente HTML de la Galeria Expansible */}
+      <ProductImageGallery images={allImages} isOpen={isGalleryOpen} onOpenChange={setIsGalleryOpen} initialIndex={galleryInitialIndex}/>
     </div>
   );
 }
