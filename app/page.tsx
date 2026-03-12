@@ -6,7 +6,7 @@ import { getProducts, getArticle } from "@/lib/shopify";
 import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
 import { AuthButton } from "@/components/AuthButton";
 import { AccountPanel } from "@/components/AccountPanel";
-import DogMap from "@/components/Perro3D";
+import { DogMapWithProducts } from "@/components/DogMapWithProducts";
 import { NoticieroCarousel } from "@/components/ui/NoticieroCarousel";
 
 export const dynamic = 'force-dynamic';
@@ -31,7 +31,7 @@ export default async function Home() {
     "carrusel-noticiero-3"
   ];
   const articlePromises = carouselArticleHandles.map(
-    handle => getArticle("carrusel-noticiero",handle)
+    handle => getArticle("carrusel-noticiero", handle)
   );
   const carouselArticles = (await Promise.all(articlePromises)).filter(Boolean);
 
@@ -57,9 +57,9 @@ export default async function Home() {
   return (
     <>
       {/* Landing Frame */}
-      <div className="relative w-full bg-[linear-gradient(to_bottom,#294676,#4C83DC)] overflow-hidden flex justify-center">
+      <div className="relative w-full bg-[linear-gradient(to_bottom,#294676,#4C83DC)] overflow-hidden flex justify-center py-8 lg:p-2 xl:py-0">
         {/* sublanding frame */}
-        <div className="flex flex-col lg:flex-row items-center justify-between w-full max-w-[1920px] min-h-[790px] py-12 lg:py-[120px] px-6 lg:px-[100px] gap-12 lg:gap-0 bg-transparent">
+        <div className="flex flex-col xl:flex-row items-center justify-center px-10 xl:px-0 xl:gap-4 gap-8 min-h-[calc(100vh-64px)]">
           {/* Redirection Frame */}
           <div className="flex flex-col w-full lg:w-[569px] gap-8 lg:gap-[48px] bg-transparent">
             {/* Text Content Frame */}
@@ -108,56 +108,14 @@ export default async function Home() {
           </div>
 
           {/* 3D Model Frame */}
+
+
           <div className="flex flex-col xl:flex-row w-full xl:w-[1080px] h-auto gap-8 lg:gap-[16px] bg-transparent">
-            {/* 3D Image Frame */}
-            <div className="flex flex-col w-full xl:w-[588px] gap-6 lg:gap-[16px] bg-transparent">
-              {/* 3D Image Heading Text Frame */}
-              <div className="flex flex-row items-center justify-center w-full lg:w-[542px] min-h-[64px] gap-[10px] mx-auto">
-                <p className="text-[#F5F5F5] font-sans font-medium text-lg leading-tight text-center">
-                  Haz clic en cualquier zona del cuerpo del perro para ver productos ortopédicos específicos para esa área.
-                </p>
-              </div>
-
-              <div className="w-full flex justify-center">
-                <DogMap />
-              </div>
-            </div>
-
-            {/* 3D Products Frame */}
-            <div className="flex flex-col w-full xl:w-[476px] h-auto xl:pt-[28px] gap-6 lg:gap-[16px] bg-transparent">
-              {/* 3D Products Subframe */}
-              <div className="flex flex-col w-full h-auto gap-6 lg:gap-[16px]">
-                {/* Heading Text Frame */}
-                <div className="flex flex-col w-full lg:w-[374px] gap-[8px] mx-auto">
-                  <h2 className="text-[#F5F5F5] font-sans font-semibold text-xl lg:text-[22px] leading-tight text-center uppercase">
-                    Productos Recomendados para Cuello y Espalda
-                  </h2>
-                </div>
-
-                {/* 3 Equal 3D Product Cards */}
-                <div className="flex flex-col gap-4 lg:gap-[16px]">
-                  {products.map((product) => (
-                    <ProductCardHorizontal key={product.id} product={product} />
-                  ))}
-                  {/* Fill with placeholders if fewer than 3 products */}
-                  {Array.from({ length: Math.max(0, 3 - products.length) }).map((_, i) => (
-                    <div key={`placeholder-${i}`} className="w-full h-[148px] bg-white/10 rounded-[32px]"></div>
-                  ))}
-                </div>
-
-                {/* 3D Redirection Frame */}
-                <div className="flex flex-row items-center justify-center lg:justify-start w-full gap-[8px] mt-4 lg:mt-0">
-                  <Link href="/tienda" className="flex items-center gap-[8px] text-[#F5F5F5] hover:opacity-80 transition-opacity">
-                    <span className="font-sans font-medium text-lg leading-[100%] underline decoration-solid text-center lg:text-left">
-                      Ver más productos recomendados
-                    </span>
-                    <ArrowRight className="w-[30px] h-[30px]" />
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <DogMapWithProducts defaultProducts={products} />
           </div>
         </div>
+
+
       </div>
 
       {/* Main Section: Recursos y Publicaciones */}
@@ -189,7 +147,7 @@ export default async function Home() {
                     )}
                     <div className="flex flex-col flex-grow p-6 overflow-hidden">
                       <h3 className="text-xl font-bold mb-2 line-clamp-2">{landingArticle1.title}</h3>
-                      <div 
+                      <div
                         className="prose prose-invert prose-sm overflow-y-auto max-h-[120px] sm:max-h-none flex-grow pr-2"
                         dangerouslySetInnerHTML={{ __html: landingArticle1.contentHtml }}
                       />
@@ -205,7 +163,7 @@ export default async function Home() {
                   <div className="flex flex-col-reverse sm:flex-row w-full h-full">
                     <div className="flex flex-col flex-grow p-6 overflow-hidden">
                       <h3 className="text-xl font-bold mb-2 line-clamp-2">{landingArticle2.title}</h3>
-                      <div 
+                      <div
                         className="prose prose-invert prose-sm overflow-y-auto max-h-[120px] sm:max-h-none flex-grow pr-2"
                         dangerouslySetInnerHTML={{ __html: landingArticle2.contentHtml }}
                       />
@@ -253,7 +211,7 @@ export default async function Home() {
                     {/* Content Frame */}
                     <div className="flex flex-col w-full p-6 gap-4 overflow-hidden">
                       <h3 className="text-xl font-bold line-clamp-2">{landingArticle3.title}</h3>
-                      <div 
+                      <div
                         className="prose prose-invert prose-sm line-clamp-4 lg:line-clamp-6"
                         dangerouslySetInnerHTML={{ __html: landingArticle3.contentHtml }}
                       />
@@ -272,8 +230,8 @@ export default async function Home() {
 
             {/* Rightmost Image: Proportional to 472px */}
             <div className="w-full xl:flex-[472] aspect-video sm:aspect-[16/9] xl:aspect-auto xl:min-h-[583px]">
-              {carouselArticles && carouselArticles.length>0 && (
-                <NoticieroCarousel articles={carouselArticles}/>
+              {carouselArticles && carouselArticles.length > 0 && (
+                <NoticieroCarousel articles={carouselArticles} />
               )}
             </div>
           </div>

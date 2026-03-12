@@ -5,10 +5,14 @@ import Image from "next/image"
 
 const bodyParts = [
   { id: 'cuello',       src: '/img/perro3d/cuello.png',       label: 'Cuello' },
+  { id: 'espalda',      src: '/img/perro3d/espalda.png',      label: 'Espalda' },
+  { id: 'cadera',       src: '/img/perro3d/cadera.png',       label: 'Cadera' },
   { id: 'hombro',       src: '/img/perro3d/hombro.png',       label: 'Hombro' },
-  { id: 'nalgas',       src: '/img/perro3d/nalgas.png',       label: 'Nalgas' },
+  { id: 'codo',         src: '/img/perro3d/codo.png',         label: 'Codo' },
+  { id: 'rodilla',      src: '/img/perro3d/rodilla.png',      label: 'Rodilla' },
   { id: 'pata_front',   src: '/img/perro3d/pata_front.png',   label: 'Pata frontal' },
-  { id: 'rodilla_back', src: '/img/perro3d/rodilla_back.png', label: 'Rodilla trasera' },
+  { id: 'pata_back',    src: '/img/perro3d/pata_back.png',    label: 'Pata trasera' },
+  
 ]
 
 const IMG_W = 990
@@ -100,7 +104,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
     <div
       ref={containerRef}
       // Usamos aspect-ratio para que el contenedor siempre respete 990:1080
-      className="relative w-full max-w-[588px] rounded-[32px] overflow-hidden cursor-pointer mx-auto touch-none"
+      className="relative w-full max-w-[588px] rounded-[32px] overflow-hidden cursor-pointer mx-auto"
       style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setActivePart(null)}
@@ -141,7 +145,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
       ))}
 
       {/* Tooltip opcional */}
-      {activePart && (
+      {/* {activePart && (
         <div className="fixed bg-black/70 text-white text-sm px-3 py-1 rounded-full pointer-events-none z-50"
         style={{
             left: mousePos.x + 12,
@@ -150,7 +154,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
         >
           {bodyParts.find(p => p.id === activePart)?.label}
         </div>
-      )}
+      )} */}
     </div>
   )
 }
