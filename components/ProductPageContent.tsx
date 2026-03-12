@@ -136,7 +136,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
 
   // Reset quantity when size changes
   React.useEffect(() => {
-    setQuantity(0);
+    setQuantity(1);
   }, [selectedSize]);
 
   // Abrir x imagen al abrir la galeria expansible

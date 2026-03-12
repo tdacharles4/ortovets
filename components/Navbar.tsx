@@ -238,8 +238,8 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#ffff]">
-      <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div className="hidden md:flex items-center gap-10">
+      <div className="flex h-16 items-center justify-between px-4 sm:px-6 xl:px-8">
+        <div className="hidden lg:flex items-center gap-10">
           <Link href="/"><Image src="/img/nav-logo.png" alt="Ortovets Logo" width={170} height={48} /></Link>
           <NavigationMenu>
             <NavigationMenuList>
@@ -256,7 +256,7 @@ export default function Navbar() {
           </NavigationMenu>
         </div>
 
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden lg:flex items-center space-x-4">
           <SearchBar />
           <AuthNav />
           <Link href="/cart" className="relative">
@@ -270,7 +270,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile View */}
-        <div className="flex w-full items-center justify-between md:hidden">
+        <div className="flex w-full items-center justify-between lg:hidden">
           <Link href="/"><Image src="/img/nav-logo.png" alt="Ortovets Logo" width={140} height={40} /></Link>
           <Sheet>
             <SheetTrigger asChild>
