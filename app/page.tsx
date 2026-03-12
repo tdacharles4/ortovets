@@ -57,7 +57,7 @@ export default async function Home() {
   return (
     <>
       {/* Landing Frame */}
-      <div className="relative w-full bg-[linear-gradient(to_bottom,#294676,#4C83DC)] overflow-hidden flex justify-center">
+      <div className="relative w-full bg-[linear-gradient(to_bottom,#294676,#4C83DC)] overflow-hidden flex justify-center py-8 lg:p-2 xl:py-0">
         {/* sublanding frame */}
         <div className="flex flex-col xl:flex-row items-center justify-center px-10 xl:px-0 xl:gap-4 gap-8 min-h-[calc(100vh-64px)]">
           {/* Redirection Frame */}
