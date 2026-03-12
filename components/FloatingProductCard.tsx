@@ -101,16 +101,29 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   )) as string[];
 
   const [selectedSize, setSelectedSize] = React.useState<string | undefined>(undefined);
+  const [selectedSide, setSelectedSide] = React.useState<string | undefined>(undefined);
+
+  // Listado de lados disponibles
+  const sideOptions = React.useMemo(()=>{
+    if(!selectedSize)return[];
+    const variantsForSize=product.variants.edges.filter(edge=>edge.node.selectedOptions.some(opt=>opt.name.toLowerCase()==='talla'&&opt.value===selectedSize));
+    const sides = variantsForSize.map(edge=>edge.node.selectedOptions.find(opt=>opt.name.toLowerCase()==='lado')?.value);
+    return[...new Set(sides.filter(Boolean))] as string[];
+  },[selectedSize,product.variants.edges]);
 
   // Find the selected Menudeo variant based on the selected size
-  const selectedVariant = product.variants?.edges?.find(edge =>
-    isMenudeoVariant(edge.node) && (
-      edge.node.selectedOptions.some(opt =>
-        ['size', 'talla', 'tamaño', 'tamaño de accesorio'].includes(opt.name.toLowerCase()) &&
-        opt.value === selectedSize
-      ) || (edge.node.selectedOptions.length === 1 && edge.node.selectedOptions[0].value === selectedSize)
-    )
-  )?.node;
+  const selectedVariant = React.useMemo(()=>{
+    if(!selectedSize){
+      return product.variants.edges.length===1?product.variants.edges[0].node:undefined;
+    }
+    const matchingVariant=product.variants.edges.find(edge=>{
+      const hasSize=edge.node.selectedOptions.some(opt=>opt.name.toLowerCase()==='talla'&&opt.value===selectedSize);
+      if(!hasSize)return false;
+      if(sideOptions.length>0){
+        return edge.node.selectedOptions.some(opt=>opt.name.toLowerCase()==='lado'&&opt.value===selectedSide);
+      }return true;
+    })?.node;
+  },[selectedSize,selectedSide,product.variants.edges,sideOptions])
 
   const menudeoPriceRange = getMenudeoPriceRange(product);
   const minPrice = menudeoPriceRange.minVariantPrice;
@@ -314,6 +327,25 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
                       {sizes.map((size) => (
                         <SelectItem key={size} value={size!}>
                           {size}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Lado Select */}
+              {sideOptions.length>0&&(
+                <div className="flex flex-col gap-2 w-full sm:flex-[3]">
+                  <Label htmlFor="size-select-fpc" className="text-[#1E1E1E] font-sans font-medium text-sm h-5 flex items-center">Lado</Label>
+                  <Select value={selectedSide} onValueChange={setSelectedSide}>
+                    <SelectTrigger id="size-select-fpc" className="w-full !h-12 rounded-[8px] border border-input text-base flex items-center bg-white px-3">
+                      <SelectValue placeholder="Selecciona un lado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sideOptions.map((side) => (
+                        <SelectItem key={side} value={side!}>
+                          {side}
                         </SelectItem>
                       ))}
                     </SelectContent>
