@@ -1,6 +1,8 @@
 import { getAllArticles } from "@/lib/shopify";
 import { NoticiasClient } from "@/components/NoticiasClient";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Noticias() {
   const articles = await getAllArticles("no-store");
 
