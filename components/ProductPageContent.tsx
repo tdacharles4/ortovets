@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from 'next/link';
 import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
-import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, Maximize2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -153,7 +153,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
       {/* Images Frame*/}
       <div className="flex flex-col w-full lg:w-[600px] xl:w-[816px] gap-[16px] lg:gap-[24px] shrink-0">
         {/* Main Image Container */}
-        <div className="relative w-full aspect-square md:aspect-video lg:aspect-square lg:h-[500px] bg-muted overflow-hidden rounded-2xl">
+        <div className="relative w-full aspect-square md:aspect-video lg:aspect-square lg:h-[800px] bg-muted overflow-hidden rounded-2xl">
           {mainImage ? (
             <button
               type="button"
@@ -169,6 +169,9 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
               fill
               className="object-cover"
             />
+            <div className="absolute bottom-3 right-3 bg-black/40 text-white p-1.5 rounded-lg pointer-events-none">
+              <Maximize2 className="w-5 h-5" />
+            </div>
             </button>
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground bg-muted text-xl">
