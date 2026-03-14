@@ -480,6 +480,7 @@ export async function getArticleByTag(tag: string, cache: RequestCache = 'force-
       blogs: {
         edges: {
           node: {
+            handle: string;
             articles: {
               edges: { node: any }[]
             }
