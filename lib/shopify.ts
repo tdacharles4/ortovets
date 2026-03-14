@@ -378,6 +378,7 @@ export async function getArticlesByTag(tag: string, count: number = 10, cache: R
       blogs: {
         edges: {
           node: {
+            handle: string;
             articles: {
               edges: { node: any }[]
             }
