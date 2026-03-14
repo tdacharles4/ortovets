@@ -339,39 +339,157 @@ export async function getCustomer() {
 
 // Logica Blog
 
-export async function getArticle(blogHandle: string, articleHandle: string, cache: RequestCache = 'force-cache') {
+export async function getArticlesByTag(tag: string, count: number = 10, cache: RequestCache = 'force-cache') {
   const query = `
-    query GetArticle($blogHandle: String!, $articleHandle: String!) {
-      blog(handle: $blogHandle) {
-        articleByHandle(handle: $articleHandle) {
-          title
-          contentHtml
-          publishedAt
-          authorV2{
-            name
-          }
-          image {
-            url
-            altText
+    query GetArticlesByTag($tag: String!, $count: Int!) {
+      blogs(first: 20) {
+        edges {
+          node {
+            handle
+            articles(first: $count, query: $tag) {
+              edges {
+                node {
+                  handle
+                  title
+                  contentHtml
+                  publishedAt
+                  tags
+                  authorV2 {
+                    name
+                  }
+                  image {
+                    url
+                    altText
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
-  `
-  const variables = {
-    blogHandle,
-    articleHandle
-  }
-  const rest = await shopifyFetch<{
+  `;
+  const res = await shopifyFetch<{
     data: {
-      blog: {
-        articleByHandle: any
-      } | null
+      blogs: {
+        edges: {
+          node: {
+            handle: string;
+            articles: {
+              edges: { node: any }[]
+            }
+          }
+        }[]
+      }
     }
-  }>({
-    query,
-    variables,
-    cache
-  });
-  return rest.body.data?.blog?.articleByHandle ?? null;
+  }>({ query, variables: { tag: `tag:${tag}`, count }, cache });
+
+  const blogs = res.body.data?.blogs?.edges ?? [];
+  return blogs.flatMap(blog =>
+    blog.node.articles.edges.map((e: any) => ({ ...e.node, blogHandle: blog.node.handle }))
+  );
+}
+
+export async function getAllArticles(cache: RequestCache = 'force-cache') {
+  const query = `
+    query GetAllArticles {
+      blogs(first: 20) {
+        edges {
+          node {
+            handle
+            title
+            articles(first: 50) {
+              edges {
+                node {
+                  handle
+                  title
+                  contentHtml
+                  publishedAt
+                  tags
+                  authorV2 {
+                    name
+                  }
+                  image {
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  const res = await shopifyFetch<{
+    data: {
+      blogs: {
+        edges: {
+          node: {
+            handle: string;
+            title: string;
+            articles: { edges: { node: any }[] }
+          }
+        }[]
+      }
+    }
+  }>({ query, cache });
+
+  const blogs = res.body.data?.blogs?.edges ?? [];
+  return blogs.flatMap(blog =>
+    blog.node.articles.edges.map((e: any) => ({ ...e.node, blogHandle: blog.node.handle, blogTitle: blog.node.title }))
+  );
+}
+
+export async function getArticleByTag(tag: string, cache: RequestCache = 'force-cache') {
+  const query = `
+    query GetArticleByTag($tag: String!) {
+      blogs(first: 20) {
+        edges {
+          node {
+            handle
+            articles(first: 1, query: $tag) {
+              edges {
+                node {
+                  handle
+                  title
+                  contentHtml
+                  publishedAt
+                  tags
+                  authorV2 {
+                    name
+                  }
+                  image {
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  const res = await shopifyFetch<{
+    data: {
+      blogs: {
+        edges: {
+          node: {
+            handle: string;
+            articles: {
+              edges: { node: any }[]
+            }
+          }
+        }[]
+      }
+    }
+  }>({ query, variables: { tag: `tag:${tag}` }, cache });
+
+  const blogs = res.body.data?.blogs?.edges ?? [];
+  for (const blog of blogs) {
+    const article = blog.node.articles.edges[0]?.node;
+    if (article) return { ...article, blogHandle: blog.node.handle };
+  }
+  return null;
 }
