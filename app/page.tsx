@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, Award, ShieldCheck, Heart } from "lucide-react";
-import { getProducts, getArticle } from "@/lib/shopify";
+import { getProducts, getArticleByTag, getArticlesByTag } from "@/lib/shopify";
 import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
 import { AuthButton } from "@/components/AuthButton";
 import { AccountPanel } from "@/components/AccountPanel";
@@ -14,26 +14,20 @@ export const dynamic = 'force-dynamic';
 export default async function Home() {
   const { body } = await getProducts();
   const products = body.data.products.edges.map((edge) => edge.node).slice(0, 3);
-  const landingArticle1 = await getArticle("noticias-landing-page", "noticia-landing-page-1", "no-store");
-  const landingArticle2 = await getArticle("noticias-landing-page", "noticia-landing-page-2", "no-store");
-  const landingArticle3 = await getArticle("noticias-landing-page", "recursos-landing-page", "no-store");
 
+  const LANDING_TAGS = {
+    article1: "noticia-landing-page-1",
+    article2: "noticia-landing-page-2",
+    article3: "recursos-landing-page",
+    carousel: "carrusel-noticiero",
+  };
 
-  console.log("--- Landing Articles Debug ---");
-  console.log("Article 1:", landingArticle1 ? "Fetched" : "NULL");
-  console.log("Article 2:", landingArticle2 ? "Fetched" : "NULL");
-  if (landingArticle2) console.log("Article 2 Title:", landingArticle2.title);
-  console.log("------------------------------");
-
-  const carouselArticleHandles = [
-    "carrusel-noticiero-1",
-    "carrusel-noticiero-2",
-    "carrusel-noticiero-3"
-  ];
-  const articlePromises = carouselArticleHandles.map(
-    handle => getArticle("carrusel-noticiero", handle)
-  );
-  const carouselArticles = (await Promise.all(articlePromises)).filter(Boolean);
+  const [landingArticle1, landingArticle2, landingArticle3, carouselArticles] = await Promise.all([
+    getArticleByTag(LANDING_TAGS.article1, "no-store"),
+    getArticleByTag(LANDING_TAGS.article2, "no-store"),
+    getArticleByTag(LANDING_TAGS.article3, "no-store"),
+    getArticlesByTag(LANDING_TAGS.carousel),
+  ]);
 
   const features = [
     {
@@ -131,10 +125,8 @@ export default async function Home() {
             <div className="flex flex-col gap-6 w-full xl:flex-[690]">
               {/* #1. Topmost Frame: Noticia Landing Page 1 */}
               <div className="w-full min-h-[247px] rounded-[16px] bg-white/20 overflow-hidden">
-                {/* Conditional Render del Articulo 1 */}
                 {landingArticle1 && (
                   <div className="flex flex-col sm:flex-row w-full h-full">
-                    {/* Imagen */}
                     {landingArticle1.image && (
                       <div className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative">
                         <Image
@@ -158,7 +150,6 @@ export default async function Home() {
 
               {/* #2. Middle Frame - Noticia Landing Page 2 */}
               <div className="w-full min-h-[240px] rounded-[16px] bg-white/20 overflow-hidden">
-                {/* Conditional Render del Articulo 2 */}
                 {landingArticle2 && (
                   <div className="flex flex-col-reverse sm:flex-row w-full h-full">
                     <div className="flex flex-col flex-grow p-6 overflow-hidden">
@@ -168,7 +159,6 @@ export default async function Home() {
                         dangerouslySetInnerHTML={{ __html: landingArticle2.contentHtml }}
                       />
                     </div>
-                    {/* Imagen */}
                     {landingArticle2.image && (
                       <div className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative">
                         <Image
@@ -193,11 +183,9 @@ export default async function Home() {
 
             {/* Middle Frame: Proportional to 552px */}
             <div className="flex flex-col gap-6 w-full xl:flex-[552]">
-              {/* Topmost Frame: Noticia Landing Page 3 */}
               <div className="flex flex-col w-full min-h-[511px] bg-white/20 rounded-[16px] overflow-hidden">
                 {landingArticle3 && (
                   <>
-                    {/* Image Frame */}
                     <div className="w-full aspect-video sm:aspect-auto sm:h-[310px] relative">
                       {landingArticle3.image && (
                         <Image
@@ -208,7 +196,6 @@ export default async function Home() {
                         />
                       )}
                     </div>
-                    {/* Content Frame */}
                     <div className="flex flex-col w-full p-6 gap-4 overflow-hidden">
                       <h3 className="text-xl font-bold line-clamp-2">{landingArticle3.title}</h3>
                       <div
@@ -220,7 +207,6 @@ export default async function Home() {
                 )}
               </div>
 
-              {/* Bottommost Frame */}
               <div className="w-full h-[48px] bg-white/10 rounded-lg overflow-hidden mt-auto">
                 <Button className="w-full h-full bg-transparent hover:bg-white/10 text-white border-none shadow-none text-lg">
                   Ver más
