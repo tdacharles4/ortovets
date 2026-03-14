@@ -189,9 +189,12 @@ export default function ContactoPage() {
       
       {/* Container for siblings */}
       <div className="relative z-10 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-[64px] max-w-[1810px] w-full">
-        {/* Content Frame */}
-        <div className="w-full lg:w-fit flex flex-col items-center lg:items-start justify-between gap-12 lg:h-[674px]">
-          <div className="flex flex-col gap-4 text-center lg:text-left">
+
+        {/* Left column — display:contents on mobile so children participate directly in the outer flex order */}
+        <div className="contents lg:flex lg:flex-col lg:items-start lg:justify-between lg:gap-12 lg:h-[674px] lg:w-fit">
+
+          {/* Title — order 1 on mobile */}
+          <div className="order-1 lg:order-none flex flex-col gap-4 text-center lg:text-left w-full">
             <h1 className="text-[#1E2939] font-sans font-extrabold text-3xl md:text-5xl lg:text-[48px] leading-tight">
               Tu Tienes Preguntas,<br />Nosotros Respuestas
             </h1>
@@ -200,43 +203,24 @@ export default function ContactoPage() {
             </p>
           </div>
 
-          {/* Info Frame */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-[40px] w-full max-w-[600px] lg:max-w-none lg:flex lg:flex-row lg:items-center">
-            {/* Frame 1: Ubicación */}
+          {/* Info squares — order 3 on mobile */}
+          <div className="order-3 lg:order-none grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-[40px] w-full max-w-[600px] lg:max-w-none lg:flex lg:flex-row lg:items-center">
             <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
-              <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">
-                Ubicación
-              </h3>
+              <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">Ubicación</h3>
               <p className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2] max-w-[200px] mx-auto lg:mx-0">
                 Tlapacoyan 14, Inmecafe, 91190 Xalapa-Enríquez, Ver.
               </p>
             </div>
-
-            {/* Frame 2: Email */}
             <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
-              <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">
-                Email
-              </h3>
-              <p className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2]">
-                ortovets@gmail.com
-              </p>
+              <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">Email</h3>
+              <p className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2]">ortovets@gmail.com</p>
             </div>
-
-            {/* Frame 3: Contacto */}
             <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
-              <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">
-                Contacto
-              </h3>
-              <p className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2]">
-                +(52) 228 257 9865
-              </p>
+              <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">Contacto</h3>
+              <p className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2]">+(52) 228 257 9865</p>
             </div>
-
-            {/* Frame 4: Redes Sociales */}
             <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
-              <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">
-                Redes Sociales
-              </h3>
+              <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">Redes Sociales</h3>
               <div className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2] flex flex-col">
                 <span>Instagram</span>
                 <span>Facebook</span>
@@ -247,8 +231,10 @@ export default function ContactoPage() {
           </div>
         </div>
 
-        {/* Contact Form Frame */}
-        <ContactForm />
+        {/* Contact Form — order 2 on mobile */}
+        <div className="order-2 lg:order-none w-full lg:w-fit">
+          <ContactForm />
+        </div>
       </div>
     </div>
   );

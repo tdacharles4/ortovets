@@ -20,6 +20,8 @@ export function NoticieroCarousel({articles}: {articles: Article[]}){
             plugins={[
                 Autoplay({
                 delay: 5000,
+                stopOnInteraction: false,
+                stopOnMouseEnter: false,
                 }),
             ]}
             opts={{
