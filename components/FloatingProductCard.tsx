@@ -6,7 +6,7 @@ import Link from "next/link";
 import InnerImageZoom from "react-inner-image-zoom";
 import 'react-inner-image-zoom/lib/styles.min.css';
 import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
-import { X, ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, Maximize2 } from "lucide-react";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog"
 import { useCart } from "@/app/context/cartContext";
 import {
@@ -233,6 +233,9 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
               fill
               className="object-cover transition-transform duration-500 lg:group-hover/fpc:scale-110"
             />
+            <div className="absolute bottom-3 right-3 bg-black/40 text-white p-1.5 rounded-lg pointer-events-none">
+              <Maximize2 className="w-5 h-5" />
+            </div>
             </button>
           ) : (
             <div className="flex h-full items-center justify-center text-xs text-muted-foreground bg-muted">

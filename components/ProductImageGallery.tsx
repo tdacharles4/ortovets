@@ -65,27 +65,6 @@ export function ProductImageGallery({images,isOpen,onOpenChange,initialIndex}:Pr
             </Carousel>
           </div>
 
-          <div className="w-full max-w-[450px] lg:max-w-[600px]">
-            <Carousel opts={{slidesToScroll:1, align:"start", loop: true}} className="w-full">
-              <CarouselContent className="-ml-2 justify-center">
-                {images.map((image,index)=>(
-                  <CarouselItem key={index} className="pl-2 basis-1/4 sm:basis-1/5">
-                    <div
-                      className="relative aspect-square cursor-pointer"
-                      onClick={()=>galleryApi?.scrollTo(index)}
-                    >
-                      <Image
-                        src={image.url}
-                        alt={`Thumbnail ${index+1}`}
-                        fill
-                        className="object-cover rounded-md"
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-          </div>
         </DialogContent>
       </Dialog>
     );
