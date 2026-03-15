@@ -445,6 +445,74 @@ export async function getAllArticles(cache: RequestCache = 'force-cache') {
   );
 }
 
+export async function getArticleByHandle(
+  blogHandle: string,
+  articleHandle: string,
+  cache: RequestCache = 'force-cache'
+) {
+  const query = `
+    query GetArticleByHandle($blogHandle: String!, $articleHandle: String!) {
+      blog(handle: $blogHandle) {
+        handle
+        title
+        articleByHandle(handle: $articleHandle) {
+          handle
+          title
+          contentHtml
+          publishedAt
+          tags
+          image {
+            url
+            altText
+          }
+        }
+        articles(first: 50) {
+          edges {
+            node {
+              handle
+              title
+              publishedAt
+              image {
+                url
+                altText
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const res = await shopifyFetch<{
+    data: {
+      blog: {
+        handle: string;
+        title: string;
+        articleByHandle: {
+          handle: string;
+          title: string;
+          contentHtml: string;
+          publishedAt: string;
+          tags: string[];
+          image: { url: string; altText: string | null } | null;
+        } | null;
+        articles: {
+          edges: {
+            node: {
+              handle: string;
+              title: string;
+              publishedAt: string;
+              image: { url: string; altText: string | null } | null;
+            };
+          }[];
+        };
+      } | null;
+    };
+  }>({ query, variables: { blogHandle, articleHandle }, cache });
+
+  return res.body.data?.blog ?? null;
+}
+
 export async function getArticleByTag(tag: string, cache: RequestCache = 'force-cache') {
   const query = `
     query GetArticleByTag($tag: String!) {
