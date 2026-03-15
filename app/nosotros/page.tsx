@@ -92,7 +92,7 @@ export default function Nosotros() {
       </section>
 
       {/* Frame 3: Misión y Visión */}
-      <section className="w-full max-w-[1920px] min-h-fit md:min-h-[500px] lg:min-h-[547px] bg-[#F5F1E3CC] bg-[url('/img/nosotros-frame2-bg.png')] bg-no-repeat bg-center md:bg-right bg-cover md:bg-contain flex items-center py-12 md:py-14 lg:py-16 px-6 md:px-12 lg:px-16 xl:px-[64px]">
+      <section className="w-full max-w-[1920px] min-h-fit md:min-h-[500px] lg:min-h-[547px] bg-[#F5EEE5] bg-[url('/img/nosotros-frame2-bg.png')] bg-no-repeat bg-center md:bg-right bg-cover md:bg-contain flex items-center py-12 md:py-14 lg:py-16 px-6 md:px-12 lg:px-16 xl:px-[64px]">
         <div className="w-full max-w-[1187px] flex flex-col gap-8 md:gap-9 lg:gap-10 xl:gap-[42px] bg-white/70 md:bg-white/40 lg:bg-white/20 xl:bg-transparent p-6 md:p-8 lg:p-10 xl:p-0 rounded-3xl md:rounded-2xl backdrop-blur-sm xl:backdrop-blur-none shadow-sm md:shadow-none">
           <div className="flex flex-col gap-3 md:gap-2 lg:gap-4">
             <h2 className="text-[#8CC63F] font-sans font-extrabold text-3xl md:text-4xl lg:text-5xl xl:text-[48px] leading-tight xl:leading-[1.0] uppercase">
