@@ -6,20 +6,23 @@ import Image from "next/image";
 export default function ConsultasPage() {
   return (
     <div className="flex flex-col w-full items-center bg-[#F5F1E6]">
-      <section className="relative w-full max-w-[1920px] lg:pb-24 xl:pb-0 xl:h-[540px] lg:bg-[url('/img/consultas-icon.png')] bg-no-repeat bg-contain [background-position:calc(100%+60px)_100%] flex flex-col lg:flex-row lg:items-start">
+      <section className="relative w-full max-w-[1920px] lg:pb-24 xl:pb-0 xl:h-[680px] lg:bg-[url('/img/consultas-icon.png')] bg-no-repeat bg-contain xl:[background-size:auto_85%] [background-position:calc(100%+120px)_100%] flex flex-col lg:flex-row lg:items-start">
 
         {/* Content Frame */}
         <div className="w-full lg:max-w-[540px] xl:max-w-[1114px] flex flex-col justify-center py-10 px-6 lg:py-[48px] lg:pl-[64px] xl:pl-[100px] gap-6 lg:gap-[48px] items-center lg:items-start">
 
           {/* Blur box */}
           <div className="flex flex-col gap-4 w-full items-center lg:items-start text-center lg:text-left bg-white/70 lg:bg-white/60 xl:bg-transparent p-4 md:p-6 xl:p-0 rounded-3xl xl:rounded-none backdrop-blur-md xl:backdrop-blur-none shadow-sm xl:shadow-none transition-all duration-300">
-            <div className="flex flex-col gap-3 xl:w-fit">
-              <h1 className="text-[#1E2939] font-sans font-extrabold leading-tight text-[clamp(1.25rem,3.5vw,3rem)] xl:whitespace-nowrap">
-                Agenda Tu Consulta Virtual
-              </h1>
-              <p className="text-[#757575] font-sans font-medium leading-snug text-[clamp(0.875rem,2vw,1.5rem)]">
-                Tu mascota merece atención profesional sin salir de casa. Ponte en contacto con nosotros para coordinar tu consulta virtual.
-              </p>
+            <div className="flex flex-col xl:flex-row w-full">
+              <div className="flex flex-col gap-3 xl:w-1/2">
+                <h1 className="text-[#1E2939] font-sans font-extrabold leading-tight text-[clamp(1.25rem,3.5vw,3rem)]">
+                  Agenda Tu Consulta Virtual
+                </h1>
+                <p className="text-[#757575] font-sans font-medium leading-snug text-[clamp(0.875rem,2vw,1.5rem)]">
+                  Tu mascota merece atención profesional sin salir de casa. Ponte en contacto con nosotros para coordinar tu consulta virtual.
+                </p>
+              </div>
+              <div className="hidden xl:block xl:w-1/2" />
             </div>
             <div className="flex flex-col gap-2">
               <h3 className="text-[#1E2939] font-sans font-bold text-[clamp(0.875rem,1.8vw,1.5rem)]">
