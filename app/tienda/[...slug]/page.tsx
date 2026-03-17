@@ -57,7 +57,7 @@ export default async function ProductPage({ params }: PageProps) {
               <h3 className="text-[#5A5A5A] font-sans font-semibold italic text-lg leading-[1.2]">
                 Video 1 Title
               </h3>
-              <div className="relative w-full aspect-video md:h-[300px] lg:h-[372px] bg-muted flex items-center justify-center cursor-pointer group rounded-xl overflow-hidden">
+              <div className="relative w-full aspect-video bg-muted flex items-center justify-center cursor-pointer group rounded-xl overflow-hidden">
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors" />
                 <PlayCircle className="w-12 h-12 lg:w-16 lg:h-16 text-white/80 group-hover:scale-110 transition-transform z-10" />
               </div>
@@ -68,7 +68,7 @@ export default async function ProductPage({ params }: PageProps) {
               <h3 className="text-[#5A5A5A] font-sans font-semibold italic text-lg leading-[1.2]">
                 Video 2 Title
               </h3>
-              <div className="relative w-full aspect-video md:h-[300px] lg:h-[372px] bg-muted flex items-center justify-center cursor-pointer group rounded-xl overflow-hidden">
+              <div className="relative w-full aspect-video bg-muted flex items-center justify-center cursor-pointer group rounded-xl overflow-hidden">
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors" />
                 <PlayCircle className="w-12 h-12 lg:w-16 lg:h-16 text-white/80 group-hover:scale-110 transition-transform z-10" />
               </div>
