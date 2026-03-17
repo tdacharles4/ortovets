@@ -12,9 +12,9 @@ export default function ConsultasPage() {
         <div className="w-full lg:max-w-[540px] xl:max-w-[1114px] flex flex-col justify-center py-10 px-6 lg:py-[48px] lg:pl-[64px] xl:pl-[100px] gap-6 lg:gap-[48px] items-center lg:items-start">
 
           {/* Blur box */}
-          <div className="flex flex-col gap-4 w-full items-center lg:items-start text-center lg:text-left bg-white/70 lg:bg-white/60 xl:bg-white/30 2xl:bg-transparent p-4 md:p-6 xl:p-8 2xl:p-0 rounded-3xl backdrop-blur-md xl:backdrop-blur-sm 2xl:backdrop-blur-none shadow-sm transition-all duration-300">
-            <div className="flex flex-col gap-3">
-              <h1 className="text-[#1E2939] font-sans font-extrabold leading-tight text-[clamp(1.25rem,3.5vw,3rem)]">
+          <div className="flex flex-col gap-4 w-full items-center lg:items-start text-center lg:text-left bg-white/70 lg:bg-white/60 xl:bg-transparent p-4 md:p-6 xl:p-0 rounded-3xl xl:rounded-none backdrop-blur-md xl:backdrop-blur-none shadow-sm xl:shadow-none transition-all duration-300">
+            <div className="flex flex-col gap-3 xl:w-fit">
+              <h1 className="text-[#1E2939] font-sans font-extrabold leading-tight text-[clamp(1.25rem,3.5vw,3rem)] xl:whitespace-nowrap">
                 Agenda Tu Consulta Virtual
               </h1>
               <p className="text-[#757575] font-sans font-medium leading-snug text-[clamp(0.875rem,2vw,1.5rem)]">
@@ -44,7 +44,7 @@ export default function ConsultasPage() {
             href="https://wa.me/522282579865"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-3 bg-[#25D366] text-white font-sans font-bold text-lg md:text-xl lg:text-[24px] px-10 py-4 rounded-full hover:bg-[#128C7E] transition-all shadow-lg shadow-[#25D366]/20 border-none cursor-pointer group"
+            className="flex items-center justify-center gap-3 bg-[#25D366] text-white font-sans font-bold text-lg md:text-xl xl:text-[clamp(1rem,1.8vw,1.5rem)] px-10 py-4 rounded-full hover:bg-[#128C7E] transition-all shadow-lg shadow-[#25D366]/20 border-none cursor-pointer group"
           >
             <Image
               src="/img/whatsapp_icon.svg"
