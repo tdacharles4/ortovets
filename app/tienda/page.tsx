@@ -1,9 +1,11 @@
 import { getProducts } from "@/lib/shopify";
-import { ProductCard } from "@/components/ProductCard";
+import { ProductGrid } from "@/components/ProductGrid";
+
+export const dynamic = 'force-dynamic'
 
 export default async function Tienda() {
   const { body } = await getProducts();
-  const products = body.data.products.edges.map((edge) => edge.node);
+  const edges = body.data.products.edges;
 
   return (
     <div className="w-full max-w-[1920px] mx-auto py-8 md:py-12 px-4 md:px-8 lg:px-16">
@@ -16,17 +18,11 @@ export default async function Tienda() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-
-      {products.length === 0 && (
-        <div className="text-center py-20">
-          <p className="text-xl text-muted-foreground">No se encontraron productos.</p>
-        </div>
-      )}
+      <ProductGrid
+        initialProducts={edges.map((e) => e.node)}
+        initialCursor={edges.at(-1)?.cursor ?? ""}
+        initialHasNextPage={body.data.products.pageInfo.hasNextPage}
+      />
     </div>
   );
 }

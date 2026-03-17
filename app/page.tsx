@@ -53,7 +53,7 @@ export default async function Home() {
       {/* Landing Frame */}
       <div className="relative w-full bg-[linear-gradient(to_bottom,#294676,#4C83DC)] overflow-hidden flex justify-center py-8 lg:p-2 xl:py-0">
         {/* sublanding frame */}
-        <div className="flex flex-col xl:flex-row items-center justify-center px-10 xl:px-0 xl:gap-4 gap-8 min-h-[calc(100vh-64px)]">
+        <div className="flex flex-col xl:flex-row flex-wrap items-center justify-center px-10 xl:px-0 xl:gap-4 gap-8 min-h-[calc(100vh-64px)] py-10">
           {/* Redirection Frame */}
           <div className="flex flex-col w-full lg:w-[569px] gap-8 lg:gap-[48px] bg-transparent">
             {/* Text Content Frame */}
