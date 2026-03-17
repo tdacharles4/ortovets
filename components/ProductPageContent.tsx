@@ -151,9 +151,9 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   return (
     <section className="w-full flex flex-col lg:flex-row gap-8 lg:gap-[64px]">
       {/* Images Frame*/}
-      <div className="flex flex-col w-full lg:w-[600px] xl:w-[816px] gap-[16px] lg:gap-[24px] shrink-0">
+      <div className="flex flex-col w-full lg:w-[600px] xl:w-[816px] gap-[16px] lg:gap-[24px] lg:min-w-[280px]">
         {/* Main Image Container */}
-        <div className="relative w-full aspect-square md:aspect-video lg:aspect-square lg:h-[800px] bg-muted overflow-hidden rounded-2xl">
+        <div className="relative w-full aspect-square md:aspect-video lg:aspect-square bg-muted overflow-hidden rounded-2xl">
           {mainImage ? (
             <button
               type="button"
