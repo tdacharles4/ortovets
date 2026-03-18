@@ -7,6 +7,7 @@ import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
 import { AuthButton } from "@/components/AuthButton";
 import { AccountPanel } from "@/components/AccountPanel";
 import { DogMapWithProducts } from "@/components/DogMapWithProducts";
+import { BreakpointLogger } from "@/components/BreakpointLogger";
 import { NoticieroCarousel } from "@/components/ui/NoticieroCarousel";
 
 export const dynamic = 'force-dynamic';
@@ -50,14 +51,15 @@ export default async function Home() {
 
   return (
     <>
+      <BreakpointLogger />
       {/* Landing Frame */}
       <div className="relative w-full bg-[linear-gradient(to_bottom,#294676,#4C83DC)] overflow-hidden flex justify-center py-8 lg:p-2 xl:py-0">
         {/* sublanding frame */}
         <div className="flex flex-col xl:flex-row flex-wrap items-center justify-center px-10 xl:px-0 xl:gap-4 gap-8 min-h-[calc(100vh-64px)] py-10">
           {/* Redirection Frame */}
-          <div className="flex flex-col w-full lg:w-[569px] gap-8 lg:gap-[48px] bg-transparent">
+          <div id="redirection-frame" className="flex flex-col md:flex-row [@media(min-width:1750px)]:flex-col w-full xl:max-w-[1080px] [@media(min-width:1750px)]:max-w-none [@media(min-width:1750px)]:w-[569px] gap-8 md:gap-6 [@media(min-width:1750px)]:gap-[48px] md:items-center bg-transparent">
             {/* Text Content Frame */}
-            <div className="flex flex-col w-full h-fit gap-4 lg:gap-[16px]">
+            <div className="flex flex-col w-full md:flex-1 h-fit gap-4 lg:gap-[16px]">
               <div className="w-full lg:w-[409px]">
                 <h1 className="text-[#FFFFFF] font-sans font-extrabold text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[100%] tracking-[0%] uppercase text-center lg:text-left">
                   MEJORA LA MOVILIDAD DE TU MASCOTA
@@ -82,9 +84,9 @@ export default async function Home() {
             </div>
 
             {/* Redirection Buttons Frame */}
-            <div className="flex flex-col sm:flex-row w-full h-auto gap-4 lg:gap-[16px]">
+            <div className="flex flex-col [@media(min-width:1750px)]:flex-row w-full md:w-auto md:shrink-0 [@media(min-width:1750px)]:w-full h-auto gap-4 lg:gap-[16px]">
               {/* Button 1: Ver productos */}
-              <Button asChild className="w-full sm:w-[262px] h-[64px] lg:h-[76px] bg-[#8CC63F] hover:bg-[#7ab336] text-[#F5F5F5] rounded-[16px] px-[32px] py-[8px] flex items-center justify-center gap-[16px] border-none shadow-none">
+              <Button asChild className="w-full md:w-full [@media(min-width:1750px)]:w-[262px] h-[64px] lg:h-[76px] bg-[#8CC63F] hover:bg-[#7ab336] text-[#F5F5F5] rounded-[16px] px-[32px] py-[8px] flex items-center justify-center gap-[16px] border-none shadow-none">
                 <Link href="/tienda">
                   <span className="font-sans font-semibold text-lg">Ver productos</span>
                   <ArrowRight className="w-[30px] h-[30px]" />
@@ -92,7 +94,7 @@ export default async function Home() {
               </Button>
 
               {/* Button 2: Agenda una cita */}
-              <Button asChild className="w-full sm:w-[291px] h-[64px] lg:h-[76px] bg-transparent border-2 border-[#FFFFFF] hover:bg-white/10 text-white rounded-[16px] px-[32px] py-[8px] flex items-center justify-center gap-[16px] shadow-none">
+              <Button asChild className="w-full md:w-full [@media(min-width:1750px)]:w-[291px] h-[64px] lg:h-[76px] bg-transparent border-2 border-[#FFFFFF] hover:bg-white/10 text-white rounded-[16px] px-[32px] py-[8px] flex items-center justify-center gap-[16px] shadow-none">
                 <Link href="/consultas">
                   <span className="font-sans font-semibold text-lg">Agenda una cita</span>
                   <Calendar className="w-[30px] h-[30px]" />
@@ -104,7 +106,7 @@ export default async function Home() {
           {/* 3D Model Frame */}
 
 
-          <div className="flex flex-col xl:flex-row w-full xl:w-[1080px] h-auto gap-8 lg:gap-[16px] bg-transparent">
+          <div id="dog-frame" className="flex flex-col xl:flex-row w-full xl:w-[1080px] h-auto gap-8 lg:gap-[16px] bg-transparent">
             <DogMapWithProducts defaultProducts={products} />
           </div>
         </div>
