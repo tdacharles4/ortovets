@@ -40,6 +40,7 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   const { addToCart } = useCart();
 
   const [quantity, setQuantity] = React.useState(1);
+  const [buyNowLoading, setBuyNowLoading] = React.useState(false);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -84,6 +85,42 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
     });
   };
 
+  const handleBuyNow = async () => {
+    const hasVariants = sizes.length > 1;
+    if (!selectedSize && hasVariants) {
+      toast("Debes seleccionar una talla");
+      return;
+    }
+    const variant = selectedVariant || product.variants?.edges?.[0]?.node;
+    if (!variant) return;
+    if (!variant.availableForSale) {
+      toast("Este producto está agotado.");
+      return;
+    }
+    const availableQty = variant.quantityAvailable ?? Infinity;
+    const finalQty = Math.min(quantity, availableQty);
+    setBuyNowLoading(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: [{ id: variant.id, quantity: finalQty, price: parseFloat(variant.price.amount), title: product.title, variantTitle: variant.title, image: product.images.edges[0]?.node.url }],
+        }),
+      });
+      const { webUrl } = await res.json();
+      if (webUrl) {
+        window.location.href = webUrl;
+      } else {
+        toast("No se pudo iniciar el checkout. Intenta de nuevo.");
+      }
+    } catch {
+      toast("Error al procesar el checkout.");
+    } finally {
+      setBuyNowLoading(false);
+    }
+  };
+
   // Extract unique sizes from Menudeo variants
   const sizes = Array.from(new Set(
     product.variants?.edges?.map(edge => {
@@ -117,12 +154,16 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
       return product.variants.edges.length===1?product.variants.edges[0].node:undefined;
     }
     const matchingVariant=product.variants.edges.find(edge=>{
-      const hasSize=edge.node.selectedOptions.some(opt=>opt.name.toLowerCase()==='talla'&&opt.value===selectedSize);
+      const options=edge.node.selectedOptions;
+      const sizeOpt=options.find(opt=>['size','talla','tamaño','tamaño de accesorio'].includes(opt.name.toLowerCase()));
+      const sizeValue=sizeOpt?.value??(options.length===1&&options[0].name!=='Title'?options[0].value:undefined);
+      const hasSize=sizeValue===selectedSize;
       if(!hasSize)return false;
       if(sideOptions.length>0){
-        return edge.node.selectedOptions.some(opt=>opt.name.toLowerCase()==='lado'&&opt.value===selectedSide);
+        return options.some(opt=>opt.name.toLowerCase()==='lado'&&opt.value===selectedSide);
       }return true;
     })?.node;
+    return matchingVariant;
   },[selectedSize,selectedSide,product.variants.edges,sideOptions])
 
   const menudeoPriceRange = getMenudeoPriceRange(product);
@@ -171,14 +212,14 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
     }
   }
 
-  // Inventory logic: Use quantityAvailable if present, else fall back to availableForSale boolean
-  const currentAvailability = selectedSize 
-    ? (selectedVariant ? selectedVariant.quantityAvailable : 0)
-    : (product.variants.edges[0]?.node?.quantityAvailable || 0);
+  // Inventory logic: null quantityAvailable means Shopify isn't tracking inventory — treat as unlimited, rely on availableForSale only
+  const currentAvailability = selectedSize
+    ? (selectedVariant ? (selectedVariant.quantityAvailable ?? Infinity) : 0)
+    : (product.variants.edges[0]?.node?.quantityAvailable ?? Infinity);
 
-  const isOutOfStock = selectedSize 
-    ? (selectedVariant ? !selectedVariant.availableForSale || selectedVariant.quantityAvailable <= 0 : true)
-    : !product.availableForSale || product.variants.edges.every(edge => edge.node.quantityAvailable <= 0);
+  const isOutOfStock = selectedSize
+    ? (selectedVariant ? !selectedVariant.availableForSale || (selectedVariant.quantityAvailable != null && selectedVariant.quantityAvailable <= 0) : true)
+    : !product.availableForSale && product.variants.edges.every(edge => edge.node.quantityAvailable != null && edge.node.quantityAvailable <= 0);
 
   const incrementQuantity = () => {
     if (quantity < currentAvailability) {
@@ -402,14 +443,14 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
                     <span className="whitespace-nowrap">Agregar al carrito</span>
                   </button>
                   {/* Comprar ahora Button CHECKOUT*/}
-                  <button 
-                    disabled={quantity === 0 || (sizes.length > 0 && !selectedSize)}
+                  <button
+                    disabled={buyNowLoading || quantity === 0 || (sizes.length > 0 && !selectedSize)}
                     className={`flex items-center justify-center flex-1 text-white h-12 rounded-[8px] font-bold text-base lg:text-lg transition-all ${
-                      (quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab336] shadow-lg shadow-[#8CC63F]/20"
+                      (buyNowLoading || quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab336] shadow-lg shadow-[#8CC63F]/20"
                     }`}
-                    onClick={handleAddToCart}
+                    onClick={handleBuyNow}
                   >
-                    <span className="whitespace-nowrap">Comprar ahora</span>
+                    <span className="whitespace-nowrap">{buyNowLoading ? "Cargando..." : "Comprar ahora"}</span>
                   </button>
                 </div>
               )}
