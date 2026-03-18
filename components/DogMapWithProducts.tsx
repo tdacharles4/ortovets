@@ -123,41 +123,39 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
           </div>
         </div>
 
-        <div className="flex flex-col xl:flex-row gap-4 xl:basis-2/3">
-          {/* PERRO 3D */}
-          <div className='flex flex-col gap-2 basis-1/2'>
-            {/* TEXT HAZ CLIC */}
-            <div className='flex items-end min-h-12'>
-              <p className="text-[#F5F5F5] font-sans font-medium text-lg leading-tight text-center">
-                Haz clic en cualquier zona del cuerpo del perro para ver productos ortopédicos específicos para esa área.
-              </p>
-            </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:basis-2/3 items-stretch">
 
-            {/* PERRO 3D */}
+          {/* 1 - TEXT HAZ CLICK */}
+          <div className="order-1 xl:order-1 flex items-end min-h-12">
+            <p className="text-[#F5F5F5] font-sans font-medium text-lg leading-tight text-center">
+              Haz clic en cualquier zona del cuerpo del perro para ver productos ortopédicos específicos para esa área.
+            </p>
+          </div>
+
+          {/* 2 - TEXT PRODUCTOS */}
+          <div className="order-3 xl:order-2 flex items-end justify-center min-h-12">
+            <h2 className="text-[#F5F5F5] font-sans font-semibold text-xl lg:text-[22px] leading-tight text-center uppercase">
+              {selectedPart
+                ? `Productos para ${partLabel[selectedPart] ?? selectedPart}`
+                : 'Productos Recomendados'}
+            </h2>
+          </div>
+
+          {/* 3 - PERRO */}
+          <div className="order-2 xl:order-3 flex flex-col gap-2">
             <div className="w-full flex justify-center">
               <DogMap onPartSelect={handlePartSelect} />
             </div>
           </div>
 
-          {/* PRODUCTOS RECOMENDADOS */}
-          <div className="flex flex-col gap-2 basis-1/2">
-            {/* TEXT PRODUCTOS */}
-            <div className="flex items-end justify-center min-h-12">
-              <h2 className="text-[#F5F5F5] font-sans font-semibold text-xl lg:text-[22px] leading-tight text-center uppercase">
-                {selectedPart
-                  ? `Productos para ${partLabel[selectedPart] ?? selectedPart}`
-                  : 'Productos Recomendados'}
-              </h2>
-            </div>
-
-            {/* PRODUCTOS RECOMENDADOS */}
+          {/* 4 - PRODUCTOS */}
+          <div className="order-4 xl:order-4 flex flex-col gap-2">
             <div className="flex flex-col w-full h-auto gap-6 lg:gap-4">
               <div className="flex flex-col w-full h-auto gap-6 lg:gap-[16px]">
 
                 {/* Product Cards */}
                 <div className="flex flex-col gap-4">
                   {loading ? (
-                    // Skeleton placeholders while loading
                     Array.from({ length: PLACEHOLDER_COUNT }).map((_, i) => (
                       <div
                         key={`skeleton-${i}`}
@@ -182,17 +180,20 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
                     href={selectedPart ? `/tienda?tag=${selectedPart}` : '/tienda'}
                     className="flex items-center gap-2 text-[#F5F5F5] hover:opacity-80 transition-opacity"
                   >
-                    <span className="font-sans font-medium text-lg leading-[100%] underline decoration-solid text-center lg:text-center">
+                    <span className="font-sans font-medium text-lg leading-[100%] underline text-center">
                       Ver más productos recomendados
                     </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
                     </svg>
                   </a>
                 </div>
+
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </>
