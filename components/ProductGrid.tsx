@@ -38,9 +38,10 @@ type Props = {
   initialProducts: ShopifyProduct[];
   initialCursor: string;
   initialHasNextPage: boolean;
+  titleSlot?: React.ReactNode;
 };
 
-export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage }: Props) {
+export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage, titleSlot }: Props) {
   const [products, setProducts] = useState(initialProducts);
   const [cursor, setCursor] = useState(initialCursor);
   const [hasNextPage, setHasNextPage] = useState(initialHasNextPage);
@@ -80,8 +81,9 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
   return (
     <>
       <div className="flex flex-col">
-        {/* Dropdown */}
-        <div className="flex justify-end mb-8 w-full">
+        {/* Header row: title slot + filter */}
+        <div className="flex items-end justify-between mb-8 w-full gap-4">
+          <div>{titleSlot}</div>
           <div className="flex flex-col items-end gap-1">
             <span className="text-lg font-medium">Filtrar</span>
             <Select value={activeTag ?? "all"} onValueChange={handleTagChange}>

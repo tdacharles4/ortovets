@@ -53,65 +53,8 @@ export default async function Home() {
     <>
       <BreakpointLogger />
       {/* Landing Frame */}
-      <div className="relative w-full bg-[linear-gradient(to_bottom,#294676,#4C83DC)] overflow-hidden flex justify-center py-8 lg:p-2 xl:py-0">
-        {/* sublanding frame */}
-        <div className="flex flex-col xl:flex-row flex-wrap items-center justify-center px-10 xl:px-0 xl:gap-4 gap-8 min-h-[calc(100vh-64px)] py-10">
-          {/* Redirection Frame */}
-          <div id="redirection-frame" className="flex flex-col md:flex-row [@media(min-width:1750px)]:flex-col w-full xl:max-w-[1080px] [@media(min-width:1750px)]:max-w-none [@media(min-width:1750px)]:w-[569px] gap-8 md:gap-6 [@media(min-width:1750px)]:gap-[48px] md:items-center bg-transparent">
-            {/* Text Content Frame */}
-            <div className="flex flex-col w-full md:flex-1 h-fit gap-4 lg:gap-[16px]">
-              <div className="w-full lg:w-[409px]">
-                <h1 className="text-[#FFFFFF] font-sans font-extrabold text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[100%] tracking-[0%] uppercase text-center lg:text-left">
-                  MEJORA LA MOVILIDAD DE TU MASCOTA
-                </h1>
-              </div>
-              <div className="w-full lg:w-[569px]">
-                <p className="text-[#FFFFFF] font-sans font-medium text-lg md:text-xl lg:text-[24px] leading-snug lg:leading-[100%] tracking-[0%] text-center lg:text-left">
-                  Productos ortpédicos especializados diseñados por veterinarios para el bienestar de tus mascotas.
-                </p>
-              </div>
-              {/* Stats/Features Container */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:flex lg:flex-row w-full lg:w-[556px] h-fit gap-4 lg:gap-[16px]">
-                {features.map((feature, index) => (
-                  <div key={index} className="flex flex-col flex-1 min-w-[110px] h-[118px] p-4 justify-center items-center gap-[12px] bg-white/10 rounded-lg backdrop-blur-sm transition-all hover:bg-white/20">
-                    <feature.icon className="w-8 h-8 text-white shrink-0" />
-                    <h3 className="text-white font-sans font-bold text-[11px] leading-tight text-center">
-                      {feature.title}
-                    </h3>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Redirection Buttons Frame */}
-            <div className="flex flex-col [@media(min-width:1750px)]:flex-row w-full md:w-auto md:shrink-0 [@media(min-width:1750px)]:w-full h-auto gap-4 lg:gap-[16px]">
-              {/* Button 1: Ver productos */}
-              <Button asChild className="w-full md:w-full [@media(min-width:1750px)]:w-[262px] h-[64px] lg:h-[76px] bg-[#8CC63F] hover:bg-[#7ab336] text-[#F5F5F5] rounded-[16px] px-[32px] py-[8px] flex items-center justify-center gap-[16px] border-none shadow-none">
-                <Link href="/tienda">
-                  <span className="font-sans font-semibold text-lg">Ver productos</span>
-                  <ArrowRight className="w-[30px] h-[30px]" />
-                </Link>
-              </Button>
-
-              {/* Button 2: Agenda una cita */}
-              <Button asChild className="w-full md:w-full [@media(min-width:1750px)]:w-[291px] h-[64px] lg:h-[76px] bg-transparent border-2 border-[#FFFFFF] hover:bg-white/10 text-white rounded-[16px] px-[32px] py-[8px] flex items-center justify-center gap-[16px] shadow-none">
-                <Link href="/consultas">
-                  <span className="font-sans font-semibold text-lg">Agenda una cita</span>
-                  <Calendar className="w-[30px] h-[30px]" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-
-          {/* 3D Model Frame */}
-
-
-          <div id="dog-frame" className="flex flex-col xl:flex-row w-full xl:w-[1080px] h-auto gap-8 lg:gap-[16px] bg-transparent">
-            <DogMapWithProducts defaultProducts={products} />
-          </div>
-        </div>
-
-
+      <div className="relative bg-[linear-gradient(to_bottom,#294676,#4C83DC)] min-h-[calc(100vh-64px)] flex justify-center">
+        <DogMapWithProducts defaultProducts={products} />
       </div>
 
       {/* Main Section: Recursos y Publicaciones */}
@@ -130,14 +73,14 @@ export default async function Home() {
                 {landingArticle1 && (
                   <div className="flex flex-col sm:flex-row w-full h-full">
                     {landingArticle1.image && (
-                      <div className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative">
+                      <Link href={`/noticias/${landingArticle1.blogHandle}/${landingArticle1.handle}`} className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative block">
                         <Image
                           src={landingArticle1.image.url}
                           alt={landingArticle1.image.altText || landingArticle1.title}
                           fill
                           className="object-cover"
                         />
-                      </div>
+                      </Link>
                     )}
                     <div className="flex flex-col flex-grow p-6 overflow-hidden">
                       <h3 className="text-xl font-bold mb-2 line-clamp-2">{landingArticle1.title}</h3>
@@ -162,14 +105,14 @@ export default async function Home() {
                       />
                     </div>
                     {landingArticle2.image && (
-                      <div className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative">
+                      <Link href={`/noticias/${landingArticle2.blogHandle}/${landingArticle2.handle}`} className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative block">
                         <Image
                           src={landingArticle2.image.url}
                           alt={landingArticle2.image.altText || landingArticle2.title}
                           fill
                           className="object-cover"
                         />
-                      </div>
+                      </Link>
                     )}
                   </div>
                 )}
@@ -177,8 +120,8 @@ export default async function Home() {
 
               {/* Frame 3: Bottommost */}
               <div className="w-full h-[48px] bg-white/10 rounded-lg overflow-hidden mt-auto">
-                <Button className="w-full h-full bg-transparent hover:bg-white/10 text-white border-none shadow-none text-lg">
-                  Ver más testimonios
+                <Button asChild className="w-full h-full bg-transparent hover:bg-white/10 text-white border-none shadow-none text-lg">
+                  <Link href="/noticias?blog=historias-de-exito">Ver más testimonios</Link>
                 </Button>
               </div>
             </div>
@@ -188,7 +131,7 @@ export default async function Home() {
               <div className="flex flex-col w-full min-h-[511px] bg-white/20 rounded-[16px] overflow-hidden">
                 {landingArticle3 && (
                   <>
-                    <div className="w-full aspect-video sm:aspect-auto sm:h-[310px] relative">
+                    <Link href={`/noticias/${landingArticle3.blogHandle}/${landingArticle3.handle}`} className="w-full aspect-video sm:aspect-auto sm:h-[310px] relative block">
                       {landingArticle3.image && (
                         <Image
                           src={landingArticle3.image.url}
@@ -197,7 +140,7 @@ export default async function Home() {
                           className="object-cover"
                         />
                       )}
-                    </div>
+                    </Link>
                     <div className="flex flex-col w-full p-6 gap-4 overflow-hidden">
                       <h3 className="text-xl font-bold line-clamp-2">{landingArticle3.title}</h3>
                       <div
@@ -210,8 +153,8 @@ export default async function Home() {
               </div>
 
               <div className="w-full h-[48px] bg-white/10 rounded-lg overflow-hidden mt-auto">
-                <Button className="w-full h-full bg-transparent hover:bg-white/10 text-white border-none shadow-none text-lg">
-                  Ver más
+                <Button asChild className="w-full h-full bg-transparent hover:bg-white/10 text-white border-none shadow-none text-lg">
+                  <Link href="/noticias?blog=material-descargable">Ver más</Link>
                 </Button>
               </div>
             </div>

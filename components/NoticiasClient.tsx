@@ -21,8 +21,8 @@ type Article = {
   image: { url: string; altText: string | null } | null;
 };
 
-export function NoticiasClient({ articles }: { articles: Article[] }) {
-  const [selectedBlog, setSelectedBlog] = React.useState<string | null>(null);
+export function NoticiasClient({ articles, initialBlog }: { articles: Article[]; initialBlog?: string | null }) {
+  const [selectedBlog, setSelectedBlog] = React.useState<string | null>(initialBlog ?? null);
 
   // Derive unique blogs with counts
   const blogs = React.useMemo(() => {

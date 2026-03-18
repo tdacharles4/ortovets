@@ -96,7 +96,7 @@ function AuthNav() {
           <div className="space-y-2 text-center"><h4 className="font-medium leading-none">Acceso</h4></div>
           <div className="grid gap-2">
             <Button onClick={() => login()}>Iniciar Sesión</Button>
-            <Link href="/acceso" passHref><Button variant="secondary" className="w-full">¿Eres veterinario? Regístrate</Button></Link>
+            <Link href="/acceso" passHref><Button variant="secondary" className="w-full">¿Aún no tienes cuenta? Regístrate</Button></Link>
           </div>
         </div>
       </PopoverContent>

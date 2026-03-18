@@ -115,7 +115,9 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: 'Solicitud de registro completada. Nuestro equipo continuará con el proceso de validación. Recibirás una notificación una vez que tu registro haya sido aprobado.',
+        message: cedula
+          ? 'Solicitud de registro completada. Nuestro equipo continuará con el proceso de validación. Recibirás una notificación una vez que tu registro haya sido aprobado. Por ahora, puedes acceder a tu cuenta como usuario regular.'
+          : 'Registro completado con éxito. Ya puedes acceder a tu cuenta.',
       });
     } else {
       return NextResponse.json(
