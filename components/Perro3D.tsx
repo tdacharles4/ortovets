@@ -4,15 +4,15 @@ import { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 
 const bodyParts = [
-  { id: 'cuello',       src: '/img/perro3d/cuello.png',       label: 'Cuello' },
-  { id: 'espalda',      src: '/img/perro3d/espalda.png',      label: 'Espalda' },
-  { id: 'cadera',       src: '/img/perro3d/cadera.png',       label: 'Cadera' },
-  { id: 'hombro',       src: '/img/perro3d/hombro.png',       label: 'Hombro' },
-  { id: 'codo',         src: '/img/perro3d/codo.png',         label: 'Codo' },
-  { id: 'rodilla',      src: '/img/perro3d/rodilla.png',      label: 'Rodilla' },
-  { id: 'pata delantera',   src: '/img/perro3d/pata_front.png',   label: 'Pata frontal' },
-  { id: 'pata trasera',    src: '/img/perro3d/pata_back.png',    label: 'Pata trasera' },
-  
+  { id: 'cuello', src: '/img/perro3d/cuello.png', label: 'Cuello' },
+  { id: 'espalda', src: '/img/perro3d/espalda.png', label: 'Espalda' },
+  { id: 'cadera', src: '/img/perro3d/cadera.png', label: 'Cadera' },
+  { id: 'hombro', src: '/img/perro3d/hombro.png', label: 'Hombro' },
+  { id: 'codo', src: '/img/perro3d/codo.png', label: 'Codo' },
+  { id: 'rodilla', src: '/img/perro3d/rodilla.png', label: 'Rodilla' },
+  { id: 'pata delantera', src: '/img/perro3d/pata_front.png', label: 'Pata frontal' },
+  { id: 'pata trasera', src: '/img/perro3d/pata_back.png', label: 'Pata trasera' },
+
 ]
 
 const IMG_W = 990
@@ -24,11 +24,13 @@ interface DogMapProps {
 
 export default function DogMap({ onPartSelect }: DogMapProps) {
   const [activePart, setActivePart] = useState<string | null>(null)
+  const [selectedPart, setSelectedPart] = useState<string | null>(null)
+
   const canvasRefs = useRef<Record<string, HTMLCanvasElement | null>>({})
   const containerRef = useRef<HTMLDivElement>(null)
 
   // tracking del mouse
-  const [mousePos, setMousePos] = useState({x:0, y:0})
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
 
   // Carga cada parte en su canvas oculto para hit-detection
   useEffect(() => {
@@ -94,10 +96,12 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
       const part = bodyParts[i]
       const alpha = getAlphaAtEvent(part.id, e)
       if (alpha > 10) {
+        setSelectedPart(prev => prev === part.id ? null : part.id) // toggle
         onPartSelect?.(part.id)
         return
       }
     }
+    setSelectedPart(null) // click on empty area deselects
   }
 
   return (
@@ -136,7 +140,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
           fill
           className={`
             object-contain pointer-events-none transition-all duration-150
-            ${activePart === part.id
+            ${activePart === part.id || selectedPart === part.id
               ? 'opacity-80 brightness-125 saturate-150'
               : 'opacity-50'
             }
