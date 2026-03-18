@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { ShopifyProduct } from "@/lib/shopify";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   Field,
@@ -22,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import React from "react";
 
 const TAGS = [
   { id: 'cuello', label: 'Cuello' },
@@ -48,6 +50,12 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
   const [loading, setLoading] = useState(false);
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
+  // fetch tag from URL
+  const searchParams = useSearchParams();
+  const tagFromUrl = searchParams.get("tag");
+
+  const router = useRouter();
+
   async function loadMore() {
     setLoading(true);
     const res = await fetch(`/api/products?cursor=${cursor}`);
@@ -60,6 +68,10 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
 
   async function handleTagChange(tag: string) {
     const isAll = tag === "all";
+
+    // ✅ update URL
+    router.push(isAll ? "/tienda" : `/tienda?tag=${tag}`);
+
     setActiveTag(isAll ? null : tag);
     setLoading(true);
 
@@ -77,6 +89,21 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
     setHasNextPage(false);
     setLoading(false);
   }
+
+  React.useEffect(() => {
+    if (!tagFromUrl) {
+      setActiveTag(null);
+      setProducts(initialProducts);
+      setCursor(initialCursor);
+      setHasNextPage(initialHasNextPage);
+      return;
+    }
+
+    // avoid refetching same tag
+    if (tagFromUrl === activeTag) return;
+
+    handleTagChange(tagFromUrl);
+  }, [tagFromUrl]);
 
   return (
     <>

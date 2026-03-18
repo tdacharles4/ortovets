@@ -31,7 +31,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
     setLoading(true)
 
     try {
-      const res = await fetch(`/api/products/tag/${partId}`)
+      const res = await fetch(`/api/products/tag?=${partId}`)
       if (!res.ok) throw new Error('Failed to fetch')
       const data: ShopifyProduct[] = await res.json()
       setProducts(data.length > 0 ? data : defaultProducts)
@@ -176,7 +176,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
 
                 {/* Redirection link */}
                 <div className="flex flex-row items-center justify-center w-full gap-2 mt-4 lg:mt-0">
-                  <a
+                  <Link
                     href={selectedPart ? `/tienda?tag=${selectedPart}` : '/tienda'}
                     className="flex items-center gap-2 text-[#F5F5F5] hover:opacity-80 transition-opacity"
                   >
@@ -187,7 +187,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
                       <path d="M5 12h14" />
                       <path d="m12 5 7 7-7 7" />
                     </svg>
-                  </a>
+                  </Link>
                 </div>
 
               </div>
