@@ -252,7 +252,7 @@ function LoginTabContent() {
             <p className="text-sm text-gray-600">
                 Si ya tienes una cuenta, inicia sesión de forma segura a través de Shopify.
             </p>
-            <Button onClick={() => login()}>Ya tengo cuenta (Login)</Button>
+            <Button onClick={() => login()}>Iniciar sesión</Button>
         </div>
     );
 }

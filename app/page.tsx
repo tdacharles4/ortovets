@@ -7,6 +7,7 @@ import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
 import { AuthButton } from "@/components/AuthButton";
 import { AccountPanel } from "@/components/AccountPanel";
 import { DogMapWithProducts } from "@/components/DogMapWithProducts";
+import { BreakpointLogger } from "@/components/BreakpointLogger";
 import { NoticieroCarousel } from "@/components/ui/NoticieroCarousel";
 
 export const dynamic = 'force-dynamic';
@@ -50,6 +51,7 @@ export default async function Home() {
 
   return (
     <>
+      <BreakpointLogger />
       {/* Landing Frame */}
       <div className="relative bg-[linear-gradient(to_bottom,#294676,#4C83DC)] min-h-[calc(100vh-64px)] flex justify-center">
         <DogMapWithProducts defaultProducts={products} />
@@ -71,14 +73,14 @@ export default async function Home() {
                 {landingArticle1 && (
                   <div className="flex flex-col sm:flex-row w-full h-full">
                     {landingArticle1.image && (
-                      <div className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative">
+                      <Link href={`/noticias/${landingArticle1.blogHandle}/${landingArticle1.handle}`} className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative block">
                         <Image
                           src={landingArticle1.image.url}
                           alt={landingArticle1.image.altText || landingArticle1.title}
                           fill
                           className="object-cover"
                         />
-                      </div>
+                      </Link>
                     )}
                     <div className="flex flex-col flex-grow p-6 overflow-hidden">
                       <h3 className="text-xl font-bold mb-2 line-clamp-2">{landingArticle1.title}</h3>
@@ -103,14 +105,14 @@ export default async function Home() {
                       />
                     </div>
                     {landingArticle2.image && (
-                      <div className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative">
+                      <Link href={`/noticias/${landingArticle2.blogHandle}/${landingArticle2.handle}`} className="w-full sm:w-[220px] h-[200px] sm:h-auto flex-shrink-0 relative block">
                         <Image
                           src={landingArticle2.image.url}
                           alt={landingArticle2.image.altText || landingArticle2.title}
                           fill
                           className="object-cover"
                         />
-                      </div>
+                      </Link>
                     )}
                   </div>
                 )}
@@ -118,8 +120,8 @@ export default async function Home() {
 
               {/* Frame 3: Bottommost */}
               <div className="w-full h-[48px] bg-white/10 rounded-lg overflow-hidden mt-auto">
-                <Button className="w-full h-full bg-transparent hover:bg-white/10 text-white border-none shadow-none text-lg">
-                  Ver más testimonios
+                <Button asChild className="w-full h-full bg-transparent hover:bg-white/10 text-white border-none shadow-none text-lg">
+                  <Link href="/noticias?blog=historias-de-exito">Ver más testimonios</Link>
                 </Button>
               </div>
             </div>
@@ -129,7 +131,7 @@ export default async function Home() {
               <div className="flex flex-col w-full min-h-[511px] bg-white/20 rounded-[16px] overflow-hidden">
                 {landingArticle3 && (
                   <>
-                    <div className="w-full aspect-video sm:aspect-auto sm:h-[310px] relative">
+                    <Link href={`/noticias/${landingArticle3.blogHandle}/${landingArticle3.handle}`} className="w-full aspect-video sm:aspect-auto sm:h-[310px] relative block">
                       {landingArticle3.image && (
                         <Image
                           src={landingArticle3.image.url}
@@ -138,7 +140,7 @@ export default async function Home() {
                           className="object-cover"
                         />
                       )}
-                    </div>
+                    </Link>
                     <div className="flex flex-col w-full p-6 gap-4 overflow-hidden">
                       <h3 className="text-xl font-bold line-clamp-2">{landingArticle3.title}</h3>
                       <div
@@ -151,8 +153,8 @@ export default async function Home() {
               </div>
 
               <div className="w-full h-[48px] bg-white/10 rounded-lg overflow-hidden mt-auto">
-                <Button className="w-full h-full bg-transparent hover:bg-white/10 text-white border-none shadow-none text-lg">
-                  Ver más
+                <Button asChild className="w-full h-full bg-transparent hover:bg-white/10 text-white border-none shadow-none text-lg">
+                  <Link href="/noticias?blog=material-descargable">Ver más</Link>
                 </Button>
               </div>
             </div>
