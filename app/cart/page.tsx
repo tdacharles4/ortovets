@@ -45,7 +45,7 @@ export default function CartPage() {
         return (
             <div className="flex flex-col items-center justify-center pt-6 md:mt-[61px] mt-[41px]">
                 <p className="text-xl mb-4">Tu carrito está vacío.</p>
-                <Link href="/shop" className="underline">
+                <Link href="/tienda" className="underline">
                     Continua comprando.
                 </Link>
             </div>
