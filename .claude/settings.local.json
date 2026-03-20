@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep:*)",
+      "Bash(grep -r \"isMVZ\\\\|getMVZDiscount\" '/c/Users/teoch/Desktop/Freelance Projects/ortovets/components/' --include=*.tsx)"
+    ]
+  }
+}

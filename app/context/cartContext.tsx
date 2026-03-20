@@ -18,6 +18,7 @@ type CartItem = {
   quantity: number;
   image?: string;
   available: number;
+  mvzDiscount?: number;
 };
 
 type CartContextType = {

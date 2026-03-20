@@ -88,6 +88,7 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
       quantity: finalQty,
       image: product.images.edges[0]?.node.url,
       available: availableQty,
+      mvzDiscount: isMVZ && mvzDiscountPercent ? mvzDiscountPercent : undefined,
     });
   };
 
