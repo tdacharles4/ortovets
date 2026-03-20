@@ -1,16 +1,22 @@
 "use client";
 
 import { useCart } from "../context/cartContext";
+import { useCustomer } from "@/hooks/useCustomer";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function CartPage() {
     const { items, removeFromCart, clearCart } = useCart();
+    const { customer } = useCustomer();
+    const isMVZ = customer?.tags?.includes('MVZ') ?? false;
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false)
 
-    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const getEffectivePrice = (item: { price: number; mvzDiscount?: number }) =>
+        isMVZ && item.mvzDiscount ? item.price * (1 - item.mvzDiscount / 100) : item.price;
+
+    const total = items.reduce((sum, item) => sum + getEffectivePrice(item) * item.quantity, 0);
 
     console.log("CartPage rendered, items:", items);
 
@@ -73,12 +79,24 @@ export default function CartPage() {
                             {item.variantTitle && (
                                 <p className="text-sm text-gray-500">{item.variantTitle}</p>
                             )}
-                            <p>
-                                {item.quantity} × ${item.price.toFixed(2)} ={" "}
-                                <span className="font-semibold">
-                                    ${(item.price * item.quantity).toFixed(2)}
-                                </span>
-                            </p>
+                            {isMVZ && item.mvzDiscount ? (
+                                <p>
+                                    <span className="line-through text-gray-400 text-sm mr-1">${item.price.toFixed(2)}</span>
+                                    <span className="text-green-600 text-sm font-medium">Dto. MVZ -{item.mvzDiscount}%</span>
+                                    <br />
+                                    {item.quantity} × ${getEffectivePrice(item).toFixed(2)} ={" "}
+                                    <span className="font-semibold">
+                                        ${(getEffectivePrice(item) * item.quantity).toFixed(2)}
+                                    </span>
+                                </p>
+                            ) : (
+                                <p>
+                                    {item.quantity} × ${item.price.toFixed(2)} ={" "}
+                                    <span className="font-semibold">
+                                        ${(item.price * item.quantity).toFixed(2)}
+                                    </span>
+                                </p>
+                            )}
                         </div>
                         <button
                             className="text-red-500 hover:underline"
