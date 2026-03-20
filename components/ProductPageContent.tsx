@@ -3,8 +3,9 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from 'next/link';
-import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
-import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, Maximize2 } from "lucide-react";
+import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange, getMVZDiscount } from "@/lib/shopify";
+import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, Maximize2, Tag } from "lucide-react";
+import { useCustomer } from "@/hooks/useCustomer";
 import {
   Select,
   SelectContent,
@@ -27,6 +28,11 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
   const [quantity, setQuantity] = React.useState(1);
   const [buyNowLoading, setBuyNowLoading] = React.useState(false);
+
+  // MVZ discount
+  const { customer } = useCustomer();
+  const isMVZ = customer?.tags?.includes('MVZ') ?? false;
+  const mvzDiscountPercent = getMVZDiscount(product);
 
   const [isGalleryOpen, setIsGalleryOpen] = React.useState(false);
   const [galleryInitialIndex, setGalleryInitialIndex] = React.useState(0);
@@ -95,6 +101,16 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   } else {
     priceDisplay = `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
   }
+
+  // MVZ discount display
+  const showMVZDiscount = isMVZ && mvzDiscountPercent !== null && selectedVariant !== undefined;
+  const discountedPrice = showMVZDiscount
+    ? formatPrice({
+        amount: (parseFloat(selectedVariant!.price.amount) * (1 - mvzDiscountPercent! / 100)).toFixed(2),
+        currencyCode: selectedVariant!.price.currencyCode,
+      })
+    : null;
+  const originalPriceFormatted = showMVZDiscount ? formatPrice(selectedVariant!.price) : null;
 
   const mainImage = allImages[selectedImageIndex] || allImages[0];
 
@@ -256,9 +272,26 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
           <h1 className="text-[#1E1E1E] font-sans font-semibold text-2xl md:text-3xl xl:text-4xl leading-[1.2]">
             {product.title}
           </h1>
-          <p className="text-[#1E1E1E] font-sans font-bold text-xl md:text-2xl">
-            {priceDisplay}
-          </p>
+          {showMVZDiscount ? (
+            <div className="flex items-center gap-3">
+              <div className="relative inline-block pt-5">
+                <span className="absolute top-0 right-0 text-sm text-gray-400 line-through whitespace-nowrap">
+                  {originalPriceFormatted}
+                </span>
+                <p className="text-[#1E1E1E] font-sans font-bold text-xl md:text-2xl leading-none">
+                  {discountedPrice}
+                </p>
+              </div>
+              <span className="flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 text-sm font-medium px-2.5 py-1 rounded-full whitespace-nowrap shrink-0">
+                <Tag className="w-3.5 h-3.5" />
+                Dto. MVZ - {mvzDiscountPercent}%
+              </span>
+            </div>
+          ) : (
+            <p className="text-[#1E1E1E] font-sans font-bold text-xl md:text-2xl">
+              {priceDisplay}
+            </p>
+          )}
         </div>
 
         {/* Description */}

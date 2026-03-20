@@ -5,8 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import InnerImageZoom from "react-inner-image-zoom";
 import 'react-inner-image-zoom/lib/styles.min.css';
-import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange } from "@/lib/shopify";
-import { X, ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, Maximize2 } from "lucide-react";
+import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange, getMVZDiscount } from "@/lib/shopify";
+import { X, ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, Maximize2, Tag } from "lucide-react";
+import { useCustomer } from "@/hooks/useCustomer";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog"
 import { useCart } from "@/app/context/cartContext";
 import {
@@ -38,6 +39,11 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
 
   // cart
   const { addToCart } = useCart();
+
+  // MVZ discount
+  const { customer } = useCustomer();
+  const isMVZ = customer?.tags?.includes('MVZ') ?? false;
+  const mvzDiscountPercent = getMVZDiscount(product);
 
   const [quantity, setQuantity] = React.useState(1);
   const [buyNowLoading, setBuyNowLoading] = React.useState(false);
@@ -185,6 +191,16 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   } else {
     priceDisplay = `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
   }
+
+  // MVZ discount display
+  const showMVZDiscount = isMVZ && mvzDiscountPercent !== null && selectedVariant !== undefined;
+  const discountedPrice = showMVZDiscount
+    ? formatPrice({
+        amount: (parseFloat(selectedVariant!.price.amount) * (1 - mvzDiscountPercent! / 100)).toFixed(2),
+        currencyCode: selectedVariant!.price.currencyCode,
+      })
+    : null;
+  const originalPriceFormatted = showMVZDiscount ? formatPrice(selectedVariant!.price) : null;
 
   const mainImage = allImages[selectedImageIndex] || allImages[0];
 
@@ -344,9 +360,26 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
               {product.title}
             </h3>
             {/* Product Price */}
-            <p className="text-[#1E1E1E] font-sans font-bold text-xl lg:text-xl leading-[1.0]">
-              {priceDisplay}
-            </p>
+            {showMVZDiscount ? (
+              <div className="flex items-center gap-3">
+                <div className="relative inline-block pt-5">
+                  <span className="absolute top-0 right-0 text-sm text-gray-400 line-through whitespace-nowrap">
+                    {originalPriceFormatted}
+                  </span>
+                  <p className="text-[#1E1E1E] font-sans font-bold text-xl lg:text-xl leading-[1.0]">
+                    {discountedPrice}
+                  </p>
+                </div>
+                <span className="flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap shrink-0">
+                  <Tag className="w-3 h-3" />
+                  Dto. MVZ - {mvzDiscountPercent}%
+                </span>
+              </div>
+            ) : (
+              <p className="text-[#1E1E1E] font-sans font-bold text-xl lg:text-xl leading-[1.0]">
+                {priceDisplay}
+              </p>
+            )}
           </div>
 
           {/* Text Frame */}
