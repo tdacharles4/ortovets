@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { ShopifyProduct, isMenudeoVariant, getMenudeoPriceRange, getMVZDiscount } from "@/lib/shopify";
 import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, Maximize2, Tag } from "lucide-react";
 import { useCustomer } from "@/hooks/useCustomer";
+import { useCart } from "@/app/context/cartContext";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -28,6 +30,9 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
   const [quantity, setQuantity] = React.useState(1);
   const [buyNowLoading, setBuyNowLoading] = React.useState(false);
+
+  // cart
+  const { addToCart } = useCart();
 
   // MVZ discount
   const { customer } = useCustomer();
@@ -159,6 +164,35 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   React.useEffect(() => {
     setQuantity(1);
   }, [selectedSize]);
+
+  const handleAddToCart = () => {
+    const hasVariants = sizes.length > 1;
+    if (!selectedSize && hasVariants) {
+      toast("Debes seleccionar una talla");
+      return;
+    }
+    const variant = selectedVariant || product.variants?.edges?.[0]?.node;
+    if (!variant) return;
+    if (!variant.availableForSale) {
+      toast("Este producto está agotado.");
+      return;
+    }
+    const availableQty = variant.quantityAvailable ?? Infinity;
+    const finalQty = Math.min(quantity, availableQty);
+    if (quantity > availableQty) {
+      toast(`Solo hay ${availableQty} disponibles — se agregó la cantidad máxima.`);
+    }
+    addToCart({
+      id: variant.id,
+      title: product.title,
+      variantTitle: variant.title,
+      price: parseFloat(variant.price.amount),
+      quantity: finalQty,
+      image: product.images.edges[0]?.node.url,
+      available: availableQty,
+      mvzDiscount: isMVZ && mvzDiscountPercent ? mvzDiscountPercent : undefined,
+    });
+  };
 
   const handleBuyNow = async () => {
     const hasVariants = sizes.length > 1;
@@ -382,7 +416,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
                   className={`flex items-center justify-center gap-3 flex-1 text-white h-14 md:h-16 rounded-[12px] font-bold text-lg md:text-xl transition-all ${
                     (quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#FF9230] hover:bg-[#e6832b] shadow-xl shadow-[#FF9230]/20"
                   }`}
-                  onClick={() => console.log("Añadir al carrito: " + product.title + " Variant: " + selectedVariant?.id + " Cantidad: " + quantity)}
+                  onClick={handleAddToCart}
                 >
                   <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
                   <span className="whitespace-nowrap">Agregar al carrito</span>
