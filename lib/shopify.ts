@@ -43,6 +43,13 @@ export type ShopifyProduct = {
   handle: string;
   description: string;
   availableForSale: boolean;
+  collections?: {
+    edges: {
+      node: {
+        title: string;
+      };
+    }[];
+  };
   images: {
     edges: {
       node: {
@@ -80,6 +87,23 @@ export type ShopifyProduct = {
     }[];
   };
 };
+
+const MVZ_DISCOUNT_COLLECTIONS: Record<string, number> = {
+  'Dto. MVZ - 15%': 15,
+  'Dto. MVZ - 14%': 14,
+  'Dto. MVZ - 13%': 13,
+  'Dto. MVZ - 7%': 7,
+};
+
+export function getMVZDiscount(product: ShopifyProduct): number | null {
+  const titles = product.collections?.edges?.map(e => e.node.title) ?? [];
+  for (const title of titles) {
+    if (MVZ_DISCOUNT_COLLECTIONS[title] !== undefined) {
+      return MVZ_DISCOUNT_COLLECTIONS[title];
+    }
+  }
+  return null;
+}
 
 export function isMenudeoVariant(variant: any) {
   if (!variant) return false;
@@ -130,6 +154,13 @@ export async function getProduct(handle: string) {
         handle
         description
         availableForSale
+        collections(first: 5) {
+          edges {
+            node {
+              title
+            }
+          }
+        }
         images(first: 10) {
           edges {
             node {
@@ -195,6 +226,11 @@ export async function getProducts(cursor?: string) {
             handle
             description
             availableForSale
+            collections(first: 5) {
+              edges {
+                node { title }
+              }
+            }
             images(first: 10) {
               edges {
                 node { url altText }
@@ -232,6 +268,13 @@ export async function getProductsByTag(tag: string) {
             handle
             description
             availableForSale
+            collections(first: 5) {
+              edges {
+                node {
+                  title
+                }
+              }
+            }
             images(first: 10) {
               edges {
                 node {
