@@ -81,12 +81,12 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
           {/* Text Content Frame */}
           <div className="flex flex-col h-fit gap-4 lg:gap-[16px]">
             <div className="">
-              <h1 className="text-[#FFFFFF] font-sans font-extrabold text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[100%] tracking-[0%] uppercase text-center lg:text-left">
+              <h1 className="text-[#2B4A7C] font-sans font-extrabold text-2xl md:text-3xl lg:text-[32px] leading-tight lg:leading-[100%] tracking-[0%] uppercase text-center lg:text-left">
                 MEJORA LA MOVILIDAD DE TU MASCOTA
               </h1>
             </div>
             <div className="">
-              <p className="text-[#FFFFFF] font-sans font-medium text-lg md:text-xl lg:text-[24px] leading-snug lg:leading-[100%] tracking-[0%] text-center lg:text-left">
+              <p className="text-[#1E2939] font-sans font-medium text-lg md:text-xl lg:text-[24px] leading-snug lg:leading-[100%] tracking-[0%] text-center lg:text-left">
                 Productos ortpédicos especializados diseñados por veterinarios para el bienestar de tus mascotas.
               </p>
             </div>
@@ -94,8 +94,8 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:flex lg:flex-row h-fit gap-4 lg:gap-[16px]">
               {features.map((feature, index) => (
                 <div key={index} className="flex flex-col flex-1 h-[118px] p-4 justify-center items-center gap-[12px] bg-white/10 rounded-lg backdrop-blur-sm transition-all hover:bg-white/20">
-                  <feature.icon className="w-8 h-8 text-white shrink-0" />
-                  <h3 className="text-white font-sans font-bold text-[11px] leading-tight text-center">
+                  <feature.icon className="w-8 h-8 text-[#1E2939] shrink-0" />
+                  <h3 className="text-[#1E2939] font-sans font-bold text-[11px] leading-tight text-center">
                     {feature.title}
                   </h3>
                 </div>
@@ -114,7 +114,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
             </Button>
 
             {/* Button 2: Agenda una cita */}
-            <Button asChild className="flex-1 min-w-0 bg-transparent border-2 border-[#FFFFFF] hover:bg-white/10 text-white rounded-[16px] flex items-center justify-center shadow-none h-auto py-3">
+            <Button asChild className="flex-1 min-w-0 bg-transparent border-2 border-[#1E2939] hover:bg-white/10 text-[#1E2939] rounded-[16px] flex items-center justify-center shadow-none h-auto py-3">
               <Link href="/consultas" className="flex items-center justify-center gap-2 w-full">
                 <span className="font-sans font-semibold text-lg">Agenda una cita</span>
                 <Calendar className="w-[30px] h-[30px] shrink-0" />
@@ -125,7 +125,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:basis-2/3 items-stretch">
 
-          {/* 1 - TEXT HAZ CLICK */}
+          {/* 1 - TEXT HAZ CLICK  ULISES -- REMOVER ESTA MIERDA SIN ROMPER LA PAGINA*/}
           <div className="order-1 xl:order-1 flex items-end min-h-12">
             <p className="text-[#F5F5F5] font-sans font-medium text-lg leading-tight text-center">
               Haz clic en cualquier zona del cuerpo del perro para ver productos ortopédicos específicos para esa área.
@@ -134,14 +134,14 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
 
           {/* 2 - TEXT PRODUCTOS */}
           <div className="order-3 xl:order-2 flex items-end justify-center min-h-12">
-            <h2 className="text-[#F5F5F5] font-sans font-semibold text-xl lg:text-[22px] leading-tight text-center uppercase">
+            <h2 className="text-[#2B4A7C] font-sans font-semibold text-xl lg:text-[22px] leading-tight text-center uppercase">
               {selectedPart
                 ? `Productos para ${partLabel[selectedPart] ?? selectedPart}`
                 : 'Productos Recomendados'}
             </h2>
           </div>
 
-          {/* 3 - PERRO */}
+          {/* 3 - PERRO  ULISES -- AJUSTAR IMAGEN EN COMPONENTE PERRO3D Y LAS ZONAS ACORDE AL DISE;O DE WATSAP // APLICAR DISE;O IPAD PRO*/}
           <div className="order-2 xl:order-3 flex flex-col gap-2">
             <div className="w-full flex justify-center">
               <DogMap onPartSelect={handlePartSelect} />
@@ -178,7 +178,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
                 <div className="flex flex-row items-center justify-center w-full gap-2 mt-4 lg:mt-0">
                   <Link
                     href={selectedPart ? `/tienda?tag=${selectedPart}` : '/tienda'}
-                    className="flex items-center gap-2 text-[#F5F5F5] hover:opacity-80 transition-opacity"
+                    className="flex items-center gap-2 text-[#4C83DC] hover:opacity-80 transition-opacity"
                   >
                     <span className="font-sans font-medium text-lg leading-[100%] underline text-center">
                       Ver más productos recomendados

@@ -53,12 +53,12 @@ export default async function Home() {
     <>
       <BreakpointLogger />
       {/* Landing Frame */}
-      <div className="relative bg-[linear-gradient(to_bottom,#294676,#4C83DC)] min-h-[calc(100vh-64px)] flex justify-center">
+      <div className="relative bg-[url('/img/landing-bg.png')] min-h-[calc(100vh-64px)] bg-cover bg-center bg-no-repeat flex justify-center">
         <DogMapWithProducts defaultProducts={products} />
       </div>
 
       {/* Main Section: Recursos y Publicaciones */}
-      <section className="bg-[#2B4A7C] text-white p-6 md:p-8 lg:p-12 relative flex-grow">
+      <section className="bg-[#112F5F] text-white p-6 md:p-8 lg:p-12 relative flex-grow">
         <div className="w-full max-w-[1920px] mx-auto">
           <div className="mb-12 text-center lg:text-left">
             <h2 className="font-sans font-extrabold text-white text-2xl md:text-3xl mb-2 uppercase">Recursos y publicaciones</h2>
@@ -129,6 +129,13 @@ export default async function Home() {
             {/* Middle Frame: Proportional to 552px */}
             <div className="flex flex-col gap-6 w-full xl:flex-[552]">
               <div className="flex flex-col w-full min-h-[511px] bg-white/20 rounded-[16px] overflow-hidden">
+                                  <div className="flex flex-col w-full p-6 gap-4 overflow-hidden">
+                      <h3 className="text-xl font-bold line-clamp-2">{landingArticle3.title}</h3>
+                      <div
+                        className="prose prose-invert prose-sm line-clamp-4 lg:line-clamp-6"
+                        dangerouslySetInnerHTML={{ __html: landingArticle3.contentHtml }}
+                      />
+                    </div>
                 {landingArticle3 && (
                   <>
                     <Link href={`/noticias/${landingArticle3.blogHandle}/${landingArticle3.handle}`} className="w-full aspect-video sm:aspect-auto sm:h-[310px] relative block">
@@ -141,13 +148,6 @@ export default async function Home() {
                         />
                       )}
                     </Link>
-                    <div className="flex flex-col w-full p-6 gap-4 overflow-hidden">
-                      <h3 className="text-xl font-bold line-clamp-2">{landingArticle3.title}</h3>
-                      <div
-                        className="prose prose-invert prose-sm line-clamp-4 lg:line-clamp-6"
-                        dangerouslySetInnerHTML={{ __html: landingArticle3.contentHtml }}
-                      />
-                    </div>
                   </>
                 )}
               </div>
