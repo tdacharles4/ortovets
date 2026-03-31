@@ -32,8 +32,10 @@ const TAGS = [
   { id: 'hombro', label: 'Hombro' },
   { id: 'codo', label: 'Codo' },
   { id: 'rodilla', label: 'Rodilla' },
-  { id: 'pata delantera', label: 'Pata frontal' },
-  { id: 'pata trasera', label: 'Pata trasera' },
+  { id: 'tarso', label: 'Tarso o Tobillo' },
+  { id: 'carpo', label: 'Carpo o Muñeca' },
+  { id: 'mano', label: 'Mano' },
+  { id: 'pataydedos', label: 'Pata y Dedos' },
 ];
 
 type Props = {
