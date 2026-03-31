@@ -128,7 +128,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
           {/* 1 - TEXT HAZ CLICK  ULISES -- REMOVER ESTA MIERDA SIN ROMPER LA PAGINA*/}
           <div className="order-1 xl:order-1 flex items-end min-h-12">
             <p className="text-[#F5F5F5] font-sans font-medium text-lg leading-tight text-center">
-              Haz clic en cualquier zona del cuerpo del perro para ver productos ortopédicos específicos para esa área.
+              
             </p>
           </div>
 

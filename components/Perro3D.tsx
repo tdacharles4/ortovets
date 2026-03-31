@@ -10,8 +10,10 @@ const bodyParts = [
   { id: 'hombro', src: '/img/perro3d/hombro.png', label: 'Hombro' },
   { id: 'codo', src: '/img/perro3d/codo.png', label: 'Codo' },
   { id: 'rodilla', src: '/img/perro3d/rodilla.png', label: 'Rodilla' },
-  { id: 'pata delantera', src: '/img/perro3d/pata_front.png', label: 'Pata frontal' },
-  { id: 'pata trasera', src: '/img/perro3d/pata_back.png', label: 'Pata trasera' },
+  { id: 'tarso', src: '/img/perro3d/tarso.png', label: 'Tarso o Tobillo' },
+  { id: 'carpo', src: '/img/perro3d/carpo.png', label: 'Carpo o Muñeca' },
+  { id: 'mano', src: '/img/perro3d/mano.png', label: 'Mano' },
+  { id: 'pataydedos', src: '/img/perro3d/pataydedos.png', label: 'Pata y Dedos' },
 
 ]
 
