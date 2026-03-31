@@ -31,7 +31,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
     setLoading(true)
 
     try {
-      const res = await fetch(`/api/products/tag?=${partId}`)
+      const res = await fetch(`/api/products/tag/${partId}`)
       if (!res.ok) throw new Error('Failed to fetch')
       const data: ShopifyProduct[] = await res.json()
       setProducts(data.length > 0 ? data : defaultProducts)
