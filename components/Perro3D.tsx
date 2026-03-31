@@ -127,10 +127,10 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
 
       {/* Imagen base */}
       <Image
-        src="/img/perro3d/bg-rem.png"
+        src="/img/perro3d/bg.png"
         alt="Perro base"
         fill
-        className="object-contain pointer-events-none scale-[2]"
+        className="object-contain pointer-events-none"
       />
 
       {/* Capas de body parts */}
