@@ -50,8 +50,10 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
     hombro: 'Hombro',
     codo: 'Codo',
     rodilla: 'Rodilla',
-    pata_front: 'Pata frontal',
-    pata_back: 'Pata trasera',
+    tarso: 'Tarso o Tobillo',
+    carpo: 'Carpo o Muñeca',
+    mano: 'Mano',
+    pataydedos: 'Pata y Dedos',
   }
 
   const features = [
@@ -128,7 +130,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
           {/* 1 - TEXT HAZ CLICK  ULISES -- REMOVER ESTA MIERDA SIN ROMPER LA PAGINA*/}
           <div className="order-1 xl:order-1 flex items-end min-h-12">
             <p className="text-[#F5F5F5] font-sans font-medium text-lg leading-tight text-center">
-              
+
             </p>
           </div>
 
