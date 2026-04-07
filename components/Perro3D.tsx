@@ -150,8 +150,8 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
         />
       ))}
 
-      {/* Tooltip opcional */}
-      {/* {activePart && (
+      {/* Tooltip */}
+      {activePart && (
         <div className="fixed bg-black/70 text-white text-sm px-3 py-1 rounded-full pointer-events-none z-50"
         style={{
             left: mousePos.x + 12,
@@ -160,7 +160,7 @@ export default function DogMap({ onPartSelect }: DogMapProps) {
         >
           {bodyParts.find(p => p.id === activePart)?.label}
         </div>
-      )} */}
+      )}
     </div>
   )
 }
