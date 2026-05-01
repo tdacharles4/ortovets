@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(xargs grep:*)",
-      "Bash(grep -r \"isMVZ\\\\|getMVZDiscount\" '/c/Users/teoch/Desktop/Freelance Projects/ortovets/components/' --include=*.tsx)"
+      "Bash(grep -r \"isMVZ\\\\|getMVZDiscount\" '/c/Users/teoch/Desktop/Freelance Projects/ortovets/components/' --include=*.tsx)",
+      "Bash(bash /c/Users/teoch/.claude/statusline-command.sh)",
+      "Bash(jq --version)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }
