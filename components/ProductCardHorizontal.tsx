@@ -33,7 +33,7 @@ export function ProductCardHorizontal({ product }: { product: ShopifyProduct }) 
 
   return (
     <Dialog>
-      <div className="flex flex-row w-full min-h-[148px] bg-[#FFFFFF] rounded-[32px] overflow-hidden items-center p-2 sm:p-[9px] gap-4 sm:gap-[16px] hover:shadow-lg transition-shadow group/hcard mx-auto">
+      <div className="flex flex-row w-full min-h-[148px] bg-[#FFFFFF]/60 rounded-[32px] overflow-hidden items-center p-2 sm:p-[9px] gap-4 sm:gap-[16px] hover:shadow-lg transition-shadow group/hcard mx-auto">
         {/* Image Frame - 130x130px */}
         <DialogTrigger asChild>
           <div className="relative w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] shrink-0 rounded-[24px] overflow-hidden bg-muted cursor-zoom-in">
@@ -58,7 +58,7 @@ export function ProductCardHorizontal({ product }: { product: ShopifyProduct }) 
         {/* Info Frame */}
         <div className="flex flex-col justify-center gap-1 overflow-hidden pr-4 flex-grow">
           {/* Product Title: Body/Regular, Large Size, 140% line height */}
-          <h3 className="text-[#1E1E1E] font-sans font-normal text-lg leading-[1.4] line-clamp-2">
+          <h3 className="text-[##1E2939] font-sans font-normal text-lg leading-[1.4] line-clamp-2" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 400 }}>
             {product.title}
           </h3>
           {/* Price: Heading/SemiBold, Base Size, 120% line height */}

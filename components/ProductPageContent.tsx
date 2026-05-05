@@ -441,6 +441,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
           <h3 className="text-[#1E1E1E] font-sans font-normal text-lg md:text-xl leading-[1.2] text-center lg:text-left">
             Preguntas Frecuentes
           </h3>
+          {/* Colapsable '¿Como se que talla comprar?' */}
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="sizing" className="border-none">
               <AccordionTrigger className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg hover:no-underline py-3 md:py-4 px-4 md:px-6 bg-[#F5F5F5] rounded-t-[12px]">
@@ -455,6 +456,18 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
                   acceder al video
                 </a> 
                 {" "}para aprender cómo medirlo correctamente y elegir la talla ideal. 🐾📏
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          {/* Colapsable '¿Como colocar el producto?' */}
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="sizing" className="border-none">
+              <AccordionTrigger className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg hover:no-underline py-3 md:py-4 px-4 md:px-6 bg-[#F5F5F5] rounded-t-[12px] flex items-center justify-between leading-none">
+                ¿Cómo colocar el producto a mi mascota?
+              </AccordionTrigger>
+              <AccordionContent className="text-[#757575] font-sans font-normal text-sm md:text-base leading-[1.6] px-4 md:px-6 pb-4 md:pb-6 bg-[#F5F5F5] rounded-b-[12px]">
+                Aqui va el contenido del colapsable.
               </AccordionContent>
             </AccordionItem>
           </Accordion>

@@ -28,6 +28,12 @@ import { toast } from "sonner";
 import { ProductImageGallery } from "./ProductImageGallery";
 
 
+function truncarDescripcion(text: string, maxChars: number = 120): string {
+  const slice = text.slice(0, maxChars);
+  const dotIndex = slice.indexOf('.');
+  return dotIndex !== -1 ? slice.slice(0, dotIndex + 1) : slice;
+}
+
 export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
   const allImages = product.images?.edges?.map(edge => edge.node) || [];
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
@@ -337,18 +343,6 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
             <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6" />
           </button>
         </div>
-
-        {/* Hyperlink text */}
-        <div className="flex justify-center w-full mt-2 lg:mt-0">
-          <DialogClose asChild>
-            <Link 
-              href={`/tienda/${product.handle || ""}`}
-              className="text-[#0091FF] font-sans font-normal text-sm lg:text-base leading-[1.4] underline decoration-solid w-fit"
-            >
-              Ver más detalles
-            </Link>
-          </DialogClose>
-        </div>
       </div>
 
       {/* FPC Product Info Frame */}
@@ -385,8 +379,17 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
 
           {/* Text Frame */}
           <div className="w-full text-center lg:text-left">
-            <p className="text-[#757575] font-sans font-normal text-sm lg:text-base leading-[1.4] line-clamp-[4]">
-              {product.description}
+            <p className="text-[#757575] font-sans font-normal text-sm lg:text-base leading-[1.4] ">
+              {truncarDescripcion(product.description??'')}
+              <br />
+              <DialogClose asChild>
+                <Link 
+                  href={`/tienda/${product.handle || ""}`}
+                  className="text-[#0091FF] font-sans font-normal text-sm lg:text-base leading-[1.4] underline decoration-solid w-fit"
+                >
+                  Ver más detalles
+                </Link>
+              </DialogClose>
             </p>
           </div>
 
@@ -491,7 +494,7 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
             </div>
           </div>
 
-          {/* Accordion */}
+          {/* Colapsable '¿Como se que talla comprar?' */}
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="sizing" className="border-none">
               <AccordionTrigger className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg hover:no-underline py-3 md:py-4 px-4 md:px-6 bg-[#F5F5F5] rounded-t-[12px] flex items-center justify-between leading-none">
@@ -506,6 +509,18 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
                   acceder al video
                 </a> 
                 {" "}para aprender cómo medirlo correctamente y elegir la talla ideal. 🐾📏
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          {/* Colapsable '¿Como colocar el producto?' */}
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="sizing" className="border-none">
+              <AccordionTrigger className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg hover:no-underline py-3 md:py-4 px-4 md:px-6 bg-[#F5F5F5] rounded-t-[12px] flex items-center justify-between leading-none">
+                ¿Cómo colocar el producto a mi mascota?
+              </AccordionTrigger>
+              <AccordionContent className="text-[#757575] font-sans font-normal text-sm md:text-base leading-[1.6] px-4 md:px-6 pb-4 md:pb-6 bg-[#F5F5F5] rounded-b-[12px]">
+                Aqui va el contenido del colapsable.
               </AccordionContent>
             </AccordionItem>
           </Accordion>

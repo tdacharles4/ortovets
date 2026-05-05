@@ -240,7 +240,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full bg-[#ffff]">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 xl:px-8">
         <div className="hidden lg:flex items-center gap-10">
-          <Link href="/"><Image src="/img/nav-logo.png" alt="Ortovets Logo" width={170} height={48} /></Link>
+          <Link href="/"><img src="/img/nav-logo.png" alt="Ortovets Logo" style={{ height: 48, width: 'auto' }} /></Link>
           <NavigationMenu>
             <NavigationMenuList>
               {navLinks.map((link) => (
@@ -271,7 +271,7 @@ export default function Navbar() {
 
         {/* Mobile View */}
         <div className="flex w-full items-center justify-between lg:hidden">
-          <Link href="/"><Image src="/img/nav-logo.png" alt="Ortovets Logo" width={140} height={40} /></Link>
+          <Link href="/"><img src="/img/nav-logo.png" alt="Ortovets Logo" style={{ height: 40, width: 'auto' }} /></Link>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon"><Menu className="h-6 w-6" /></Button>
