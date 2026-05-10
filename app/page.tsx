@@ -53,7 +53,7 @@ export default async function Home() {
     <>
       <BreakpointLogger />
       {/* Landing Frame */}
-      <div className="relative bg-[url('/img/landing-bg.png')] min-h-[calc(100vh-64px)] bg-cover bg-center bg-no-repeat flex justify-center">
+      <div className="relative bg-[url('/img/landing-bg.png')] min-h-[calc(100vh-64px)] md:min-h-0 bg-cover bg-center bg-no-repeat flex justify-center">
         <DogMapWithProducts defaultProducts={products} />
       </div>
 
