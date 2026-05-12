@@ -93,10 +93,10 @@ export default function ConsultasPage() {
           </h2>
           <div className="flex flex-col gap-1">
             <p className="text-[#1E2939] font-sans font-medium text-[16px] leading-tight">
-              LICENCIATURA EN MEDICINA VETERINARIA Y ZOOTECNIA: 1458193
+              LICENCIATURA EN MEDICINA VETERINARIA Y ZOOTECNIA
             </p>
             <p className="text-[#1E2939] font-sans font-medium text-[16px] leading-tight">
-              MAESTRÍA EN CIENCIAS FISIOLÓGICA: 2056201
+              MAESTRÍA EN CIENCIAS FISIOLÓGICA
             </p>
           </div>
         </div>
