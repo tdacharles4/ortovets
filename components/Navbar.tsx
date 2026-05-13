@@ -58,7 +58,7 @@ function AuthNav() {
   if (isAuthenticated) {
     return (
       <Popover>
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild className="p-0!">
           <Button variant="ghost" size="icon"><User className="h-6 w-6" /></Button>
         </PopoverTrigger>
         <PopoverContent className="w-80 mr-4">
@@ -67,7 +67,7 @@ function AuthNav() {
               <h4 className="font-medium leading-none flex items-center gap-2">
                 {loading ? "Cargando..." : `Hola, ${customer?.firstName || 'Usuario'}`}
                 {!loading && customer?.tags?.includes('MVZ') && (
-                  <Badge variant="secondary" className="px-2 py-0 text-[10px]">
+                  <Badge variant="secondary" className="py-0 text-[10px]">
                     MVZ
                   </Badge>
                 )}
@@ -174,12 +174,12 @@ function SearchBar() {
   }, [activeProductHandle]); // This effect runs only when a product handle is set
 
   return (
-    <div className="relative flex-1 max-w-md" ref={searchRef}>
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+    <div className="relative flex-1 min-w-[100px] max-w-[160px] lg:max-w-xs xl:max-w-sm" ref={searchRef}>
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 xl:h-4 xl:w-4 text-muted-foreground" />
       <Input
         type="search"
         placeholder="Buscar producto..."
-        className="pl-9 w-full"
+        className="pl-7 xl:pl-9 w-full"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         onFocus={() => setIsSearchOpen(searchQuery.length > 1 && searchResults.length > 0)}
@@ -238,15 +238,15 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#ffff]">
-      <div className="flex h-16 items-center justify-between px-4 sm:px-6 xl:px-8">
-        <div className="hidden lg:flex items-center gap-10">
-          <Link href="/"><img src="/img/nav-logo.png" alt="Ortovets Logo" style={{ height: 48, width: 'auto' }} /></Link>
+      <div className="flex h-16 items-center justify-between gap-2 px-4 sm:px-6 xl:px-8">
+        <div className="hidden md:flex items-center gap-2 lg:gap-6">
+          <Link href="/" className="flex-shrink-0"><img src="/img/nav-logo.png" alt="Ortovets Logo" style={{ height: 48, width: 'auto', display: 'block' }} /></Link>
           <NavigationMenu>
-            <NavigationMenuList>
+            <NavigationMenuList className="gap-2">
               {navLinks.map((link) => (
                 <NavigationMenuItem key={link.title}>
                   <NavigationMenuLink asChild>
-                    <Link href={link.href} className={`${navigationMenuTriggerStyle()} text-base`}>
+                    <Link href={link.href} className={`${navigationMenuTriggerStyle()} text-sm lg:text-base px-0 py-0 lg:px-3 lg:py-1`}>
                       {link.title}
                     </Link>
                   </NavigationMenuLink>
@@ -256,7 +256,7 @@ export default function Navbar() {
           </NavigationMenu>
         </div>
 
-        <div className="hidden lg:flex items-center space-x-4">
+        <div className="hidden md:flex items-center gap-1 lg:gap-4">
           <SearchBar />
           <AuthNav />
           <Link href="/cart" className="relative">
@@ -270,8 +270,8 @@ export default function Navbar() {
         </div>
 
         {/* Mobile View */}
-        <div className="flex w-full items-center justify-between lg:hidden">
-          <Link href="/"><img src="/img/nav-logo.png" alt="Ortovets Logo" style={{ height: 40, width: 'auto' }} /></Link>
+        <div className="flex w-full items-center justify-between md:hidden">
+          <Link href="/" className="flex-shrink-0"><img src="/img/nav-logo.png" alt="Ortovets Logo" style={{ height: 40, width: 'auto', display: 'block' }} /></Link>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon"><Menu className="h-6 w-6" /></Button>
