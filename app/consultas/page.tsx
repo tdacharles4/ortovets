@@ -9,7 +9,7 @@ export default function ConsultasPage() {
       <section className="relative w-full max-w-[1920px] [@media(hover:none)_and_(pointer:coarse)]:flex-grow lg:bg-[url('/img/consultas-icon.png')] bg-no-repeat bg-contain xl:[background-size:auto_85%] [background-position:calc(100%+120px)_100%] flex flex-col lg:grid lg:grid-cols-[60%_40%] xl:grid-cols-[58%_42%] lg:grid-rows-[auto_auto]">
 
         {/* Left: spans both rows — blur box + button in same w-fit container */}
-        <div className="lg:row-span-2 flex flex-col gap-4 mx-6 mt-10 mb-10 lg:mx-0 lg:mt-0 lg:mb-0 lg:pt-[48px] lg:pb-[48px] lg:pl-[64px] xl:pl-[100px] xl:pt-[48px] xl:pb-[48px] lg:w-fit xl:w-auto lg:gap-[16px] [@media(hover:none)_and_(pointer:coarse)]:!pt-8 [@media(hover:none)_and_(pointer:coarse)]:!pb-0 [@media(hover:none)_and_(pointer:coarse)]:!gap-6">
+        <div className="lg:row-span-2 flex flex-col gap-4 mx-6 mt-10 mb-10 lg:mx-0 lg:mt-0 lg:mb-0 lg:pt-[48px] lg:pb-[48px] lg:pl-[64px] xl:pl-[100px] xl:pt-[48px] xl:pb-[48px] lg:w-fit xl:w-auto lg:gap-[16px] [@media(hover:none)_and_(pointer:coarse)]:!pt-8 [@media(hover:none)_and_(pointer:coarse)]:!gap-6">
 
           {/* Blur box */}
           <div className="flex flex-col gap-4 lg:gap-3 items-center lg:items-start text-center lg:text-left bg-white/70 lg:bg-white/60 xl:bg-transparent [@media(hover:none)_and_(pointer:coarse)]:!bg-white/50 p-4 md:p-6 lg:px-5 lg:pt-6 lg:pb-6 xl:p-0 rounded-3xl xl:rounded-none backdrop-blur-md xl:backdrop-blur-none shadow-sm xl:shadow-none transition-all duration-300 w-full lg:w-0 lg:min-w-full xl:w-full xl:min-w-0 [@media(hover:none)_and_(pointer:coarse)]:!gap-10 [@media(hover:none)_and_(pointer:coarse)]:!p-14">
