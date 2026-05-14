@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -183,18 +183,46 @@ function ContactForm() {
 }
 
 export default function ContactoPage() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const update = () => {
+      if (window.innerWidth < 1024) {
+        el.style.transform = "";
+        return;
+      }
+      el.style.transform = "none";
+      const naturalHeight = el.scrollHeight;
+      const outer = el.parentElement as HTMLElement;
+      const outerStyles = window.getComputedStyle(outer);
+      const paddingTop = parseFloat(outerStyles.paddingTop);
+      const paddingBottom = parseFloat(outerStyles.paddingBottom);
+      const available = window.innerHeight - 64 - paddingTop - paddingBottom - 32;
+      const scale = Math.min(0.95, available / naturalHeight);
+      el.style.transform = `scale(${scale})`;
+      el.style.transformOrigin = "center center";
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
   return (
-    <div className="relative w-full min-h-[calc(100vh-64px)] flex items-center justify-center bg-[url('/img/contacto-bg.png')] bg-cover bg-center overflow-hidden py-12 px-4 md:px-8">
+    <div className="relative w-full min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] flex items-center justify-center bg-[url('/img/contacto-bg.png')] bg-cover bg-center overflow-hidden px-2 md:px-4">
       <div className="absolute inset-0 bg-black/5" />
       
       {/* Container for siblings */}
-      <div className="relative z-10 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-[64px] max-w-[1810px] w-full">
+      <div ref={containerRef} className="relative z-10 flex flex-col lg:flex-row items-center justify-center gap-12 max-w-[1810px] w-full">
 
         {/* Left column — display:contents on mobile so children participate directly in the outer flex order */}
-        <div className="contents lg:flex lg:flex-col lg:items-start lg:justify-between lg:gap-12 lg:h-[674px] lg:w-fit">
+        <div className="contents lg:flex lg:flex-col lg:items-start lg:justify-between lg:gap-12 lg:h-[674px] lg:w-fit lg:shrink-0">
 
           {/* Title — order 1 on mobile */}
-          <div className="order-1 lg:order-none flex flex-col gap-4 text-center lg:text-left w-full">
+          <div className="order-1 lg:order-none flex flex-col gap-4 text-center lg:text-left w-full ">
             <h1 className="text-[#1E2939] font-sans font-extrabold text-3xl md:text-5xl lg:text-[48px] leading-tight">
               Tu Tienes Preguntas,<br />Nosotros Respuestas
             </h1>
