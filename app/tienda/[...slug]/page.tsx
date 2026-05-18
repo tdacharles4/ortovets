@@ -1,4 +1,4 @@
-import { getProduct } from "@/lib/shopify";
+import { getProduct, ShopifyProductVideo, ShopifyProductExternalVideo } from "@/lib/shopify";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, PlayCircle } from "lucide-react";
@@ -19,6 +19,12 @@ export default async function ProductPage({ params }: PageProps) {
   if (!product) {
     notFound();
   }
+
+  const productVideos = (product.media?.edges ?? [])
+    .map(e => e.node)
+    .filter(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
+
+  const firstVideo = productVideos[0] as ShopifyProductVideo | ShopifyProductExternalVideo | undefined;
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-white">
@@ -53,15 +59,33 @@ export default async function ProductPage({ params }: PageProps) {
           {/* Videos Content Frame */}
           <div className="flex flex-col md:flex-row w-full gap-8 md:gap-12 lg:gap-[48px]">
             {/* Video Frame 1 */}
-            <div className="flex flex-col flex-1 gap-3">
-              <h3 className="text-[#5A5A5A] font-sans font-semibold italic text-lg leading-[1.2]">
-                Video 1 Title
-              </h3>
-              <div className="relative w-full aspect-video bg-muted flex items-center justify-center cursor-pointer group rounded-xl overflow-hidden">
-                <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors" />
-                <PlayCircle className="w-12 h-12 lg:w-16 lg:h-16 text-white/80 group-hover:scale-110 transition-transform z-10" />
+            {firstVideo && (
+              <div className="flex flex-col flex-1 gap-3">
+                <h3 className="text-[#5A5A5A] font-sans font-semibold italic text-lg leading-[1.2]">
+                  ¿Cómo medir el producto?
+                </h3>
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black">
+                  {firstVideo.mediaContentType === 'VIDEO' ? (
+                    <video
+                      className="w-full h-full object-cover"
+                      controls
+                      poster={(firstVideo as ShopifyProductVideo).previewImage?.url}
+                    >
+                      {(firstVideo as ShopifyProductVideo).sources.map(src => (
+                        <source key={src.url} src={src.url} type={src.mimeType} />
+                      ))}
+                    </video>
+                  ) : (
+                    <iframe
+                      className="w-full h-full"
+                      src={(firstVideo as ShopifyProductExternalVideo).embeddedUrl}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Video Frame 2 */}
             <div className="flex flex-col flex-1 gap-3">
