@@ -37,6 +37,21 @@ export async function shopifyFetch<T>({
   }
 }
 
+export type ShopifyProductVideo = {
+  mediaContentType: 'VIDEO';
+  sources: { url: string; mimeType: string; format: string }[];
+  previewImage: { url: string } | null;
+};
+
+export type ShopifyProductExternalVideo = {
+  mediaContentType: 'EXTERNAL_VIDEO';
+  embeddedUrl: string;
+  host: string;
+  previewImage: { url: string } | null;
+};
+
+export type ShopifyProductMedia = ShopifyProductVideo | ShopifyProductExternalVideo;
+
 export type ShopifyProduct = {
   id: string;
   title: string;
@@ -56,6 +71,11 @@ export type ShopifyProduct = {
         url: string;
         altText: string;
       };
+    }[];
+  };
+  media?: {
+    edges: {
+      node: ShopifyProductMedia;
     }[];
   };
   priceRange: {
@@ -166,6 +186,30 @@ export async function getProduct(handle: string) {
             node {
               url
               altText
+            }
+          }
+        }
+        media(first: 10) {
+          edges {
+            node {
+              mediaContentType
+              ... on Video {
+                sources {
+                  url
+                  mimeType
+                  format
+                }
+                previewImage {
+                  url
+                }
+              }
+              ... on ExternalVideo {
+                embeddedUrl
+                host
+                previewImage {
+                  url
+                }
+              }
             }
           }
         }

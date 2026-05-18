@@ -30,6 +30,47 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   const [carouselStartIndex, setCarouselStartIndex] = React.useState(0);
   const [quantity, setQuantity] = React.useState(1);
   const [buyNowLoading, setBuyNowLoading] = React.useState(false);
+  const imagesFrameRef = React.useRef<HTMLDivElement>(null);
+  const infoFrameRef = React.useRef<HTMLDivElement>(null);
+  const infoInnerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const images = imagesFrameRef.current;
+    const outer = infoFrameRef.current;
+    const inner = infoInnerRef.current;
+    if (!images || !outer || !inner) return;
+
+    const update = () => {
+      if (window.innerWidth < 1024) {
+        outer.style.height = "";
+        inner.style.transform = "";
+        inner.style.transformOrigin = "";
+        return;
+      }
+      const imagesHeight = images.offsetHeight;
+      if (!imagesHeight) return;
+      outer.style.height = `${imagesHeight}px`;
+      // Reset transform before measuring natural height
+      inner.style.transform = "";
+      inner.style.transformOrigin = "";
+      void inner.getBoundingClientRect();
+      const naturalHeight = inner.scrollHeight;
+      if (naturalHeight > imagesHeight) {
+        const scale = imagesHeight / naturalHeight;
+        inner.style.transformOrigin = "top center";
+        inner.style.transform = `scale(${scale})`;
+      }
+    };
+
+    const observer = new ResizeObserver(update);
+    observer.observe(images);
+    observer.observe(inner);
+    window.addEventListener("resize", update);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
 
   // cart
   const { addToCart } = useCart();
@@ -233,7 +274,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   return (
     <section className="w-full flex flex-col lg:flex-row gap-8 lg:gap-[64px]">
       {/* Images Frame*/}
-      <div className="flex flex-col w-full lg:w-[600px] xl:w-[816px] gap-[16px] lg:gap-[24px] lg:min-w-[280px]">
+      <div ref={imagesFrameRef} className="flex flex-col w-full lg:w-[600px] xl:w-[816px] gap-[16px] lg:gap-[24px] lg:min-w-[280px]">
         {/* Main Image Container */}
         <div className="relative w-full aspect-square md:aspect-video lg:aspect-square bg-muted overflow-hidden rounded-2xl">
           {mainImage ? (
@@ -300,7 +341,8 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
       </div>
 
       {/* Product Info Frame */}
-      <div className="flex flex-col flex-grow gap-6 lg:gap-8 pt-2 lg:pt-4">
+      <div ref={infoFrameRef} className="flex flex-col flex-grow lg:max-w-[65%] lg:overflow-hidden">
+        <div ref={infoInnerRef} className="flex flex-col gap-6 lg:gap-8 pt-2 lg:pt-4">
         {/* Title and Price Section */}
         <div className="flex flex-col gap-3 md:gap-4 w-full text-center lg:text-left">
           <h1 className="text-[#1E1E1E] font-sans font-semibold text-2xl md:text-3xl xl:text-4xl leading-[1.2]">
@@ -471,6 +513,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+        </div>
         </div>
       </div>
       <ProductImageGallery images={allImages} isOpen={isGalleryOpen} onOpenChange={setIsGalleryOpen} initialIndex={galleryInitialIndex}/>

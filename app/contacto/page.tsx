@@ -3,7 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { useScaleToFit } from "@/hooks/useScaleToFit";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -184,32 +185,7 @@ function ContactForm() {
 
 export default function ContactoPage() {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const update = () => {
-      if (window.innerWidth < 1024) {
-        el.style.transform = "";
-        return;
-      }
-      el.style.transform = "none";
-      const naturalHeight = el.scrollHeight;
-      const outer = el.parentElement as HTMLElement;
-      const outerStyles = window.getComputedStyle(outer);
-      const paddingTop = parseFloat(outerStyles.paddingTop);
-      const paddingBottom = parseFloat(outerStyles.paddingBottom);
-      const available = window.innerHeight - 64 - paddingTop - paddingBottom - 32;
-      const scale = Math.min(0.95, available / naturalHeight);
-      el.style.transform = `scale(${scale})`;
-      el.style.transformOrigin = "center center";
-    };
-
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
+  useScaleToFit(containerRef, { axis: "y" });
 
   return (
     <div className="relative w-full min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] flex items-center justify-center bg-[url('/img/contacto-bg.png')] bg-cover bg-center overflow-hidden px-2 md:px-4">

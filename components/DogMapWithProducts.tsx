@@ -105,9 +105,9 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
                   className="object-contain pointer-events-none"
                 />
             </div>
-            <div className="flex items-center justify-center gap-2 bg-[#2B4A7C] md:bg-transparent rounded-full px-4 py-2 md:px-0 md:py-0 w-98 h-13 md:h-auto">
+            <div className="inline-flex self-start items-center gap-2 bg-[#2B4A7C] rounded-full px-4 py-2">
               <div className="flex items-center justify-center w-4 h-4 rounded-full bg-[#8CC63F] shrink-0"/>
-              <h1 className="text-white md:text-[#2B4A7C] font-bold text-2xl uppercase tracking-wide whitespace-nowrap">
+              <h1 className="text-white font-bold text-2xl uppercase tracking-wide whitespace-nowrap">
                 Marca #1 en México
               </h1>
             </div>
