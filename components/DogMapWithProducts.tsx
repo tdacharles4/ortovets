@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import DogMap from '@/components/Perro3D'
 import { ProductCardHorizontal } from '@/components/ProductCardHorizontal'
 import { ShopifyProduct } from '@/lib/shopify'
@@ -20,10 +19,9 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
   const [products, setProducts] = useState<ShopifyProduct[]>(defaultProducts)
   const [selectedPart, setSelectedPart] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const handleIpadPartSelect = (partId: string) => {
-    router.push(`/tienda?tag=${partId}`)
+    setSelectedPart(prev => prev === partId ? null : partId)
   }
 
   const handlePartSelect = async (partId: string) => {
@@ -159,23 +157,27 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
           {/* iPad-only simplified view */}
           <div className="hidden md:flex xl:hidden flex-col items-center justify-center gap-4 h-full py-4">
             <h2 className="text-[#2B4A7C] font-sans font-semibold text-xl uppercase text-center">
-              Selecciona la zona afectada
+              {selectedPart
+                ? `Productos Recomendados para ${partLabel[selectedPart] ?? selectedPart}`
+                : 'Selecciona la zona afectada'}
             </h2>
             <div className="w-full flex justify-center">
               <DogMap onPartSelect={handleIpadPartSelect} />
             </div>
-            <Link
-              href="/tienda"
-              className="flex items-center gap-2 text-[#4C83DC] hover:opacity-80 transition-opacity"
-            >
-              <span className="font-sans font-medium text-lg underline text-center">
-                Ver más productos recomendados
-              </span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </Link>
+            {selectedPart && (
+              <Link
+                href={`/tienda?tag=${selectedPart}`}
+                className="flex items-center gap-2 text-[#4C83DC] hover:opacity-80 transition-opacity"
+              >
+                <span className="font-sans font-medium text-lg underline text-center">
+                  Ver más productos recomendados
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </Link>
+            )}
           </div>
 
           {/* Mobile & Desktop full grid view */}
