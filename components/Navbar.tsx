@@ -235,11 +235,12 @@ function SearchBar() {
 export default function Navbar() {
   const { items } = useCart()
   const count = items.reduce((sum, i) => sum + i.quantity, 0);
+  const [sheetOpen, setSheetOpen] = React.useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#ffff]">
       <div className="flex h-16 items-center justify-between gap-2 px-4 sm:px-6 xl:px-8">
-        <div className="hidden md:flex items-center gap-2 lg:gap-6">
+        <div className="hidden xl:flex items-center gap-2 xl:gap-6">
           <Link href="/" className="flex-shrink-0"><img src="/img/nav-logo.png" alt="Ortovets Logo" style={{ height: 48, width: 'auto', display: 'block' }} /></Link>
           <NavigationMenu>
             <NavigationMenuList className="gap-2">
@@ -256,7 +257,7 @@ export default function Navbar() {
           </NavigationMenu>
         </div>
 
-        <div className="hidden md:flex items-center gap-1 lg:gap-4">
+        <div className="hidden xl:flex items-center gap-1 xl:gap-4">
           <SearchBar />
           <AuthNav />
           <Link href="/cart" className="relative">
@@ -269,47 +270,49 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile View */}
-        <div className="flex w-full items-center justify-between md:hidden">
-          <Link href="/" className="flex-shrink-0"><img src="/img/nav-logo.png" alt="Ortovets Logo" style={{ height: 40, width: 'auto', display: 'block' }} /></Link>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon"><Menu className="h-6 w-6" /></Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-8">
-              <div className="flex flex-col gap-y-6">
-                <SearchBar />
-                <nav className="flex flex-col gap-y-4">
-                  {navLinks.map((link) => (
-                    <Link key={link.title} href={link.href} className="text-lg font-semibold text-foreground/80 hover:text-foreground">
-                      {link.title}
-                    </Link>
-                  ))}
-                </nav>
-                <div className="border-b"></div>
-                <div className="flex flex-col gap-y-4">
-                  <div className="flex flex-col gap-y-2">
-                    <AuthNav />
-                  </div>
-
-                  <Link
-                    href="/cart"
-                    className="flex items-center gap-2 text-lg font-semibold text-foreground/80 hover:text-foreground"
-                  >
-                    <div className="relative">
-                      <ShoppingCart className="h-5 w-5" />
-                      {count > 0 && (
-                        <span className="absolute -top-2 -right-4 bg-red-600 text-white text-xs rounded-full px-2">
-                          {count}
-                        </span>
-                      )}
+        {/* Mobile + Tablet View */}
+        <div className="flex w-full items-center justify-between xl:hidden">
+          <div className="flex items-center gap-1">
+            <Link href="/" className="flex-shrink-0"><img src="/img/nav-logo.png" alt="Ortovets Logo" style={{ height: 40, width: 'auto', display: 'block' }} /></Link>
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-15 w-15"><Menu className="h-8 w-8" /></Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-8">
+                <div className="flex flex-col gap-y-6">
+                  <SearchBar />
+                  <nav className="flex flex-col gap-y-4">
+                    {navLinks.map((link) => (
+                      <Link key={link.title} href={link.href} onClick={() => setSheetOpen(false)} className="text-lg font-semibold text-foreground/80 hover:text-foreground">
+                        {link.title}
+                      </Link>
+                    ))}
+                  </nav>
+                  <div className="border-b"></div>
+                  <div className="flex flex-col gap-y-4">
+                    <div className="flex flex-col gap-y-2">
+                      <AuthNav />
                     </div>
-                    <span className="pl-2">Carrito</span>
-                  </Link>
+                    <Link
+                      href="/cart"
+                      onClick={() => setSheetOpen(false)}
+                      className="flex items-center gap-2 text-lg font-semibold text-foreground/80 hover:text-foreground"
+                    >
+                      <div className="relative">
+                        <ShoppingCart className="h-5 w-5" />
+                        {count > 0 && (
+                          <span className="absolute -top-2 -right-4 bg-red-600 text-white text-xs rounded-full px-2">
+                            {count}
+                          </span>
+                        )}
+                      </div>
+                      <span className="pl-2">Carrito</span>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
