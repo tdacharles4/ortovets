@@ -94,16 +94,29 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
         <div className="flex flex-col gap-8 w-full md:w-[45%] xl:basis-1/3">
           {/* Text Content Frame */}
           <div className="flex flex-col h-fit gap-8 lg:gap-[32px]">
-            <div className="w-auto h-auto md:hidden xl:block">
-              <Image
+            {/* Mobile: logo with white pill background */}
+            <div className="flex justify-center md:hidden">
+              <div className="inline-flex bg-white rounded-full px-6 pt-2 pb-5">
+                <Image
                   src="/img/landing-logo.png"
                   alt="Ortovets"
                   width="683"
                   height="252"
                   className="object-contain pointer-events-none"
                 />
+              </div>
             </div>
-            <div className="inline-flex self-start items-center gap-2 bg-[#2B4A7C] rounded-full px-4 py-2">
+            {/* Desktop: logo without pill */}
+            <div className="hidden xl:block">
+              <Image
+                src="/img/landing-logo.png"
+                alt="Ortovets"
+                width="683"
+                height="252"
+                className="object-contain pointer-events-none"
+              />
+            </div>
+            <div className="inline-flex self-center md:self-start items-center gap-2 bg-[#2B4A7C] rounded-full px-4 py-2">
               <div className="flex items-center justify-center w-4 h-4 rounded-full bg-[#8CC63F] shrink-0"/>
               <h1 className="text-white font-bold text-2xl uppercase tracking-wide whitespace-nowrap">
                 Marca #1 en México
@@ -204,11 +217,11 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
             <div className="w-full flex justify-center text-center">
               <DogMap onPartSelect={handlePartSelect} />
             </div>
-            <h2 className="-mt-6 translate-x-8 text-[#2B4A7C] uppercase text-xl">Selecciona la zona afectada</h2>
+            <h2 className="-mt-6 text-[#2B4A7C] uppercase text-xl text-center">Selecciona la zona afectada</h2>
           </div>
 
           {/* 4 - PRODUCTOS */}
-          <div className="mt-24 order-4 xl:order-4 flex flex-col gap-2">
+          <div className="mt-4 xl:mt-6 order-4 xl:order-4 flex flex-col gap-2">
             <div className="flex flex-col w-full h-auto gap-6 lg:gap-4">
               <div className="flex flex-col w-full h-auto gap-6 lg:gap-[16px]">
 
