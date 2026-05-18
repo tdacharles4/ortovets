@@ -111,9 +111,9 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
     <>
       <div className="flex flex-col">
         {/* Header row: title slot + filter */}
-        <div className="flex items-end justify-between mb-8 w-full gap-4">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-8 w-full gap-4">
           <div>{titleSlot}</div>
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex flex-col items-start md:items-end gap-1">
             <span className="text-lg font-medium">Filtrar</span>
             <Select value={activeTag ?? "all"} onValueChange={handleTagChange}>
               <SelectTrigger>
@@ -146,7 +146,7 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
         {loading ? (
           <div className="text-center py-20 text-[#757575]">Cargando...</div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 md:gap-8">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

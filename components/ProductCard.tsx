@@ -39,8 +39,24 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
   return (
     <Dialog>
       <Card className="flex flex-col h-full group/card overflow-hidden border-none shadow-lg rounded-2xl bg-card p-0 gap-0">
+          {/* Mobile: go directly to product page */}
+          <Link href={`/tienda/${product.handle}`} className="relative aspect-square w-full overflow-hidden block md:hidden">
+            {image ? (
+              <Image
+                src={image.url}
+                alt={image.altText || product.title}
+                fill
+                className="object-cover transition-transform duration-500 group-hover/card:scale-110"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-muted-foreground bg-muted">
+                Sin imagen
+              </div>
+            )}
+          </Link>
+          {/* Desktop: open quick-view modal */}
           <DialogTrigger asChild>
-            <div className="relative aspect-square w-full cursor-zoom-in overflow-hidden">
+            <div className="relative aspect-square w-full cursor-zoom-in overflow-hidden hidden md:block">
               {image ? (
                 <Image
                   src={image.url}
