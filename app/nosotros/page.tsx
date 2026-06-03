@@ -4,15 +4,19 @@ export default function Nosotros() {
   return (
     <div className="flex flex-col w-full items-center bg-white space-y-8 md:space-y-10 lg:space-y-12 xl:space-y-14 py-8 md:py-10 lg:py-12">
       {/* Frame 1: Hero Section */}
-      <section className="relative w-full max-w-[1920px] min-h-[300px] md:min-h-[380px] lg:min-h-[440px] xl:h-[478px] flex items-center justify-center bg-[#F5F1E3CC] bg-cover bg-center py-12 md:py-14 lg:py-16 xl:py-0">
-        <div className="absolute inset-0 bg-black/10 md:bg-transparent" />
-        <div className="relative w-full max-w-[1054px] px-6 flex flex-col items-center justify-center text-center gap-4 md:gap-5 lg:gap-6 xl:gap-1">
+      <section className="relative w-full max-w-[1920px] min-h-[300px] md:min-h-[380px] lg:min-h-[440px] xl:h-[478px] flex flex-col md:flex-row items-center bg-[#F5F1E3CC] bg-[url('/img/nosotros-topframe-bg.png')] bg-cover bg-center py-12 md:py-14 lg:py-16 xl:py-0 overflow-hidden">
+        {/* Left: Text content */}
+        <div className="relative z-10 flex flex-col justify-center gap-4 md:gap-5 lg:gap-6 xl:gap-3 w-full md:w-1/2 px-6 md:px-10 lg:px-16 xl:px-[80px] text-center md:text-left">
           <h1 className="text-[#1E2939] font-sans font-extrabold text-3xl md:text-4xl lg:text-5xl xl:text-[48px] leading-tight xl:leading-[1.0]">
             ¿Quiénes Somos?
           </h1>
-          <p className="text-[#1E2939] font-sans font-medium text-base md:text-lg lg:text-xl xl:text-[24px] leading-relaxed xl:leading-[1.4] max-w-3xl">
+          <p className="text-[#1E2939] font-sans font-medium text-base md:text-lg lg:text-xl xl:text-[24px] leading-relaxed xl:leading-[1.4]">
             Expertos en soluciones ortopédicas para mascotas. Somos una empresa mexicana dedicada al diseño y fabricación de productos ortopédicos para animales de compañía. Contamos con el respaldo y la supervisión directa de especialistas en terapia física y rehabilitación veterinaria.
           </p>
+        </div>
+        {/* Right: Image */}
+        <div className="relative z-10 flex w-full md:w-1/2 items-center justify-center mt-6 md:mt-0 px-6 md:px-0">
+          <img src="/img/nosotros-topframe-img.png" alt="Ortovets equipo" className="w-full h-auto object-contain" />
         </div>
       </section>
 
