@@ -135,7 +135,12 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
                 className="object-contain pointer-events-none"
               />
             </motion.div>
-            <motion.div variants={popItem} className="inline-flex self-center md:self-start items-center gap-2 bg-[#2B4A7C] rounded-full px-4 py-2">
+            <motion.div
+              variants={popItem}
+              className="inline-flex self-center md:self-start items-center gap-2 bg-[#2B4A7C] rounded-full px-4 py-2"
+              animate={{ scale: [1, 1.04, 1] }}
+              transition={{ scale: { delay: 0.6, duration: 2.2, repeat: Infinity, ease: 'easeInOut' } }}
+            >
               <div className="flex items-center justify-center w-4 h-4 rounded-full bg-[#8CC63F] shrink-0"/>
               <h1 className="text-white font-bold text-2xl uppercase tracking-wide whitespace-nowrap">
                 Marca #1 en México
