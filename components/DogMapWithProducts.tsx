@@ -125,8 +125,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
                 />
               </div>
             </motion.div>
-            {/* Desktop: logo without pill */}
-            <motion.div variants={popItem} className="hidden xl:block">
+            <motion.div variants={popItem} className="hidden md:block">
               <Image
                 src="/img/landing-logo.png"
                 alt="Ortovets"
