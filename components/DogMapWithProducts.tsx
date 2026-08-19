@@ -155,7 +155,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
             </motion.div>
             {/* Stats/Features Container */}
             <motion.div
-              className="mt-4 xl:mt-16 grid grid-cols-2 sm:grid-cols-4 lg:flex lg:flex-row h-fit gap-4 lg:gap-[32px]"
+              className="mt-4 xl:mt-8 grid grid-cols-2 sm:grid-cols-4 lg:flex lg:flex-row h-fit gap-4 lg:gap-[32px]"
               variants={staggerContainer(0.08)}
             >
               {features.map((feature, index) => (

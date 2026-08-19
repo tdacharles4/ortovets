@@ -16,10 +16,10 @@ export default async function Tienda() {
         initialHasNextPage={body.data.products.pageInfo.hasNextPage}
         titleSlot={
           <div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-[#1E1E1E]">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-[#2B4A7C]">
               Nuestros Productos
             </h1>
-            <p className="mt-4 text-[#757575] text-base md:text-lg max-w-2xl">
+            <p className="mt-4 text-[#757575] text-base md:text-lg max-w-2xl text-[#2B4A7C]">
               Explora nuestra selección de productos ortopédicos diseñados para el bienestar y la movilidad de tu mascota.
             </p>
           </div>

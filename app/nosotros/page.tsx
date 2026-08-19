@@ -57,7 +57,7 @@ export default function Nosotros() {
                   Innovación Con Propósito
                 </h3>
                 <p className="text-[#1E2939]/90 font-sans font-normal text-xs md:text-sm lg:text-[13px] xl:text-sm leading-relaxed">
-                  Desarrollamos soluciones ortopédicas basadas en investigación, tecnología y mejora continua para ofrecer productos realmente funcionales and efectivos.
+                  Desarrollamos soluciones ortopédicas basadas en investigación, tecnología y mejora continua para ofrecer productos realmente funcionales y efectivos.
                 </p>
               </div>
             </div>
@@ -104,7 +104,7 @@ export default function Nosotros() {
                 Visión
               </h2>
               <p className="text-[#294676] font-sans font-medium text-base md:text-lg lg:text-xl xl:text-[24px] leading-relaxed xl:leading-[1.4]">
-                Brindar soluciones ortopédicas especializadas de alta calidad que mejoren la movilidad, el bienestar and la calidad de vida de las mascotas, a través de innovación, atención personalizada y estándares médicos rigurosos.
+                Brindar soluciones ortopédicas especializadas de alta calidad que mejoren la movilidad, el bienestar y la calidad de vida de las mascotas, a través de innovación, atención personalizada y estándares médicos rigurosos.
               </p>
             </div>
             <div className="flex flex-col gap-3 md:gap-2 lg:gap-4">

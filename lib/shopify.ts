@@ -65,8 +65,7 @@ export type ShopifyProduct = {
       };
     }[];
   };
-  images: {
-    edges: {
+  images: {edges: {
       node: {
         url: string;
         altText: string;
