@@ -75,16 +75,16 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
             </div>
           </DialogTrigger>
         <CardContent className="flex-grow p-4">
-          <CardTitle className="line-clamp-1 text-lg">{product.title}</CardTitle>
+          <CardTitle className="line-clamp-1 text-lg text-[#2B4A7C]">{product.title}</CardTitle>
           <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
             {product.description}
           </p>
-          <p className="mt-4 text-xl font-bold">
+          <p className="mt-4 text-xl font-bold text-[#2B4A7C]">
             {priceDisplay}
           </p>
         </CardContent>
         <CardFooter className="p-4 pt-0">
-          <div className="flex w-full overflow-hidden rounded-md border border-input h-10 relative bg-[#1E1E1E]">
+          <div className="flex w-full overflow-hidden rounded-md border border-input h-10 relative bg-[#2B4A7C]">
             <Link 
               href={`/tienda/${product.handle}`}
               className="flex-grow h-full text-sm font-medium text-white transition-opacity duration-300 cursor-pointer flex items-center justify-center hover:bg-white/10"

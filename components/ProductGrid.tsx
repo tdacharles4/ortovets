@@ -14,7 +14,6 @@ import {
   FieldSeparator,
   FieldSet,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -109,7 +108,7 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col text-[#2B4A7C]">
         {/* Header row: title slot + filter */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-8 w-full gap-4">
           <div>{titleSlot}</div>
