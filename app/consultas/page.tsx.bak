@@ -40,17 +40,11 @@ export default function ConsultasPage() {
               <li className="text-[#757575] font-sans font-medium leading-relaxed text-[clamp(0.55rem,1.1vw,0.95rem)] lg:text-[clamp(0.625rem,0.9375vw,0.8125rem)] xl:text-[clamp(0.3rem,1.1vw,0.95rem)] [@media(hover:none)_and_(pointer:coarse)]:!text-lg">
                 Ten fotos o videos listos para compartir durante la consulta.
               </li>
-              <li className="text-[#757575] font-sans font-medium leading-relaxed text-[clamp(0.55rem,1.1vw,0.95rem)] lg:text-[clamp(0.625rem,0.9375vw,0.8125rem)] xl:text-[clamp(0.3rem,1.1vw,0.95rem)] [@media(hover:none)_and_(pointer:coarse)]:!text-lg">
-                El costo por consulta virtual es de $450.
-              </li>
-              <li className="text-[#757575] font-sans font-medium leading-relaxed text-[clamp(0.55rem,1.1vw,0.95rem)] lg:text-[clamp(0.625rem,0.9375vw,0.8125rem)] xl:text-[clamp(0.3rem,1.1vw,0.95rem)] [@media(hover:none)_and_(pointer:coarse)]:!text-lg">
-                El pago se realiza por transferencia.
-              </li>
             </ul>
           </div>
           {/* WhatsApp button */}
           <a
-            href="https://wa.me/522288244340?text=Hola%2C%20estoy%20interesado%20en%20agendar%20una%20consulta%20virtual"
+            href="https://wa.me/522288244340"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-3 bg-[#25D366] text-white font-sans font-bold text-lg md:text-xl xl:text-[clamp(1rem,1.8vw,1.5rem)] px-10 py-4 rounded-full hover:bg-[#128C7E] transition-all shadow-lg shadow-[#25D366]/20 border-none cursor-pointer group flex-shrink-0 lg:self-start lg:mt-auto"
