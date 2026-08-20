@@ -221,7 +221,7 @@ export default function ContactoPage() {
             </div>
             <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
               <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">Contacto</h3>
-              <p className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2]">+(52) 228 257 9865</p>
+              <p className="text-[#757575] font-sans font-regular text-[14px] leading-[1.2]">+(52) 228 824 4340</p>
             </div>
             <div className="flex flex-col justify-start gap-1 text-center lg:text-left">
               <h3 className="text-[#5A5A5A] font-sans font-semibold text-base leading-[1.2]">Redes Sociales</h3>

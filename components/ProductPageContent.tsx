@@ -100,34 +100,58 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
     }).filter(Boolean) || []
   )) as string[];
 
+  const SIZE_OPTION_NAMES = ['size', 'talla', 'tamaño', 'tamaño de accesorio'];
+
   const [selectedSize, setSelectedSize] = React.useState<string | undefined>(undefined);
-  const [selectedSide, setSelectedSide] = React.useState<string | undefined>(undefined);
+  const [selectedSecondOption, setSelectedSecondOption] = React.useState<string | undefined>(undefined);
 
-  // Listado de lados disponibles
-  const sideOptions = React.useMemo(()=>{
-    if(!selectedSize)return[];
-    const variantsForSize=product.variants.edges.filter(edge=>edge.node.selectedOptions.some(opt=>opt.name.toLowerCase()==='talla'&&opt.value===selectedSize));
-    const sides = variantsForSize.map(edge=>edge.node.selectedOptions.find(opt=>opt.name.toLowerCase()==='lado')?.value);
-    return[...new Set(sides.filter(Boolean))] as string[];
-  },[selectedSize,product.variants.edges]);
+  // Detect any second option beyond size (e.g. Lado, Mangas, etc.)
+  const secondOption = React.useMemo(() => {
+    if (!selectedSize) return { name: null, values: [] as string[] };
 
-  // Find the selected Menudeo variant based on the selected size
-  const selectedVariant = React.useMemo(()=>{
-    if(!selectedSize){
-      return product.variants.edges.length===1?product.variants.edges[0].node:undefined;
+    const variantsForSize = product.variants.edges.filter(edge =>
+      edge.node.selectedOptions.some(opt =>
+        SIZE_OPTION_NAMES.includes(opt.name.toLowerCase()) && opt.value === selectedSize
+      )
+    );
+
+    let optionName: string | null = null;
+    const values: string[] = [];
+
+    for (const edge of variantsForSize) {
+      const extraOpt = edge.node.selectedOptions.find(opt =>
+        !SIZE_OPTION_NAMES.includes(opt.name.toLowerCase()) && opt.name !== 'Title'
+      );
+      if (extraOpt) {
+        if (!optionName) optionName = extraOpt.name;
+        if (!values.includes(extraOpt.value)) values.push(extraOpt.value);
+      }
     }
-    const matchingVariant=product.variants.edges.find(edge=>{
-      const options=edge.node.selectedOptions;
-      const sizeOpt=options.find(opt=>['size','talla','tamaño','tamaño de accesorio'].includes(opt.name.toLowerCase()));
-      const sizeValue=sizeOpt?.value??(options.length===1&&options[0].name!=='Title'?options[0].value:undefined);
-      const hasSize=sizeValue===selectedSize;
-      if(!hasSize)return false;
-      if(sideOptions.length>0){
-        return options.some(opt=>opt.name.toLowerCase()==='lado'&&opt.value===selectedSide);
-      }return true;
+
+    return { name: optionName, values };
+  }, [selectedSize, product.variants.edges]);
+
+  // Find the selected Menudeo variant based on size + optional second option
+  const selectedVariant = React.useMemo(() => {
+    if (!selectedSize) {
+      return product.variants.edges.length === 1 ? product.variants.edges[0].node : undefined;
+    }
+    return product.variants.edges.find(edge => {
+      const options = edge.node.selectedOptions;
+      const sizeOpt = options.find(opt => SIZE_OPTION_NAMES.includes(opt.name.toLowerCase()));
+      const sizeValue = sizeOpt?.value ?? (options.length === 1 && options[0].name !== 'Title' ? options[0].value : undefined);
+      if (sizeValue !== selectedSize) return false;
+
+      if (secondOption.values.length > 0) {
+        return options.some(opt =>
+          !SIZE_OPTION_NAMES.includes(opt.name.toLowerCase()) &&
+          opt.name !== 'Title' &&
+          opt.value === selectedSecondOption
+        );
+      }
+      return true;
     })?.node;
-    return matchingVariant;
-  },[selectedSize,selectedSide,product.variants.edges,sideOptions])
+  }, [selectedSize, selectedSecondOption, product.variants.edges, secondOption])
 
   const menudeoPriceRange = getMenudeoPriceRange(product);
   const minPrice = menudeoPriceRange.minVariantPrice;
@@ -185,8 +209,10 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
     ? (selectedVariant ? (selectedVariant.quantityAvailable ?? Infinity) : 0)
     : (product.variants.edges[0]?.node?.quantityAvailable ?? Infinity);
 
+  const pendingSelection = secondOption.values.length > 0 && !selectedSecondOption;
+
   const isOutOfStock = selectedSize
-    ? (selectedVariant ? !selectedVariant.availableForSale || (selectedVariant.quantityAvailable != null && selectedVariant.quantityAvailable <= 0) : true)
+    ? (selectedVariant ? !selectedVariant.availableForSale || (selectedVariant.quantityAvailable != null && selectedVariant.quantityAvailable <= 0) : !pendingSelection)
     : !product.availableForSale && product.variants.edges.every(edge => edge.node.quantityAvailable != null && edge.node.quantityAvailable <= 0);
 
   const incrementQuantity = () => {
@@ -210,6 +236,10 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
     const hasVariants = sizes.length > 1;
     if (!selectedSize && hasVariants) {
       toast("Debes seleccionar una talla");
+      return;
+    }
+    if (pendingSelection) {
+      toast(`Debes seleccionar ${secondOption.name?.toLowerCase()}`);
       return;
     }
     const variant = selectedVariant || product.variants?.edges?.[0]?.node;
@@ -238,6 +268,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   const handleBuyNow = async () => {
     const hasVariants = sizes.length > 1;
     if (!selectedSize && hasVariants) return;
+    if (pendingSelection) return;
     const variant = selectedVariant || product.variants?.edges?.[0]?.node;
     if (!variant || !variant.availableForSale) return;
     const availableQty = variant.quantityAvailable ?? Infinity;
@@ -289,16 +320,16 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
             </Select>
           </div>
         )}
-        {sideOptions.length > 0 && (
+        {secondOption.values.length > 0 && (
           <div className="flex flex-col gap-2 w-full sm:flex-[3]">
-            <Label htmlFor="side-select-page" className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg h-7 flex items-center">Lado</Label>
-            <Select value={selectedSide} onValueChange={setSelectedSide}>
-              <SelectTrigger id="side-select-page" className="w-full !h-14 rounded-[12px] border border-input text-base md:text-lg flex items-center bg-white px-4">
-                <SelectValue placeholder="Selecciona un lado" />
+            <Label htmlFor="second-option-select-page" className="text-[#1E1E1E] font-sans font-medium text-base md:text-lg h-7 flex items-center">{secondOption.name}</Label>
+            <Select value={selectedSecondOption} onValueChange={setSelectedSecondOption}>
+              <SelectTrigger id="second-option-select-page" className="w-full !h-14 rounded-[12px] border border-input text-base md:text-lg flex items-center bg-white px-4">
+                <SelectValue placeholder={`Selecciona ${secondOption.name?.toLowerCase()}`} />
               </SelectTrigger>
               <SelectContent>
-                {sideOptions.map((side) => (
-                  <SelectItem key={side} value={side!}>{side}</SelectItem>
+                {secondOption.values.map((val) => (
+                  <SelectItem key={val} value={val}>{val}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -311,7 +342,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
               <Minus className="w-5 h-5" />
             </button>
             <span className="text-base md:text-lg font-medium">{quantity}</span>
-            <button onClick={incrementQuantity} disabled={quantity >= currentAvailability || (sizes.length > 0 && !selectedSize)} className="p-1 hover:text-[#8CC63F] disabled:text-gray-300 transition-colors">
+            <button onClick={incrementQuantity} disabled={quantity >= currentAvailability || (sizes.length > 0 && (!selectedSize || pendingSelection))} className="p-1 hover:text-[#8CC63F] disabled:text-gray-300 transition-colors">
               <Plus className="w-5 h-5" />
             </button>
           </div>
@@ -325,16 +356,16 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
         ) : (
           <div className="flex flex-col sm:flex-row gap-4 w-full">
             <button
-              disabled={quantity === 0 || (sizes.length > 0 && !selectedSize)}
-              className={`flex items-center justify-center gap-3 flex-1 text-white h-14 md:h-16 rounded-[12px] font-bold text-lg md:text-xl transition-all ${(quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#FF9230] hover:bg-[#e6832b] shadow-xl shadow-[#FF9230]/20"}`}
+              disabled={quantity === 0 || (sizes.length > 0 && (!selectedSize || pendingSelection))}
+              className={`flex items-center justify-center gap-3 flex-1 text-white h-14 md:h-16 rounded-[12px] font-bold text-lg md:text-xl transition-all ${(quantity === 0 || (sizes.length > 0 && (!selectedSize || pendingSelection))) ? "bg-gray-300 cursor-not-allowed" : "bg-[#FF9230] hover:bg-[#e6832b] shadow-xl shadow-[#FF9230]/20"}`}
               onClick={handleAddToCart}
             >
               <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
               <span className="whitespace-nowrap">Agregar al carrito</span>
             </button>
             <button
-              disabled={buyNowLoading || quantity === 0 || (sizes.length > 0 && !selectedSize)}
-              className={`flex items-center justify-center flex-1 text-white h-14 md:h-16 rounded-[12px] font-bold text-lg md:text-xl transition-all ${(buyNowLoading || quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab336] shadow-xl shadow-[#8CC63F]/20"}`}
+              disabled={buyNowLoading || quantity === 0 || (sizes.length > 0 && (!selectedSize || pendingSelection))}
+              className={`flex items-center justify-center flex-1 text-white h-14 md:h-16 rounded-[12px] font-bold text-lg md:text-xl transition-all ${(buyNowLoading || quantity === 0 || (sizes.length > 0 && (!selectedSize || pendingSelection))) ? "bg-gray-300 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab336] shadow-xl shadow-[#8CC63F]/20"}`}
               onClick={handleBuyNow}
             >
               <span className="whitespace-nowrap">{buyNowLoading ? "Cargando..." : "Comprar ahora"}</span>

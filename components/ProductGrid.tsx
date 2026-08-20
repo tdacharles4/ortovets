@@ -49,6 +49,7 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
   const [cursor, setCursor] = useState(initialCursor);
   const [hasNextPage, setHasNextPage] = useState(initialHasNextPage);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
   // fetch tag from URL
@@ -58,13 +59,13 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
   const router = useRouter();
 
   async function loadMore() {
-    setLoading(true);
+    setLoadingMore(true);
     const res = await fetch(`/api/products?cursor=${cursor}`);
     const data = await res.json();
     setProducts((prev) => [...prev, ...data.products]);
     setCursor(data.cursor);
     setHasNextPage(data.hasNextPage);
-    setLoading(false);
+    setLoadingMore(false);
   }
 
   async function handleTagChange(tag: string) {
@@ -157,10 +158,10 @@ export function ProductGrid({ initialProducts, initialCursor, initialHasNextPage
           <div className="flex justify-center mt-10">
             <button
               onClick={loadMore}
-              disabled={loading}
+              disabled={loadingMore}
               className="px-8 py-3 bg-[#1E1E1E] text-white font-semibold rounded hover:bg-[#333] disabled:opacity-50 transition"
             >
-              {loading ? "Cargando..." : "Cargar más"}
+              {loadingMore ? "Cargando..." : "Cargar más"}
             </button>
           </div>
         )}

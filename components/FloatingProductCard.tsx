@@ -63,6 +63,10 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
       toast("Debes seleccionar una talla");
       return;
     }
+    if (pendingSelection) {
+      toast(`Debes seleccionar ${secondOption.name?.toLowerCase()}`);
+      return;
+    }
 
     const variant = selectedVariant || product.variants?.edges?.[0]?.node;
     if (!variant) {
@@ -102,6 +106,10 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
     const hasVariants = sizes.length > 1;
     if (!selectedSize && hasVariants) {
       toast("Debes seleccionar una talla");
+      return;
+    }
+    if (pendingSelection) {
+      toast(`Debes seleccionar ${secondOption.name?.toLowerCase()}`);
       return;
     }
     const variant = selectedVariant || product.variants?.edges?.[0]?.node;
@@ -150,34 +158,58 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
     }).filter(Boolean) || []
   )) as string[];
 
+  const SIZE_OPTION_NAMES = ['size', 'talla', 'tamaño', 'tamaño de accesorio'];
+
   const [selectedSize, setSelectedSize] = React.useState<string | undefined>(undefined);
-  const [selectedSide, setSelectedSide] = React.useState<string | undefined>(undefined);
+  const [selectedSecondOption, setSelectedSecondOption] = React.useState<string | undefined>(undefined);
 
-  // Listado de lados disponibles
-  const sideOptions = React.useMemo(()=>{
-    if(!selectedSize)return[];
-    const variantsForSize=product.variants.edges.filter(edge=>edge.node.selectedOptions.some(opt=>opt.name.toLowerCase()==='talla'&&opt.value===selectedSize));
-    const sides = variantsForSize.map(edge=>edge.node.selectedOptions.find(opt=>opt.name.toLowerCase()==='lado')?.value);
-    return[...new Set(sides.filter(Boolean))] as string[];
-  },[selectedSize,product.variants.edges]);
+  // Detect any second option beyond size (e.g. Lado, Mangas, etc.)
+  const secondOption = React.useMemo(() => {
+    if (!selectedSize) return { name: null, values: [] as string[] };
 
-  // Find the selected Menudeo variant based on the selected size
-  const selectedVariant = React.useMemo(()=>{
-    if(!selectedSize){
-      return product.variants.edges.length===1?product.variants.edges[0].node:undefined;
+    const variantsForSize = product.variants.edges.filter(edge =>
+      edge.node.selectedOptions.some(opt =>
+        SIZE_OPTION_NAMES.includes(opt.name.toLowerCase()) && opt.value === selectedSize
+      )
+    );
+
+    let optionName: string | null = null;
+    const values: string[] = [];
+
+    for (const edge of variantsForSize) {
+      const extraOpt = edge.node.selectedOptions.find(opt =>
+        !SIZE_OPTION_NAMES.includes(opt.name.toLowerCase()) && opt.name !== 'Title'
+      );
+      if (extraOpt) {
+        if (!optionName) optionName = extraOpt.name;
+        if (!values.includes(extraOpt.value)) values.push(extraOpt.value);
+      }
     }
-    const matchingVariant=product.variants.edges.find(edge=>{
-      const options=edge.node.selectedOptions;
-      const sizeOpt=options.find(opt=>['size','talla','tamaño','tamaño de accesorio'].includes(opt.name.toLowerCase()));
-      const sizeValue=sizeOpt?.value??(options.length===1&&options[0].name!=='Title'?options[0].value:undefined);
-      const hasSize=sizeValue===selectedSize;
-      if(!hasSize)return false;
-      if(sideOptions.length>0){
-        return options.some(opt=>opt.name.toLowerCase()==='lado'&&opt.value===selectedSide);
-      }return true;
+
+    return { name: optionName, values };
+  }, [selectedSize, product.variants.edges]);
+
+  // Find the selected Menudeo variant based on size + optional second option
+  const selectedVariant = React.useMemo(() => {
+    if (!selectedSize) {
+      return product.variants.edges.length === 1 ? product.variants.edges[0].node : undefined;
+    }
+    return product.variants.edges.find(edge => {
+      const options = edge.node.selectedOptions;
+      const sizeOpt = options.find(opt => SIZE_OPTION_NAMES.includes(opt.name.toLowerCase()));
+      const sizeValue = sizeOpt?.value ?? (options.length === 1 && options[0].name !== 'Title' ? options[0].value : undefined);
+      if (sizeValue !== selectedSize) return false;
+
+      if (secondOption.values.length > 0) {
+        return options.some(opt =>
+          !SIZE_OPTION_NAMES.includes(opt.name.toLowerCase()) &&
+          opt.name !== 'Title' &&
+          opt.value === selectedSecondOption
+        );
+      }
+      return true;
     })?.node;
-    return matchingVariant;
-  },[selectedSize,selectedSide,product.variants.edges,sideOptions])
+  }, [selectedSize, selectedSecondOption, product.variants.edges, secondOption])
 
   const menudeoPriceRange = getMenudeoPriceRange(product);
   const minPrice = menudeoPriceRange.minVariantPrice;
@@ -240,8 +272,10 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
     ? (selectedVariant ? (selectedVariant.quantityAvailable ?? Infinity) : 0)
     : (product.variants.edges[0]?.node?.quantityAvailable ?? Infinity);
 
+  const pendingSelection = secondOption.values.length > 0 && !selectedSecondOption;
+
   const isOutOfStock = selectedSize
-    ? (selectedVariant ? !selectedVariant.availableForSale || (selectedVariant.quantityAvailable != null && selectedVariant.quantityAvailable <= 0) : true)
+    ? (selectedVariant ? !selectedVariant.availableForSale || (selectedVariant.quantityAvailable != null && selectedVariant.quantityAvailable <= 0) : !pendingSelection)
     : !product.availableForSale && product.variants.edges.every(edge => edge.node.quantityAvailable != null && edge.node.quantityAvailable <= 0);
 
   const incrementQuantity = () => {
@@ -394,15 +428,18 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
           </div>
 
           {/* Interaction Section */}
+          {(() => {
+            const compact = secondOption.values.length > 0;
+            return (
           <div className="flex flex-col gap-6 w-full">
-            <div className="flex flex-col sm:flex-row gap-4 items-end w-full">
+            <div className={`flex flex-col sm:flex-row ${compact ? 'gap-2' : 'gap-4'} items-end w-full`}>
               {/* Talla Select */}
               {sizes.length > 0 && (
-                <div className="flex flex-col gap-2 w-full sm:flex-[3]">
+                <div className={`flex flex-col gap-2 w-full ${compact ? 'sm:flex-[2]' : 'sm:flex-[3]'}`}>
                   <Label htmlFor="size-select-fpc" className="text-[#1E1E1E] font-sans font-medium text-sm h-5 flex items-center">Talla</Label>
                   <Select value={selectedSize} onValueChange={setSelectedSize}>
-                    <SelectTrigger id="size-select-fpc" className="w-full !h-12 rounded-[8px] border border-input text-base flex items-center bg-white px-3">
-                      <SelectValue placeholder="Selecciona una talla" />
+                    <SelectTrigger id="size-select-fpc" className={`w-full ${compact ? '!h-10 text-sm' : '!h-12 text-base'} rounded-[8px] border border-input flex items-center bg-white px-3`}>
+                      <SelectValue placeholder={compact ? "Seleccionar" : "Selecciona una talla"} />
                     </SelectTrigger>
                     <SelectContent>
                       {sizes.map((size) => (
@@ -415,18 +452,18 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
                 </div>
               )}
 
-              {/* Lado Select */}
-              {sideOptions.length>0&&(
-                <div className="flex flex-col gap-2 w-full sm:flex-[3]">
-                  <Label htmlFor="size-select-fpc" className="text-[#1E1E1E] font-sans font-medium text-sm h-5 flex items-center">Lado</Label>
-                  <Select value={selectedSide} onValueChange={setSelectedSide}>
-                    <SelectTrigger id="size-select-fpc" className="w-full !h-12 rounded-[8px] border border-input text-base flex items-center bg-white px-3">
-                      <SelectValue placeholder="Selecciona un lado" />
+              {/* Second Option Select (Lado, Mangas, etc.) */}
+              {compact && (
+                <div className="flex flex-col gap-2 w-full sm:flex-[2]">
+                  <Label htmlFor="second-option-select-fpc" className="text-[#1E1E1E] font-sans font-medium text-sm h-5 flex items-center">{secondOption.name}</Label>
+                  <Select value={selectedSecondOption} onValueChange={setSelectedSecondOption}>
+                    <SelectTrigger id="second-option-select-fpc" className="w-full !h-10 text-sm rounded-[8px] border border-input flex items-center bg-white px-3">
+                      <SelectValue placeholder="Seleccionar" />
                     </SelectTrigger>
                     <SelectContent>
-                      {sideOptions.map((side) => (
-                        <SelectItem key={side} value={side!}>
-                          {side}
+                      {secondOption.values.map((val) => (
+                        <SelectItem key={val} value={val}>
+                          {val}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -437,18 +474,18 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
               {/* Cantidad Select */}
               <div className={`flex flex-col gap-2 w-full ${sizes.length > 0 ? 'sm:flex-[1]' : ''}`}>
                 <Label className="text-[#1E1E1E] font-sans font-medium text-sm h-5 flex items-center">Cantidad</Label>
-                <div className="flex items-center justify-between w-full h-12 px-3 rounded-[8px] border border-input bg-white">
-                  <button 
+                <div className={`flex items-center justify-between w-full ${compact ? 'h-10' : 'h-12'} px-3 rounded-[8px] border border-input bg-white`}>
+                  <button
                     onClick={decrementQuantity}
                     disabled={quantity <= 1}
                     className="p-1 hover:text-[#8CC63F] disabled:text-gray-300 transition-colors"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="text-base font-medium">{quantity}</span>
-                  <button 
+                  <span className={`${compact ? 'text-sm' : 'text-base'} font-medium`}>{quantity}</span>
+                  <button
                     onClick={incrementQuantity}
-                    disabled={quantity >= currentAvailability || (sizes.length > 0 && !selectedSize)}
+                    disabled={quantity >= currentAvailability || (sizes.length > 0 && (!selectedSize || pendingSelection))}
                     className="p-1 hover:text-[#8CC63F] disabled:text-gray-300 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
@@ -470,9 +507,9 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
                 <div className="flex flex-col sm:flex-row gap-3 w-full">
                   {/* Add to Cart Button */}
                   <button 
-                    disabled={quantity === 0 || (sizes.length > 0 && !selectedSize)}
+                    disabled={quantity === 0 || (sizes.length > 0 && (!selectedSize || pendingSelection))}
                     className={`flex items-center justify-center gap-2 flex-1 text-white h-12 rounded-[8px] font-bold text-base lg:text-lg transition-all ${
-                      (quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#FF9230] hover:bg-[#e6832b] shadow-lg shadow-[#FF9230]/20"
+                      (quantity === 0 || (sizes.length > 0 && (!selectedSize || pendingSelection))) ? "bg-gray-300 cursor-not-allowed" : "bg-[#FF9230] hover:bg-[#e6832b] shadow-lg shadow-[#FF9230]/20"
                     }`}
                     onClick={handleAddToCart}
                   >
@@ -481,9 +518,9 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
                   </button>
                   {/* Comprar ahora Button CHECKOUT*/}
                   <button
-                    disabled={buyNowLoading || quantity === 0 || (sizes.length > 0 && !selectedSize)}
+                    disabled={buyNowLoading || quantity === 0 || (sizes.length > 0 && (!selectedSize || pendingSelection))}
                     className={`flex items-center justify-center flex-1 text-white h-12 rounded-[8px] font-bold text-base lg:text-lg transition-all ${
-                      (buyNowLoading || quantity === 0 || (sizes.length > 0 && !selectedSize)) ? "bg-gray-300 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab336] shadow-lg shadow-[#8CC63F]/20"
+                      (buyNowLoading || quantity === 0 || (sizes.length > 0 && (!selectedSize || pendingSelection))) ? "bg-gray-300 cursor-not-allowed" : "bg-[#8CC63F] hover:bg-[#7ab336] shadow-lg shadow-[#8CC63F]/20"
                     }`}
                     onClick={handleBuyNow}
                   >
@@ -493,6 +530,8 @@ export function FloatingProductCard({ product }: { product: ShopifyProduct }) {
               )}
             </div>
           </div>
+            );
+          })()}
 
           {/* Colapsable '¿Como se que talla comprar?' */}
           <Accordion type="single" collapsible className="w-full">
