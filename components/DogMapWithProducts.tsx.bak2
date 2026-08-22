@@ -172,7 +172,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
           </div>
 
           {/* Redirection Buttons Frame */}
-          <motion.div variants={popItem} className="mt-2 flex flex-col sm:flex-row h-auto gap-4 w-full">
+          <motion.div variants={popItem} className="mt-6 flex flex-col sm:flex-row h-auto gap-4 w-full">
             {/* Button 1: Ver productos */}
             <Button asChild className="flex-1 min-w-0 bg-[#8CC63F] hover:bg-[#7ab336] text-[#F5F5F5] rounded-[16px] flex items-center justify-center border-none shadow-none h-auto py-3">
               <Link href="/tienda" className="flex items-center justify-center gap-2 w-full">
@@ -188,11 +188,6 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
                 <Calendar className="w-[30px] h-[30px] shrink-0" />
               </Link>
             </Button>
-          </motion.div>
-          <motion.div variants={popItem} className="text-center">
-            <Link href="/acceso" className="text-white font-sans font-medium text-sm md:text-base hover:underline transition-opacity hover:opacity-80">
-              ¿Eres veterinario?
-            </Link>
           </motion.div>
         </motion.div>
 
