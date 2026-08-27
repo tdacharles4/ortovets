@@ -432,7 +432,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
       {/* Images Frame */}
       <div ref={imagesFrameRef} className="flex flex-col w-[60%] mx-auto md:w-full md:mx-0 md:col-start-1 md:row-start-1 xl:w-[816px] gap-[16px] xl:gap-[24px] xl:min-w-[280px]">
         {/* Main Image Container */}
-        <div className="relative w-full aspect-square md:aspect-video xl:aspect-square bg-muted overflow-hidden rounded-2xl">
+        <div className="relative w-full aspect-square bg-muted overflow-hidden rounded-2xl">
           {mainImage ? (
             <button
               type="button"
@@ -460,7 +460,7 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
         </div>
 
         {/* Mobile carousel — swipeable, no buttons */}
-        <div className="flex xl:hidden flex-row gap-2 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory">
+        <div className="flex xl:hidden flex-row gap-2 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory justify-center">
           {allImages.map((img, index) => (
             <div
               key={`${img.url}-${index}`}

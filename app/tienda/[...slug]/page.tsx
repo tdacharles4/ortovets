@@ -50,20 +50,20 @@ export default async function ProductPage({ params }: PageProps) {
         </div>
 
         {/* Videos Recomendados Frame */}
-        <section className="w-full h-auto py-8 md:py-12 px-4 md:px-8 lg:px-16 flex flex-col gap-8 bg-white opacity-90 mt-8 md:mt-12 mb-12 md:mb-20 scroll-mt-20" id="video-section">
+        <section className="w-full h-auto py-8 md:py-12 px-4 md:px-8 lg:px-16 flex flex-col gap-8 bg-white opacity-90 mt-8 md:mt-12 mb-0 scroll-mt-20" id="video-section">
           {/* Text Heading: Videos Recomendados */}
           <h2 className="text-[#1E1E1E] font-sans font-semibold text-2xl leading-[1.2]">
             Videos Recomendados
           </h2>
 
           {/* Videos Content Frame */}
-          <div className="flex flex-col md:flex-row w-full gap-8 md:gap-12 lg:gap-[48px]">
+          <div className="flex flex-col sm:flex-row w-full gap-6">
             {/* Video Frame 1 */}
-            {firstVideo && (
-              <div className="flex flex-col flex-1 gap-3">
-                <h3 className="text-[#5A5A5A] font-sans font-semibold italic text-lg leading-[1.2]">
-                  ¿Cómo medir el producto?
-                </h3>
+            <div className="flex flex-col flex-1 gap-3">
+              <h3 className="text-[#5A5A5A] font-sans font-semibold italic text-lg leading-[1.2]">
+                ¿Cómo medir el producto?
+              </h3>
+              {firstVideo ? (
                 <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black">
                   {firstVideo.mediaContentType === 'VIDEO' ? (
                     <video
@@ -84,8 +84,13 @@ export default async function ProductPage({ params }: PageProps) {
                     />
                   )}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="relative w-full aspect-video bg-muted flex items-center justify-center cursor-pointer group rounded-xl overflow-hidden">
+                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors" />
+                  <PlayCircle className="w-12 h-12 lg:w-16 lg:h-16 text-white/80 group-hover:scale-110 transition-transform z-10" />
+                </div>
+              )}
+            </div>
 
             {/* Video Frame 2 */}
             <div className="flex flex-col flex-1 gap-3">
@@ -101,7 +106,7 @@ export default async function ProductPage({ params }: PageProps) {
         </section>
 
         {/* Reviews Grid Frame */}
-        <section className="w-full h-auto py-8 md:py-12 px-4 md:px-8 lg:px-16 flex flex-col gap-6 bg-white mt-8 md:mt-12">
+        <section className="w-full h-auto py-8 md:py-12 px-4 md:px-8 lg:px-16 flex flex-col gap-6 bg-white mt-2 md:mt-4">
           {/* Text Heading: Reseñas más recientes */}
           <h2 className="text-[#1E1E1E] font-sans font-semibold text-2xl leading-[1.2]">
             Reseñas más recientes
