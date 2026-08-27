@@ -21,7 +21,7 @@ export async function shopifyFetch<T>({
       },
       body: JSON.stringify({ query, variables }),
       cache,
-      next: cache === 'force-cache' ? { revalidate: 3600 } : undefined
+      next: cache === 'force-cache' ? { revalidate: 120 } : undefined
     });
 
     return {
