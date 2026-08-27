@@ -105,6 +105,16 @@ export type ShopifyProduct = {
       };
     }[];
   };
+  metafield?: {
+    value: string;
+    type: string;
+    reference?: ShopifyProduct | null;
+    references?: {
+      edges: {
+        node: ShopifyProduct;
+      }[];
+    };
+  } | null;
 };
 
 const MVZ_DISCOUNT_COLLECTIONS: Record<string, number> = {
@@ -220,6 +230,94 @@ export async function getProduct(handle: string) {
           maxVariantPrice {
             amount
             currencyCode
+          }
+        }
+        metafield(namespace: "custom", key: "comprado_con") {
+          value
+          type
+          reference {
+            ... on Product {
+              id
+              title
+              handle
+              availableForSale
+              images(first: 1) {
+                edges {
+                  node {
+                    url
+                    altText
+                  }
+                }
+              }
+              priceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
+              }
+              variants(first: 20) {
+                edges {
+                  node {
+                    id
+                    title
+                    availableForSale
+                    quantityAvailable
+                    price {
+                      amount
+                      currencyCode
+                    }
+                    selectedOptions {
+                      name
+                      value
+                    }
+                  }
+                }
+              }
+            }
+          }
+          references(first: 10) {
+            edges {
+              node {
+                ... on Product {
+                  id
+                  title
+                  handle
+                  availableForSale
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                        altText
+                      }
+                    }
+                  }
+                  priceRange {
+                    minVariantPrice {
+                      amount
+                      currencyCode
+                    }
+                  }
+                  variants(first: 20) {
+                    edges {
+                      node {
+                        id
+                        title
+                        availableForSale
+                        quantityAvailable
+                        price {
+                          amount
+                          currencyCode
+                        }
+                        selectedOptions {
+                          name
+                          value
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
         variants(first: 20) {

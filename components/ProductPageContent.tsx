@@ -154,6 +154,20 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
   }, [selectedSize, selectedSecondOption, product.variants.edges, secondOption])
 
   const menudeoPriceRange = getMenudeoPriceRange(product);
+
+  // "Comprado con" link from metafield
+  const compradoConLink = React.useMemo(() => {
+    if (product.metafield?.type !== 'link' || !product.metafield.value) return null;
+    try {
+      const data = JSON.parse(product.metafield.value);
+      if (!data.text || !data.url) return null;
+      const path = new URL(data.url).pathname;
+      return { text: data.text as string, path };
+    } catch {
+      return null;
+    }
+  }, [product.metafield]);
+
   const minPrice = menudeoPriceRange.minVariantPrice;
   const maxPrice = menudeoPriceRange.maxVariantPrice;
   
@@ -519,6 +533,14 @@ export function ProductPageContent({ product }: { product: ShopifyProduct }) {
           <p className="text-[#757575] font-sans font-normal text-base md:text-lg leading-[1.6]">
             {product.description}
           </p>
+          {compradoConLink && (
+            <p className="text-[#757575] font-sans font-normal text-base md:text-lg leading-[1.6] mt-2">
+              Suele comprarse con{' '}
+              <Link href={compradoConLink.path} className="text-[#4C83DC] underline hover:opacity-80 transition-opacity">
+                {compradoConLink.text}
+              </Link>
+            </p>
+          )}
         </div>
 
         {/* Interaction Section — mobile + desktop only; iPad uses full-width row below */}
