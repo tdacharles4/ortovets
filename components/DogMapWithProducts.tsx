@@ -190,7 +190,7 @@ export function DogMapWithProducts({ defaultProducts }: DogMapWithProductsProps)
             </Button>
           </motion.div>
           <motion.div variants={popItem} className="text-center">
-            <Link href="/acceso" className="text-white font-sans font-medium text-sm md:text-base hover:underline transition-opacity hover:opacity-80">
+            <Link href="/acceso" className="text-white mix-blend-difference font-sans font-medium text-sm md:text-base hover:underline transition-opacity hover:opacity-80">
               ¿Eres veterinario?
             </Link>
           </motion.div>
